@@ -87,7 +87,7 @@ img.big{width:72px;height:42px}
  <p><b>Goods:</b> Apple $5 · Potato $10 · Wood $30 · Coal $100 · Iron $500 · Gold $2000. Pricier goods are sold further east.</p>
  <p><b>Haulers:</b> Backpack 5 → Wheelbarrow 12 → Small Wagon 25 → Big Wagon 50. Bigger is slower.</p>
  <p><b>Danger.</b> Plains: slimes, goblins. Snow: golems, goblins, deep snow, blizzards. Mountains: golems, witches, slopes, rockfall. Volcano: witches, lava golems, heat, lava pits.</p>
- <p><b>Risk.</b> Hits can knock goods off your hauler (pick them back up). Goblins steal goods — kill them to get them back. If you fall, you lose all cargo but keep money and gear, and wake at the last town.</p>
+ <p><b>Risk.</b> Hits can knock goods off your hauler (pick them back up). Goblins steal goods and slow down while carrying them — catch and kill them to get them back. If you fall, you lose all cargo but keep money and gear, and wake at the last town.</p>
  <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town · Q swap weapon · H potion · Esc pause.</p>
  <p><b>Fire</b> melts ice golems, <b>ice</b> cracks lava golems, <b>hammers</b> crush all golems.</p></div></div>
 <div id="town" class="ov"><div class="panel"><div class="th"><h2 id="tname">Town</h2><span class="gold" id="tmoney"></span><button id="tLeave" class="red">✕</button></div>
@@ -331,7 +331,7 @@ $('ttabs').onclick=e=>{const b=e.target.closest('button');if(b){curTab=b.dataset
 function pr(n){return '$'+Math.round(n).toLocaleString()}
 function iconImg(id,cls){return '<img class="px '+(cls||'')+'" src="'+id+'">'}
 function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tmoney').textContent=pr(S.money);
- [...$('ttabs').children].forEach(b=>b.classList.toggle('on',b.dataset.tab===curTab));let h='';
+ [...$('ttabs').children].forEach(b=>{b.classList.toggle('on',b.dataset.tab===curTab);const tb=b.dataset.tab;b.style.display=(tb==='haulers'&&!t.haulers.length&&S.haulers.length<2)||(tb==='weapons'&&!t.weapons.length&&S.weapons.length<2)?'none':''});let h='';
  if(curTab==='market'){const n=cargoCount(),c=cap();
   h+='<div class="sec">CARGO '+n+'/'+c+'</div>';
   if(!S.cargo.length)h+='<div class="row dim"><span class="nm">Empty</span></div>';
@@ -340,19 +340,22 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   t.sells.forEach(i=>{const p=buyPrice(t.i,i);const far=TOWNS.reduce((b,o)=>{const v=sellPrice(o.i,i,t.i);return v>b.v?{v,o}:b},{v:0});const nb=TOWNS[t.i+1]||TOWNS[t.i-1];const nv=sellPrice(nb.i,i,t.i);
    const tr=p>ITEMS[i].base?'<span class="dn2">▲</span>':p<ITEMS[i].base?'<span class="up">▼</span>':'';
    const can=Math.min(c-n,Math.floor(S.money/p));
-   h+='<div class="row">'+iconImg(ICONURL[ITEMS[i].id])+'<span class="nm">'+ITEMS[i].name+' '+pr(p)+tr+'<span class="sub">'+nb.name+' '+pr(nv)+' · '+far.o.name+' '+pr(far.v)+'</span></span><button data-act="buy" data-i="'+i+'" data-n="1" '+(can<1?'disabled':'')+'>+1</button><button data-act="buy" data-i="'+i+'" data-n="999" '+(can<1?'disabled':'')+'>Max</button></div>'});
-  const other=ITEMS.map((it,i)=>i).filter(i=>!t.sells.includes(i));
-  h+='<div class="small" style="margin-top:6px">Not sold here: '+other.map(i=>ITEMS[i].name).join(', ')+'</div>';
+   h+='<div class="row" data-b="'+i+'">'+iconImg(ICONURL[ITEMS[i].id])+'<span class="nm">'+ITEMS[i].name+' '+pr(p)+tr+'<span class="sub">'+nb.name+' '+pr(nv)+' · '+far.o.name+' '+pr(far.v)+'</span></span><button data-act="buy" data-i="'+i+'" data-n="1" '+(can<1?'disabled':'')+'>+1</button><button data-act="buy" data-i="'+i+'" data-n="999" '+(can<1?'disabled':'')+'>Max</button></div>'});
  } else if(curTab==='haulers'){
-  HORDER.forEach(id=>{const H=HAULERS[id];const own=S.haulers.includes(id),here=t.haulers.includes(id),eq=S.hauler===id;const where=TOWNS.filter(o=>o.haulers.includes(id)).map(o=>o.name).join(', ');
-   let btn=eq?'<button disabled>Using</button>':own?'<button data-act="useh" data-id="'+id+'" '+(cargoCount()>H.cap?'disabled':'')+'>Use</button>':here?'<button data-act="buyh" data-id="'+id+'" '+(S.money<H.price?'disabled':'')+'>'+pr(H.price)+'</button>':'';
-   h+='<div class="row '+(!own&&!here?'dim':'')+'">'+iconImg(HAULURL[id],'big')+'<span class="nm">'+H.name+'<span class="sub">📦 '+H.cap+' · 👟 '+Math.round(H.spd*100)+'%'+(!own&&!here?' · '+where:'')+'</span></span>'+btn+'</div>'});
+  const row=id=>{const H=HAULERS[id];const own=S.haulers.includes(id),eq=S.hauler===id;
+   const btn=eq?'<button disabled>Using</button>':own?'<button data-act="useh" data-id="'+id+'" '+(cargoCount()>H.cap?'disabled':'')+'>Use</button>':'<button data-act="buyh" data-id="'+id+'" '+(S.money<H.price?'disabled':'')+'>'+pr(H.price)+'</button>';
+   return '<div class="row" data-h="'+id+'">'+iconImg(HAULURL[id],'big')+'<span class="nm">'+H.name+'<span class="sub">📦 '+H.cap+' · 👟 '+Math.round(H.spd*100)+'%</span></span>'+btn+'</div>'};
+  const sale=HORDER.filter(id=>t.haulers.includes(id)),mine=HORDER.filter(id=>S.haulers.includes(id)&&!t.haulers.includes(id));
+  if(sale.length)h+='<div class="sec">FOR SALE</div>'+sale.map(row).join('');
+  if(mine.length)h+='<div class="sec">YOURS</div>'+mine.map(row).join('');
  } else if(curTab==='weapons'){
-  WORDER.forEach(id=>{const W=WEAPONS[id];const own=S.weapons.includes(id),here=t.weapons.includes(id),eq=S.weapon===id;if(id==='fists'&&!own)return;const where=TOWNS.filter(o=>o.weapons.includes(id)).map(o=>o.name).join(', ');
-   const el=W.elem==='fire'?' · 🔥':W.elem==='ice'?' · ❄':W.elem==='crush'?' · 🪨':'';
-   let btn=eq?'<button disabled>Equipped</button>':own?'<button data-act="usew" data-id="'+id+'">Equip</button>':here?'<button data-act="buyw" data-id="'+id+'" '+(S.money<W.price?'disabled':'')+'>'+pr(W.price)+'</button>':'';
-   h+='<div class="row '+(!own&&!here?'dim':'')+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+W.dmg+' · '+(1/W.cd).toFixed(1)+'/s · '+(W.ranged?'ranged':'reach '+W.range)+el+(!own&&!here?' · '+where:'')+'</span></span>'+btn+'</div>'});
-  h+='<div class="small" style="margin-top:6px">🔥 melts ice golems · ❄ cracks lava golems · 🪨 crushes golems</div>';
+  const row=id=>{const W=WEAPONS[id];const own=S.weapons.includes(id),eq=S.weapon===id;const el=W.elem==='fire'?' · 🔥':W.elem==='ice'?' · ❄':W.elem==='crush'?' · 🪨':'';
+   const btn=eq?'<button disabled>Equipped</button>':own?'<button data-act="usew" data-id="'+id+'">Equip</button>':'<button data-act="buyw" data-id="'+id+'" '+(S.money<W.price?'disabled':'')+'>'+pr(W.price)+'</button>';
+   return '<div class="row" data-w="'+id+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+W.dmg+' · '+(1/W.cd).toFixed(1)+'/s · '+(W.ranged?'ranged':'reach '+W.range)+el+'</span></span>'+btn+'</div>'};
+  const sale=WORDER.filter(id=>t.weapons.includes(id)),mine=WORDER.filter(id=>S.weapons.includes(id)&&!t.weapons.includes(id));
+  if(sale.length)h+='<div class="sec">FOR SALE</div>'+sale.map(row).join('');
+  if(mine.length)h+='<div class="sec">YOURS</div>'+mine.map(row).join('');
+  if(sale.some(id=>WEAPONS[id].elem))h+='<div class="small" style="margin-top:6px">🔥 melts ice golems · ❄ cracks lava golems · 🪨 crushes golems</div>';
  } else if(curTab==='inn'){const rc=10+t.i*8,pc=30;
   h+='<div class="row"><span class="nm">❤ Rest<span class="sub">'+Math.ceil(S.hp)+'/'+S.maxhp+' → full</span></span><button data-act="rest" '+(S.hp>=S.maxhp||S.money<rc?'disabled':'')+'>'+pr(rc)+'</button></div>';
   h+='<div class="row"><span class="nm">🧪 Potion ×'+S.potions+'<span class="sub">+45 HP · max 5 · press H</span></span><button data-act="pot" '+(S.potions>=5||S.money<pc?'disabled':'')+'>'+pr(pc)+'</button></div>';
@@ -463,7 +466,7 @@ function updEnemy(e,dt){const d=ENEMY[e.type],base=d.base||e.type;e.t+=dt;if(e.h
  if(base==='slime'){if(e.onGround){e.y=surfY(e.x);e.hop-=dt;if(e.hop<=0){e.hop=.8+rnd()*.6;e.vy=-170;e.onGround=false;e.dir=Math.sign(dxp)||1}}
   else{walkTo(e.dir,d.spd);e.vy+=600*dt;e.y+=e.vy*dt;const gy=surfY(e.x);if(e.y>=gy){e.y=gy;e.onGround=true}}
   if(near)hurtPlayer(d.dmg,e.x)}
- else if(base==='goblin'){e.y=surfY(e.x);if(e.flee>0){e.flee-=dt;if(!walkTo(e.fdir,d.spd*1.3)){e.fdir*=-1}if(e.flee<=0&&e.loot.length&&adx>VW*.6){e.dead=1;return}if(e.flee<=0)e.flee=2;return}
+ else if(base==='goblin'){e.y=surfY(e.x);if(e.flee>0){e.flee-=dt;const fs=e.loot.length?d.spd*Math.max(.5,.65-.05*e.loot.length):d.spd*1.3;if(!walkTo(e.fdir,fs)){e.fdir*=-1}if(e.flee<=0&&e.loot.length&&adx>VW*.6){e.dead=1;return}if(e.flee<=0)e.flee=2;return}
   if(e.loot.length){e.flee=5;e.fdir=-Math.sign(dxp)||1;return}
   if(adx>4)walkTo(Math.sign(dxp),d.spd);e.cd-=dt;
   if(near&&e.cd<=0){e.cd=1.1;if(cargoCount()){const n=Math.min(cargoCount(),1+(rnd()<.5?1:0));for(let i=0;i<n;i++){const u=randomUnit();if(u)e.loot.push(u)}ftxt(P.x,P.y-30,'Stolen ×'+n+'!','#ff6a6a');e.flee=5;e.fdir=-Math.sign(dxp)||1;P.inv=Math.max(P.inv,.4)}else hurtPlayer(d.dmg,e.x,false)}}
