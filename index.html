@@ -40,6 +40,12 @@ img.big{width:72px;height:42px}
 .toast{font-size:9px;background:rgba(20,10,16,.9);padding:7px 11px;box-shadow:0 0 0 2px #000,0 0 0 4px #7a5232;animation:tin .25s;line-height:1.6;text-align:center;white-space:nowrap}
 @keyframes tin{from{transform:translateY(-8px);opacity:0}}
 #pbtn{position:fixed;right:6px;top:62px;z-index:11;padding:7px 9px}
+#ibtn{position:fixed;right:52px;top:62px;z-index:11;padding:4px 6px;font-size:14px;line-height:1}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.tile{width:62px;min-height:62px;padding:5px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:7px;line-height:1.3;background:#3a2830;color:#f6ead0;box-shadow:0 0 0 2px #000;position:relative}
+.tile:active{box-shadow:0 0 0 2px #000,inset 0 0 0 2px #7a5232}.tile.eq{box-shadow:0 0 0 2px #000,0 0 0 4px #ffd75e;background:#4a3428}.tile.empty{opacity:.45}.tile.dim{opacity:.55}
+.tile img{width:28px;height:28px;image-rendering:pixelated}.tile .q{position:absolute;right:4px;top:3px;font-size:8px;color:#ffd75e;text-shadow:1px 1px 0 #000}.tile .s{color:#7de07a}
+.slots .tile{width:84px;min-height:74px}.slots .tile .l{color:#b49a88}
 #touch{position:fixed;inset:0;z-index:9;pointer-events:none;display:none}
 #touch.on{display:block}
 .tb{position:absolute;pointer-events:auto;width:62px;height:62px;border-radius:50%;background:rgba(255,240,210,.16);box-shadow:0 0 0 2px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;text-shadow:2px 2px 0 #000;touch-action:none}
@@ -78,7 +84,7 @@ img.big{width:72px;height:42px}
 </div>
 <div id="prompt"></div><div id="toasts"></div>
 <div id="touch"><div class="tb" id="tL">◀</div><div class="tb" id="tR">▶</div><div class="tb" id="tJ">▲</div><div class="tb" id="tA">⚔</div><div class="tb" id="tE">E</div><div class="tb" id="tH">🧪</div><div class="tb" id="tQ">Q</div><div class="tb" id="tC">🛒</div></div>
-<button id="pbtn" style="display:none">II</button>
+<button id="pbtn" style="display:none">II</button><button id="ibtn" class="alt" style="display:none" aria-label="Inventory">🎒</button>
 <div id="menu" class="ov on"><div class="mid"><h1>MERCHANT<br>ROAD</h1><div class="small" style="text-align:center">Buy low. Travel far. Sell high.</div>
  <button id="bCont">Continue</button><button id="bNew">New Game</button><button id="bHelp" class="alt">How to Play</button></div></div>
 <div id="pause" class="ov"><div class="panel mid"><h2>Paused</h2><button id="bRes">Resume</button><button id="bHelp2" class="alt">How to Play</button><button id="bMenu" class="red">Main Menu</button></div></div>
@@ -89,12 +95,14 @@ img.big{width:72px;height:42px}
  <p><b>Danger.</b> Plains: slimes, goblins. Snow: golems, goblins, deep snow, blizzards. Mountains: golems, witches, slopes, rockfall. Volcano: witches, lava golems, heat, lava pits.</p>
  <p><b>Risk.</b> Hits can knock goods off your hauler (pick them back up). Goblins steal goods and slow down while carrying them — catch and kill them to get them back. If you fall, you lose all cargo but keep money and gear, and wake at the last town.</p>
  <p><b>Carts.</b> Press <b>C</b> (🛒) to unhitch your cart and park it anywhere. You walk faster without it, but only your backpack (5) comes along, and you can only sell what you carry. Walk back and press C to hitch up again. Goblins may raid a cart left alone.</p>
+ <p><b>Gear.</b> Press <b>I</b> (🎒) for your inventory: goods, cart and gear. Tap gear to equip. Monsters sometimes drop things: slimes apples (25%), goblins daggers, golems a <b>Stone Chestplate</b> (takes 20% less damage), witches a <b>Witch Hat</b> (+25% ranged damage), each 10%. Spare copies are sold on the spot.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
- <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · Q swap weapon · H potion · Esc pause.</p>
+ <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · I inventory · Q swap weapon · H potion · Esc pause.</p>
  <p><b>Fire</b> melts ice golems, <b>ice</b> cracks lava golems, <b>hammers</b> crush all golems.</p></div></div>
 <div id="town" class="ov"><div class="panel"><div class="th"><h2 id="tname">Town</h2><span class="gold" id="tmoney"></span><button id="tLeave" class="red">✕</button></div>
  <div class="tabs" id="ttabs"><button data-tab="market">Market</button><button data-tab="haulers">Haulers</button><button data-tab="weapons">Weapons</button><button data-tab="inn">Inn</button></div>
  <div id="tbody"></div></div></div>
+<div id="inv" class="ov"><div class="panel"><div class="th"><h2>🎒</h2><span class="gold" id="imoney"></span><button id="invX" class="red">✕</button></div><div id="ibody"></div></div></div>
 <div id="dead" class="ov"><div class="panel mid"><h2 style="color:#ff7a6a">Defeated</h2><div class="small" id="deadTxt"></div><button id="bRespawn">Continue</button></div></div>
 <script>
 'use strict';
@@ -200,10 +208,18 @@ const ICONS={
  coal:['........','...kk...','..kgkk..','.kkkkgk.','kgkkkkkk','kkkkgkk.','.kkkkk..','........'],
  iron:['........','........','..wwwww.','.siiiiis','siiiiiss','ssssssss','........','........'],
  gold:['........','........','..wwwww.','.yyyyyyo','yyyyyyoo','oooooooo','........','........']};
-const IPAL={g:'#3a8a2a',r:'#d83a3a',w:'#ffd0d0',d:'#9a2020',t:'#c8a060',b:'#8b5a2b',o:'#5a3818',l:'#d8b080',k:'#22222a',i:'#b8c0cc',s:'#707884',y:'#ffd040'};
+const IPAL={h:'#5a3a7a',p:'#c060ff',a:'#5e5e5e',c:'#d0d0d0',g:'#3a8a2a',r:'#d83a3a',w:'#ffd0d0',d:'#9a2020',t:'#c8a060',b:'#8b5a2b',o:'#5a3818',l:'#d8b080',k:'#22222a',i:'#b8c0cc',s:'#707884',y:'#ffd040'};
 const ICONPAL2={iron:{w:'#eef2f8'},gold:{w:'#fff4b0',o:'#c08a10'}};
 function iconCanvas(id){const c=document.createElement('canvas');c.width=8;c.height=8;const g=c.getContext('2d');const pal=Object.assign({},IPAL,ICONPAL2[id]||{});ICONS[id].forEach((row,y)=>{for(let x=0;x<8;x++){const ch=row[x];if(ch&&ch!=='.'){g.fillStyle=pal[ch];g.fillRect(x,y,1,1)}}});return c}
 const ICONC={},ICONURL={};ITEMS.forEach(it=>{ICONC[it.id]=iconCanvas(it.id);ICONURL[it.id]=ICONC[it.id].toDataURL()});
+// ===== gear (enemy drops) =====
+const GEAR={stonechest:{name:'Stone Chestplate',slot:'chest',def:.2,val:75,stat:'🛡 -20%'},witchhat:{name:'Witch Hat',slot:'head',rng:.25,val:100,stat:'🏹 +25%'}};
+const GSLOTS=[['head','Head'],['chest','Chest']];
+ICONS.stonechest=['.a....a.','aab..baa','aabbbbaa','.abccba.','.abbbba.','.abbbba.','.aabbaa.','..aaaa..'];ICONPAL2.stonechest={a:'#5e5e5e',b:'#8a8a8a',c:'#d0d0d0'};
+ICONS.witchhat=['.....h..','....hh..','...hhh..','...hhh..','..hhhhh.','..ppppp.','hhhhhhhh','.hhhhhh.'];ICONPAL2.witchhat={h:'#5a3a7a',p:'#c060ff'};
+const GEARC={},GEARURL={};for(const id in GEAR){GEARC[id]=iconCanvas(id);GEARURL[id]=GEARC[id].toDataURL()}
+// drop chances by enemy family (DROPMUL lets tests force drops)
+const DROPS={slime:[['apple',.25]],goblin:[['dagger',.1]],golem:[['stonechest',.1]],witch:[['witchhat',.1]]};let DROPMUL=1;
 // weapon pixel lines: [length, colors fn]
 function wepPixels(id){switch(id){
  case 'dagger':return ['#5a3818','#5a3818','#d8b040','#d0d8e0','#e8eef4','#e8eef4','#ffffff'];
@@ -243,9 +259,11 @@ function drawPlayer(c,x,y,dir,t,walking,air,flash,wep,atk){
  if(air){P(-3,-6,2,4,'#4a3b2a');P(1,-5,2,4,'#4a3b2a');P(-4,-2,3,1,'#2a1d14');P(1,-1,3,1,'#2a1d14')}
  else{P(-3+la,-5,2,4,'#4a3b2a');P(1+lb,-5,2,4,'#4a3b2a');P(-3+la,-1,3,1,'#2a1d14');P(1+lb,-1,3,1,'#2a1d14')}
  const bob=walking&&Math.abs(ph)>.7?-1:0;
- P(-4,-11+bob,8,6,'#3a6ea5');P(-4,-11+bob,8,1,'#5a8ec5');P(-4,-7+bob,8,1,'#5a3a1a');P(0,-7+bob,1,1,'#d8b040');
+ const EQ=(c.canvas&&c.canvas.id==='c'&&S&&S.eq)||{};
+ P(-4,-11+bob,8,6,'#3a6ea5');P(-4,-11+bob,8,1,'#5a8ec5');if(EQ.chest==='stonechest'){P(-4,-11+bob,8,4,'#8a8a8a');P(-4,-11+bob,8,1,'#c8c8c8');P(-5,-11+bob,2,2,'#6a6a6a');P(-1,-10+bob,2,2,'#5e5e5e')}P(-4,-7+bob,8,1,'#5a3a1a');P(0,-7+bob,1,1,'#d8b040');
  P(-3,-16+bob,6,5,'#f1c28a');P(-3,-16+bob,1,3,'#6b3d1f');P(1,-14+bob,1,1,'#1a1420');P(3,-13+bob,1,1,'#e0a070');
- P(-5,-17+bob,10,1,'#6a2424');P(-3,-20+bob,6,3,'#8a2b2b');P(-3,-18+bob,6,1,'#d8b040');
+ if(EQ.head==='witchhat'){P(-6,-17+bob,12,1,'#3a2450');P(-3,-20+bob,6,3,'#4a2e6a');P(-3,-18+bob,6,1,'#c060ff');P(-2,-22+bob,4,2,'#4a2e6a');P(-2,-24+bob,2,2,'#4a2e6a');P(-3,-25+bob,1,1,'#4a2e6a')}
+ else{P(-5,-17+bob,10,1,'#6a2424');P(-3,-20+bob,6,3,'#8a2b2b');P(-3,-18+bob,6,1,'#d8b040')}
  // arm + weapon
  const w=WEAPONS[wep];let ang=-1.1,ext=0;
  if(atk>0){const k=1-atk;if(w.ranged){ang=0;ext=k<.3?-1:0}else if(wep==='frostspear'){ang=-.05;ext=Math.round(Math.sin(k*Math.PI)*6)}else ang=lerp(-2.0,.7,smooth(k))}
@@ -279,17 +297,19 @@ function drawEnemy(c,e,sx,sy,t){
 }
 function spriteURL(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');fn(g);return c.toDataURL()}
 const HAULURL={};HORDER.forEach(id=>{HAULURL[id]=spriteURL(56,32,g=>{drawHauler(g,id==='wheelbarrow'?20:id==='backpack'?30:50,30,1,id,['#d83a3a','#c8a060','#8b5a2b','#ffd040','#a8b0bc'],.4);if(id==='backpack')drawPlayer(g,30,30,1,0,false,false,false,'fists',0)})});
-const WEPURL={};WORDER.forEach(id=>{WEPURL[id]=spriteURL(16,16,g=>{if(id==='fists'){px(g,5,6,6,5,'#f1c28a');px(g,5,6,6,1,'#ffd8a8');px(g,6,8,1,1,'#c08a50');px(g,8,8,1,1,'#c08a50')}else drawWeapon(g,3,13,1,-.78,id,0)})});
+const WEPURL={};const WEPC={};WORDER.forEach(id=>{const c=document.createElement('canvas');c.width=16;c.height=16;drawWeapon(c.getContext('2d'),3,13,1,-.78,id,0);WEPC[id]=c});WORDER.forEach(id=>{WEPURL[id]=spriteURL(16,16,g=>{if(id==='fists'){px(g,5,6,6,5,'#f1c28a');px(g,5,6,6,1,'#ffd8a8');px(g,6,8,1,1,'#c08a50');px(g,8,8,1,1,'#c08a50')}else drawWeapon(g,3,13,1,-.78,id,0)})});
 // ===== state =====
 const KEY='merchantRoad.v1';
 let S,P,ENEMIES=[],PROJ=[],PARTS=[],PICK=[],ROCKS=[],FTXT=[];
 let MODE='menu';
-function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[]}}
+function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:[],eq:{head:null,chest:null}}}
 function newPlayer(x){return {x,y:surfY(x),vy:0,kbx:0,dir:1,onGround:true,inv:0,cd:0,atk:0,walk:0,wheel:0,lastSafe:x,heat:0}}
 function save(){if(!S)return;S.x=Math.round(DG?DG.d.x:P.x);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo){const s=Object.assign(fresh(),d);
   // migrate older saves (no carts parking / caves)
   if(!s.dng||typeof s.dng!=='object')s.dng={};if(!Array.isArray(s.caves))s.caves=[];
+  if(!Array.isArray(s.gear))s.gear=[];s.gear=s.gear.filter(g=>GEAR[g]);if(!s.eq||typeof s.eq!=='object')s.eq={};for(const [sl] of GSLOTS){const g=s.eq[sl];if(!(g&&GEAR[g]&&GEAR[g].slot===sl&&s.gear.includes(g)))s.eq[sl]=null}
+  if(!Array.isArray(s.weapons)||!s.weapons.length)s.weapons=['fists'];if(!WEAPONS[s.weapon])s.weapon=s.weapons[0];
   const pk=s.park;if(pk&&(!Array.isArray(pk.cargo)||!isFinite(pk.x)||s.hauler==='backpack'||!HAULERS[s.hauler])){if(Array.isArray(pk.cargo))s.cargo=s.cargo.concat(pk.cargo);s.park=null}
   if(!HAULERS[s.hauler])s.hauler='backpack';return s}}catch(e){}return null}
 // ===== economy =====
@@ -310,7 +330,8 @@ function cargoColors(c){const a=[];for(const s of (c||S.cargo))for(let k=0;k<s.q
 // ===== input =====
 const keys={};const pressed={};
 addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowleft','arrowright','arrowup',' ','arrowdown'].includes(k))e.preventDefault();if(!keys[k])pressed[k]=1;keys[k]=1;
- if(k==='escape'){if(MODE==='play')setMode('pause');else if(MODE==='pause')setMode('play');else if(MODE==='town')leaveTown();else if($('help').classList.contains('on'))$('help').classList.remove('on')}});
+ if(k==='i'&&!e.repeat){if(MODE==='play')openInv();else if(MODE==='inv')closeInv()}
+ if(k==='escape'){if(MODE==='inv')closeInv();else if(MODE==='play')setMode('pause');else if(MODE==='pause')setMode('play');else if(MODE==='town')leaveTown();else if($('help').classList.contains('on'))$('help').classList.remove('on')}});
 addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=0});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=0;for(const k in tkeys)tkeys[k]=0});
 const tkeys={};
@@ -331,8 +352,8 @@ function resize(){const de=document.documentElement,w=de.clientWidth||innerWidth
 addEventListener('resize',resize);resize();
 // ===== UI =====
 function toast(t,ms){const d=document.createElement('div');d.className='toast';d.innerHTML=t;$('toasts').appendChild(d);setTimeout(()=>d.remove(),ms||2200);while($('toasts').children.length>3)$('toasts').firstChild.remove()}
-function setMode(m){MODE=m;$('prompt').style.display='none';['menu','pause','town','dead'].forEach(id=>$(id).classList.toggle('on',m===id));
- const play=m!=='menu';$('hud').style.display=play?'flex':'none';$('pbtn').style.display=m==='play'?'block':'none';$('touch').classList.toggle('on',isTouch&&m==='play');for(const k in tkeys)tkeys[k]=0;
+function setMode(m){MODE=m;$('prompt').style.display='none';['menu','pause','town','dead','inv'].forEach(id=>$(id).classList.toggle('on',m===id));
+ const play=m!=='menu';$('hud').style.display=play?'flex':'none';$('pbtn').style.display=m==='play'?'block':'none';$('ibtn').style.display=m==='play'?'block':'none';$('touch').classList.toggle('on',isTouch&&m==='play');for(const k in tkeys)tkeys[k]=0;
  if(m==='menu')$('bCont').style.display=load()?'block':'none'}
 $('bNew').onclick=()=>{if(load()&&!confirm('Start over? Your current save will be erased.'))return;S=fresh();startGame()};
 $('bCont').onclick=()=>{S=load()||fresh();startGame()};
@@ -399,6 +420,38 @@ function updHUD(){if(!S)return;$('hpfill').style.width=clamp(S.hp/S.maxhp*100,0,
  for(const i of S.caves){const d=DUNGEONS[i];if(!d)continue;const x=Math.round(d.x/WORLD*w);MINI.fillStyle=dState(d)>0?'#5a4a44':'#1a0c0c';MINI.fillRect(x-1,8,3,4)}
  if(S.park){const x=Math.round(S.park.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,13,5,7);MINI.fillStyle='#ffa030';MINI.fillRect(x-1,14,3,5)}
  if(P){const x=Math.round(px0/WORLD*w);MINI.fillStyle='#ff3030';MINI.fillRect(x-1,0,3,20)}}
+// ===== drops & inventory =====
+function nearestTown(x){let o=0;for(const t of TOWNS)if(Math.abs(t.x-x)<Math.abs(TOWNS[o].x-x))o=t.i;return o}
+function dropLoot(id,x,y){
+ if(id==='apple'){const u={item:0,origin:nearestTown(DG?DG.d.x:x),paid:0};if(DG){if(cargoCount()<cap()){addCargo(0,u.origin,1,0);ftxt(P.x,P.y-30,'+1 Apple','#7de07a')}}else dropUnit(u,x,y);return}
+ if(DG){giveGear(id);return}
+ PICK.push({gear:id,x,y,vx:(rnd()-.5)*80,vy:-170,life:45,ground:false});part(x,y,'#fff4b0',8,60)}
+function gearIcon(id){return WEPURL[id]&&!GEAR[id]?WEPURL[id]:GEARURL[id]}
+function giveGear(id){const name=GEAR[id]?GEAR[id].name:WEAPONS[id].name;let msg;
+ if(GEAR[id]){if(S.gear.includes(id)){S.money+=GEAR[id].val;msg='+'+pr(GEAR[id].val)}else{S.gear.push(id);const sl=GEAR[id].slot;if(!S.eq[sl])S.eq[sl]=id;msg=GEAR[id].stat}}
+ else{if(S.weapons.includes(id)){const v=Math.round(WEAPONS[id].price/2);S.money+=v;msg='+'+pr(v)}else{S.weapons.push(id);msg='⚔ '+WEAPONS[id].dmg}}
+ toast('<img class="px" style="width:20px;height:20px;vertical-align:middle" src="'+gearIcon(id)+'"> <b>'+name+'</b><br><span class="up">'+msg+'</span>',2200);ftxt(P.x,P.y-30,name,'#ffd75e');save()}
+function openInv(){if(MODE!=='play')return;setMode('inv');renderInv()}
+function closeInv(){setMode('play')}
+$('ibtn').onclick=openInv;$('invX').onclick=closeInv;
+function tile(img,label,o){o=o||{};return '<button class="tile'+(o.cls?' '+o.cls:'')+'"'+(o.act?' data-act="'+o.act+'" data-id="'+o.id+'"':'')+'>'+(o.q?'<span class="q">'+o.q+'</span>':'')+(img?'<img src="'+img+'">':'<span style="font-size:20px;opacity:.5">·</span>')+'<span>'+label+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'')+'</button>'}
+function wstat(W){return '⚔'+W.dmg+(W.ranged?' 🏹':'')}
+function renderInv(){$('imoney').textContent=pr(S.money);let h='';const W=WEAPONS[S.weapon];
+ h+='<div class="tiles slots">'+tile(WEPURL[S.weapon],W.name,{cls:'eq',s:wstat(W)});
+ for(const [sl,lab] of GSLOTS){const g=S.eq[sl];h+=g?tile(GEARURL[g],GEAR[g].name,{cls:'eq',act:'uneq',id:sl,s:GEAR[g].stat}):tile('','<span class="l">'+lab+'</span>',{cls:'empty'})}
+ h+='</div>';
+ const owned=S.gear.filter(g=>!Object.values(S.eq).includes(g)),wps=S.weapons.filter(w=>w!==S.weapon);
+ if(owned.length||wps.length){h+='<div class="sec">GEAR</div><div class="tiles">';for(const g of owned)h+=tile(GEARURL[g],GEAR[g].name,{act:'eq',id:g,s:GEAR[g].stat});for(const w of wps)h+=tile(WEPURL[w],WEAPONS[w].name,{act:'eqw',id:w,s:wstat(WEAPONS[w])});h+='</div>'}
+ h+='<div class="sec">'+(S.park?'🎒 ':'')+'CARGO '+cargoCount()+'/'+cap()+'</div><div class="tiles">';
+ if(!S.cargo.length)h+=tile('','Empty',{cls:'empty'});for(const st of S.cargo)h+=tile(ICONURL[ITEMS[st.item].id],ITEMS[st.item].name,{q:'×'+st.qty,s:'<span style="color:#b49a88">'+TOWNS[st.origin].name+'</span>'});h+='</div>';
+ if(S.park){h+='<div class="sec">🛒 🅿 '+cargoN(S.park.cargo)+'/'+(HAULERS[S.hauler].cap-PACK)+'</div><div class="tiles">';if(!S.park.cargo.length)h+=tile('','Empty',{cls:'empty'});for(const st of S.park.cargo)h+=tile(ICONURL[ITEMS[st.item].id],ITEMS[st.item].name,{cls:'dim',q:'×'+st.qty});h+='</div>'}
+ h+='<div class="small" style="margin-top:8px">🧪'+S.potions+' · ❤ '+Math.ceil(S.hp)+'/'+S.maxhp+(gearSum('def')?' · 🛡 -'+Math.round(gearSum('def')*100)+'%':'')+(gearSum('rng')?' · 🏹 +'+Math.round(gearSum('rng')*100)+'%':'')+'</div>';
+ $('ibody').innerHTML=h;updHUD()}
+$('ibody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const a=b.dataset.act,id=b.dataset.id;
+ if(a==='eq'&&GEAR[id]&&S.gear.includes(id))S.eq[GEAR[id].slot]=id;
+ else if(a==='uneq')S.eq[id]=null;
+ else if(a==='eqw'&&S.weapons.includes(id))S.weapon=id;
+ save();renderInv()};
 // ===== gameplay =====
 const env={biome:-1,spawnD:0,next:350,bliz:0,blizT:25,rockT:3,lastX:0};
 function spawnEnemy(type,x){const d=ENEMY[type];const e={type,x,y:surfY(x),vy:0,vx:0,hp:d.hp,max:d.hp,dir:-1,t:0,state:'walk',cd:1+rnd(),onGround:true,hitT:0,loot:[],flee:0,seed:rnd()*10,moving:false,cast:0,hop:rnd()};
@@ -409,7 +462,8 @@ function spawnGroup(dir){const b=biomeAt(P.x);const max=2+b;if(ENEMIES.length>=m
 function part(x,y,col,n,sp,g,life){for(let i=0;i<n;i++)PARTS.push({x,y,vx:(rnd()-.5)*sp,vy:(rnd()-.8)*sp,col,g:g==null?300:g,life:(life||.5)*(.6+rnd()*.6)})}
 function ftxt(x,y,t,col){FTXT.push({x,y,t,col,life:1})}
 function dropUnit(u,x,y,vx){PICK.push({...u,x,y,vx:vx==null?(rnd()-.5)*120:vx,vy:-140-rnd()*60,life:30,ground:false})}
-function hurtPlayer(dmg,sx,knock){if(P.inv>0||MODE!=='play')return;S.hp-=dmg;P.inv=.9;P.kbx=(P.x>=sx?1:-1)*140;if(P.onGround){P.vy=-120;P.onGround=false}
+function gearSum(k){let v=0;for(const [sl] of GSLOTS){const g=S.eq&&S.eq[sl];if(g&&GEAR[g][k])v+=GEAR[g][k]}return v}
+function hurtPlayer(dmg,sx,knock){if(P.inv>0||MODE!=='play')return;dmg*=1-gearSum('def');S.hp-=dmg;P.inv=.9;P.kbx=(P.x>=sx?1:-1)*140;if(P.onGround){P.vy=-120;P.onGround=false}
  ftxt(P.x,P.y-24,'-'+Math.round(dmg),'#ff6a6a');part(P.x,P.y-10,'#e84a4a',6,80);
  if(!DG&&knock!==false&&cargoCount()&&rnd()<.4){const u=randomUnit();if(u){dropUnit(u,P.x,P.y-14,(P.x>=sx?-1:1)*(60+rnd()*60));ftxt(P.x,P.y-32,'-1 '+ITEMS[u.item].name,'#ffd75e')}}
  if(S.hp<=0)die()}
@@ -421,9 +475,10 @@ function hitEnemy(e,dmg,dir,elem){const w=WEAPONS[S.weapon];const m=wmult({elem:
  if(e.hp<=0)killEnemy(e)}
 function killEnemy(e){const d=ENEMY[e.type];e.dead=1;S.stats.kills++;const c=d.coin[0]+Math.floor(rnd()*(d.coin[1]-d.coin[0]+1));S.money+=c;ftxt(e.x,e.y-d.h-10,'+$'+c,'#ffd75e');
  const base=d.base||e.type;part(e.x,e.y-d.h/2,base==='slime'?'#5cc84a':base==='golem'?golemPal(e.type)[0]:base==='witch'?'#a060e0':'#6aa84f',14,140);
+ for(const [id,ch] of DROPS[base]||[])if(rnd()<ch*DROPMUL)dropLoot(id,e.x,e.y-10);
  if(DG){let n=0;for(const u of e.loot)if(cargoCount()<cap()){addCargo(u.item,u.origin,1,u.paid);n++}if(n)ftxt(P.x,P.y-30,'+'+n,'#7de07a')}else for(const u of e.loot)dropUnit(u,e.x,e.y-10);e.loot=[]}
 function playerAttack(){const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd;P.atk=1;
- if(w.ranged){const fire=w.elem==='fire';PROJ.push({x:P.x+P.dir*8,y:P.y-9,vx:P.dir*w.pspd,vy:0,g:0,dmg:w.dmg,from:'p',elem:w.elem,kind:fire?'fire':'bolt',life:1.4});return}
+ if(w.ranged){const fire=w.elem==='fire';PROJ.push({x:P.x+P.dir*8,y:P.y-9,vx:P.dir*w.pspd,vy:0,g:0,dmg:w.dmg*(1+gearSum('rng')),from:'p',elem:w.elem,kind:fire?'fire':'bolt',life:1.4});return}
  const x0=P.dir>0?P.x:P.x-w.range-4,x1=P.dir>0?P.x+w.range+4:P.x;
  for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(e.x+d.w/2>x0&&e.x-d.w/2<x1&&e.y-d.h<P.y+2&&e.y>P.y-24)hitEnemy(e,w.dmg,P.dir,w.elem)}}
 function update(dt){S.time+=dt;
@@ -445,7 +500,7 @@ function update(dt){S.time+=dt;
  PROJ=PROJ.filter(p=>!p.dead);
  // pickups (road only)
  if(!DG){for(const k of PICK){k.life-=dt;if(!k.ground){k.vy+=600*dt;k.x+=k.vx*dt;k.y+=k.vy*dt;const gy=groundAt(k.x);const pit=pitAt(k.x);if(pit&&k.y>pit.ly){k.dead=1;part(k.x,pit.ly,'#ff7a1a',6,60);continue}if(gy!==null&&k.y>=gy){k.y=gy;k.ground=true}}
-  if(k.life<=0)k.dead=1;else if(Math.abs(k.x-P.x)<10&&Math.abs(k.y-(P.y-4))<14&&k.age>.4){if(cargoCount()<cap()){addCargo(k.item,k.origin,1,k.paid);k.dead=1;ftxt(P.x,P.y-26,'+1 '+ITEMS[k.item].name,'#7de07a')}}
+  if(k.life<=0)k.dead=1;else if(Math.abs(k.x-P.x)<10&&Math.abs(k.y-(P.y-4))<14&&k.age>.4){if(k.gear){giveGear(k.gear);k.dead=1}else if(cargoCount()<cap()){addCargo(k.item,k.origin,1,k.paid);k.dead=1;ftxt(P.x,P.y-26,'+1 '+ITEMS[k.item].name,'#7de07a')}}
   k.age=(k.age||0)+dt}
  PICK=PICK.filter(k=>!k.dead)}
  for(const p of PARTS){p.life-=dt;p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt}PARTS=PARTS.filter(p=>p.life>0);
@@ -654,7 +709,9 @@ function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==
 }
 function drawActors(ox,oy){
  // pickups
- for(const k of PICK){if(k.life<3&&Math.floor(k.life*8)%2)continue;X.drawImage(ICONC[ITEMS[k.item].id],Math.round(k.x-ox-4),Math.round(k.y-oy-8+(k.ground?Math.sin(menuT*4+k.x)*1.5:0)))}
+ for(const k of PICK){if(k.life<3&&Math.floor(k.life*8)%2)continue;const bob=k.ground?Math.sin(menuT*4+k.x)*1.5:0;
+  if(k.gear){const c=WEPC[k.gear]||GEARC[k.gear],w=c.width;if(Math.sin(menuT*5+k.x)>.7)px(X,k.x-ox+w/2-2,k.y-oy-w-2+bob,1,1,'#fff4b0');X.drawImage(c,Math.round(k.x-ox-w/2),Math.round(k.y-oy-w+bob))}
+  else X.drawImage(ICONC[ITEMS[k.item].id],Math.round(k.x-ox-4),Math.round(k.y-oy-8+bob))}
  for(const e of ENEMIES)drawEnemy(X,e,Math.round(e.x-ox),Math.round(e.y-oy),menuT);
  if(P&&S&&MODE!=='menu'){const sx=Math.round(P.x-ox),sy=Math.round(P.y-oy);const fl=P.inv>0&&Math.floor(P.inv*14)%2===0;
   let hy=sy;const H=carriedH();if(H!=='backpack'&&H!=='wheelbarrow'){const cxw=P.x-P.dir*(H==='bigwagon'?28:20);const g=groundAt(cxw);hy=Math.round((g===null?P.y:Math.min(g+(P.y-(groundAt(P.x)??P.y)),g))-oy)}
@@ -759,5 +816,5 @@ setMode('menu');requestAnimationFrame(frame);
 addEventListener('beforeunload',()=>{if(MODE!=='menu')save()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&MODE==='play'){save();setMode('pause')}});
 // test hooks
-window.MR={spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,PITS,surfY,env,get DG(){return DG},DUNGEONS,enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
+window.MR={giveGear,dropLoot,killEnemy,openInv,closeInv,GEAR,set dropMul(v){DROPMUL=v},gearSum,spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},get PROJ(){return PROJ},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,PITS,surfY,env,get DG(){return DG},DUNGEONS,enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
 </script></body></html>
