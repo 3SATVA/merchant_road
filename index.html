@@ -102,7 +102,8 @@ img.big{width:72px;height:42px}
  <p><b>Risk.</b> Hits can knock goods off your hauler (pick them back up). Goblins steal goods and slow down while carrying them — catch and kill them to get them back. If you fall, you lose all cargo but keep money and gear, and wake at the last town.</p>
  <p><b>Carts.</b> Press <b>C</b> (🛒) to unhitch your cart and park it anywhere. You walk faster without it, but only your backpack (5) comes along, and you can only sell what you carry. Walk back and press C to hitch up again. Goblins may raid a cart left alone.</p>
  <p><b>Gear.</b> Press <b>I</b> (🎒) for your inventory: goods, cart and gear. Tap gear to equip. Monsters sometimes drop things: slimes apples (25%), goblins daggers, each 10%. Golems drop <b>Sentient Stone</b> (30%), witches <b>Magic Essence</b> (30%), lava golems <b>Dried Lava</b> (10%). Materials don't use cargo space. Spare copies of gear are sold on the spot.</p>
- <p><b>Forge.</b> Frostholm, Stonepeak and Emberfall have a Forge (anvil sign). <b>Flame Sword</b>: 2 essence, 2 iron, 1 dried lava (iron comes from your cargo). <b>Witch Hat</b>: 2 essence (+25% ranged). <b>Witch Robes</b>: 3 essence (+15% ranged, 8% less damage). <b>Stone Chestplate</b>: 3 stone (20% less damage). <b>Stone Helm</b>: 2 stone (10% less damage). One hat at a time.</p>
+ <p><b>Forge.</b> Frostholm, Stonepeak and Emberfall have a Forge (anvil sign). <b>Flame Sword</b>: 2 essence, 2 iron, 1 dried lava (iron comes from your cargo). <b>Witch Hat</b>: 2 essence (+25% ranged). <b>Witch Robes</b>: 3 essence (+15% ranged, 8% less damage). <b>Stone Chestplate</b>: 3 stone (20% less damage). <b>Stone Helm</b>: 2 stone (10% less damage). <b>Witch Boots</b>: 2 essence (+10% ranged, +8% speed). <b>Stone Boots</b>: 2 stone (6% less damage, half knockback). One item per slot.</p>
+ <p><b>Sets.</b> Wear all 3 witch pieces: twin shots (each 75% damage). All 3 stone pieces: +30 max HP, no knockback, and hits never knock goods off your hauler. The <b>Fire Staff</b> now fires homing fireballs.</p>
  <p><b>Barber.</b> Wake Ridge, Pinehollow and Emberfall have a Barber (striped pole): change skin, body and hair for free. Your Top Hat goes on your head; take it off to show your hair. One hat at a time: wearing a Witch Hat puts the Top Hat back in your bag.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
  <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · I inventory · Q swap weapon · H potion · Esc pause.</p>
@@ -225,13 +226,18 @@ const ICONC={},ICONURL={};ITEMS.forEach(it=>{ICONC[it.id]=iconCanvas(it.id);ICON
 const GEAR={stonechest:{name:'Stone Chestplate',slot:'chest',def:.2,val:75,stat:'🛡 -20%'},witchhat:{name:'Witch Hat',slot:'head',rng:.25,val:100,stat:'🏹 +25%'}};
 GEAR.tophat={name:'Top Hat',slot:'head',val:0,stat:'—',base:1};
 GEAR.stonehelm={name:'Stone Helm',slot:'head',def:.1,val:60,stat:'🛡 -10%'};
+GEAR.witchboots={name:'Witch Boots',slot:'feet',rng:.1,spd:.08,val:80,stat:'🏹 +10% 👟 +8%'};
+GEAR.stoneboots={name:'Stone Boots',slot:'feet',def:.06,kb:.5,val:60,stat:'🛡 -6% ⚓'};
 GEAR.witchrobe={name:'Witch Robes',slot:'chest',def:.08,rng:.15,val:120,stat:'🏹 +15% 🛡 -8%'};
-const GSLOTS=[['head','Head'],['chest','Chest']];
+const GSLOTS=[['head','Head'],['chest','Chest'],['feet','Feet']];
+const SETS={witch:{name:'Witch Set',pieces:['witchhat','witchrobe','witchboots'],col:'#c060ff',desc:'🔮 Twin shots'},stone:{name:'Stone Set',pieces:['stonehelm','stonechest','stoneboots'],col:'#7de0ff',desc:'❤ +30 · ⚓ · 📦 safe'}};
 const MATS={stone:{name:'Sentient Stone',col:'#a8a8a8'},essence:{name:'Magic Essence',col:'#c060ff'},lava:{name:'Dried Lava',col:'#ff6a1a'}};
 ICONS.essence=['....w...','...pp...','..pmmp..','.pmwmmp.','.pmmmmp.','..pmmp..','...pp...','........'];ICONPAL2.essence={p:'#7a3aa0',m:'#c060ff',w:'#ffffff'};
 ICONS.lava=['........','..kkk...','.kkokkk.','kkookkk.','kokkkokk','kkkookk.','.kkkkk..','........'];ICONPAL2.lava={k:'#4a3030',o:'#ff6a1a'};
 ICONS.stone=['........','..ssss..','.sllsss.','sslsseds','ssssssss','.sssss..','..sss...','........'];ICONPAL2.stone={s:'#7a7a80',l:'#b8b8c0',e:'#7de0ff',d:'#4a4a50'};
 ICONS.stonehelm=['..aaaa..','.abbbba.','abbccbba','abbbbbba','aaaaaaaa','a.dddd.a','a......a','........'];ICONPAL2.stonehelm={a:'#5e5e5e',b:'#8a8a8a',c:'#d0d0d0',d:'#2a2a30'};
+ICONS.witchboots=['........','..pp....','..pp....','..pp....','..pppp..','.ppppppm','.mmmmmm.','........'];ICONPAL2.witchboots={p:'#5a3a7a',m:'#c060ff'};
+ICONS.stoneboots=['........','.aa..aa.','.ab..ab.','.ab..ab.','.abb.abb','aabbaabb','aaaaaaaa','........'];ICONPAL2.stoneboots={a:'#6a6a6a',b:'#b8b8c0'};
 ICONS.witchrobe=['..pppp..','.pmppmp.','pppppppp','.pppppp.','.pmmmmp.','.pppppp.','pppppppp','pppppppp'];ICONPAL2.witchrobe={p:'#5a3a7a',m:'#c060ff'};
 ICONS.stonechest=['.a....a.','aab..baa','aabbbbaa','.abccba.','.abbbba.','.abbbba.','.aabbaa.','..aaaa..'];ICONPAL2.stonechest={a:'#5e5e5e',b:'#8a8a8a',c:'#d0d0d0'};
 ICONS.tophat=['........','..hhhh..','..hhhh..','..hhhh..','..yyyy..','..hhhh..','hhhhhhhh','........'];ICONPAL2.tophat={h:'#8a2b2b',y:'#d8b040'};
@@ -288,6 +294,7 @@ function drawPlayer(c,x,y,dir,t,walking,air,flash,wep,atk,o){
  const ph=walking?Math.sin(t*14):0;const la=Math.round(ph*1.5),lb=-la;
  if(air){P(-3,-6,2,4,'#4a3b2a');P(1,-5,2,4,'#4a3b2a');P(-4,-2,3,1,'#2a1d14');P(1,-1,3,1,'#2a1d14')}
  else{P(-3+la,-5,2,4,'#4a3b2a');P(1+lb,-5,2,4,'#4a3b2a');P(-3+la,-1,3,1,'#2a1d14');P(1+lb,-1,3,1,'#2a1d14')}
+ {const FT=o&&o.eq&&o.eq.feet;if(FT){const ft=air?[[-4,-2],[1,-1]]:[[-3+la,-1],[1+lb,-1]];for(const [fx,fy] of ft){if(FT==='witchboots'){P(fx,fy-2,3,3,'#5a3a7a');P(fx,fy-2,3,1,'#c060ff');P(fx+3,fy,1,1,'#c060ff')}else{P(fx,fy-2,3,3,'#8a8a8a');P(fx,fy-2,3,1,'#b8b8c0');P(fx+3,fy,1,1,'#6a6a6a')}}}}
  const bob=walking&&Math.abs(ph)>.7?-1:0;
  const EQ=(o&&o.eq)||{head:'tophat'},LK=(o&&o.look)||DEFLOOK,SK=SKINS[LK.skin]||SKINS[0];
  if(LK.body===1){P(-3,-11+bob,6,4,'#3a6ea5');P(-3,-11+bob,6,1,'#5a8ec5');P(-4,-7+bob,8,3,'#3a6ea5');P(-4,-5+bob,8,1,'#2e5a8a')}else{P(-4,-11+bob,8,6,'#3a6ea5');P(-4,-11+bob,8,1,'#5a8ec5')}if(EQ.chest==='witchrobe'){P(-4,-11+bob,8,9,'#5a3a7a');P(-4,-11+bob,8,1,'#c060ff');P(-1,-10+bob,2,5,'#4a2e6a');P(-5,-4+bob,10,1,'#4a2e6a');P(-4,-6+bob,8,1,'#c060ff')}
@@ -335,7 +342,7 @@ const WEPURL={};const WEPC={};WORDER.forEach(id=>{const c=document.createElement
 const KEY='merchantRoad.v1';
 let S,P,ENEMIES=[],PROJ=[],PARTS=[],PICK=[],ROCKS=[],FTXT=[];
 let MODE='menu';
-function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),v:2}}
+function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),v:2}}
 function newPlayer(x){return {x,y:surfY(x),vy:0,kbx:0,dir:1,onGround:true,inv:0,cd:0,atk:0,walk:0,wheel:0,lastSafe:x,heat:0}}
 function save(){if(!S)return;S.x=Math.round(DG?DG.d.x:P.x);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo){const s=Object.assign(fresh(),d);
@@ -397,7 +404,7 @@ $('bNew').onclick=()=>{if(load()&&!confirm('Start over? Your current save will b
 $('bCont').onclick=()=>{S=load()||fresh();startGame()};
 $('bHelp').onclick=$('bHelp2').onclick=()=>$('help').classList.add('on');$('bHelpX').onclick=()=>$('help').classList.remove('on');
 $('bRes').onclick=()=>setMode('play');$('bMenu').onclick=()=>{save();DG=null;ENEMIES=[];PROJ=[];setMode('menu')};$('pbtn').onclick=()=>setMode('pause');
-$('bRespawn').onclick=()=>{P=newPlayer(TOWNS[S.lastTown].x);S.hp=S.maxhp;save();setMode('play')};
+$('bRespawn').onclick=()=>{P=newPlayer(TOWNS[S.lastTown].x);S.hp=maxHP();save();setMode('play')};
 function startGame(){DG=null;P=newPlayer(clamp(S.x,20,WORLD-20));ENEMIES=[];PROJ=[];PICK=[];ROCKS=[];FTXT=[];PARTS=[];env.biome=-1;env.spawnD=0;env.next=350;setMode('play');save()}
 let curTab='market',curTown=0;
 function enterTown(t){curTown=t.i;S.lastTown=t.i;if(!S.visited.includes(t.i))S.visited.push(t.i);curTab='market';setMode('town');renderTown();save()}
@@ -416,7 +423,7 @@ const BLDURL={};(function(){const mk=(roof,wall,fn)=>spriteURL(16,16,g=>{px(g,2,
  BLDURL.barber=mk('#2a3a6a','#e8e0d0',g=>{px(g,12,8,3,1,'#c8c8c8');for(let i=0;i<6;i++)px(g,12,9+i,3,1,['#e83a3a','#f4f4f4','#3a6ad0'][i%3]);px(g,12,15,3,1,'#c8c8c8');px(g,2,10,3,3,'#ffe08a')})})();
 document.querySelectorAll('#ttabs img[data-b]').forEach(i=>i.src=BLDURL[i.dataset.b]);
 function lookPrev(look,eq,w,h,dx,dy){return spriteURL(w,h,g=>drawPlayer(g,dx,dy,1,0,false,false,false,'fists',0,{look,eq}))}
-function drawPrev(cv,t,walk){if(!cv)return;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);drawPlayer(g,Math.floor(cv.width/2),cv.height-4,1,t||0,!!walk,false,false,S.weapon,0,{eq:S.eq,look:S.look})}
+function drawPrev(cv,t,walk){if(!cv)return;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);drawPlayer(g,Math.floor(cv.width/2),cv.height-4,1,t||0,!!walk,false,false,S.weapon,0,{eq:S.eq,look:S.look});setAura(g,Math.floor(cv.width/2),cv.height-4,t||0)}
 function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tmoney').textContent=pr(S.money);
  [...$('ttabs').children].forEach(b=>{b.classList.toggle('on',b.dataset.tab===curTab);const tb=b.dataset.tab;b.style.display=(tb==='haulers'&&!t.haulers.length&&S.haulers.length<2)||(tb==='weapons'&&!t.weapons.length&&S.weapons.length<2)||(tb==='barber'&&!t.barber)||(tb==='craft'&&!t.forge)?'none':''});let h='';
  if(curTab==='market'){const n=cargoCount(),c=cap();
@@ -444,7 +451,7 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   if(mine.length)h+='<div class="sec">YOURS</div>'+mine.map(row).join('');
   if(sale.some(id=>WEAPONS[id].elem))h+='<div class="small" style="margin-top:6px">🔥 melts ice golems · ❄ cracks lava golems · 🪨 crushes golems</div>';
  } else if(curTab==='inn'){const rc=10+t.i*8,pc=30;
-  h+='<div class="row"><span class="nm">❤ Rest<span class="sub">'+Math.ceil(S.hp)+'/'+S.maxhp+' → full</span></span><button data-act="rest" '+(S.hp>=S.maxhp||S.money<rc?'disabled':'')+'>'+pr(rc)+'</button></div>';
+  h+='<div class="row"><span class="nm">❤ Rest<span class="sub">'+Math.ceil(S.hp)+'/'+maxHP()+' → full</span></span><button data-act="rest" '+(S.hp>=maxHP()||S.money<rc?'disabled':'')+'>'+pr(rc)+'</button></div>';
   h+='<div class="row"><span class="nm">🧪 Potion ×'+S.potions+'<span class="sub">+45 HP · max 5 · press H</span></span><button data-act="pot" '+(S.potions>=5||S.money<pc?'disabled':'')+'>'+pr(pc)+'</button></div>';
   h+='<div class="sec">STATS</div><div class="small">Profit '+pr(S.stats.profit)+' · Goods sold '+S.stats.sold+' · Kills '+S.stats.kills+' · Falls '+S.stats.deaths+'</div>';
  } else if(curTab==='craft'&&t.forge){
@@ -472,11 +479,11 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  else if(a==='look'){const k=b.dataset.k;if(k in S.look)S.look[k]=+b.dataset.v;S.look=fixLook(S.look)}
  else if(a==='hat'){if(S.gear.includes('tophat'))S.eq.head=S.eq.head==='tophat'?null:'tophat'}
  else if(a==='craft'){craft(b.dataset.id)}
- else if(a==='rest'){const rc=10+t*8;if(S.money>=rc){S.money-=rc;S.hp=S.maxhp}}
+ else if(a==='rest'){const rc=10+t*8;if(S.money>=rc){S.money-=rc;S.hp=maxHP()}}
  else if(a==='pot'){if(S.money>=30&&S.potions<5){S.money-=30;S.potions++}}
  save();renderTown()};
 const MINI=$('mini').getContext('2d');
-function updHUD(){if(!S)return;$('hpfill').style.width=clamp(S.hp/S.maxhp*100,0,100)+'%';$('hpt').textContent=Math.ceil(Math.max(0,S.hp));$('money').textContent=pr(S.money);
+function updHUD(){if(!S)return;$('hpfill').style.width=clamp(S.hp/maxHP()*100,0,100)+'%';$('hpt').textContent=Math.ceil(Math.max(0,S.hp));$('money').textContent=pr(S.money);
  $('cargo').textContent=cargoCount()+'/'+cap();const ch=carriedH();if($('icart').dataset.k!==ch){$('icart').src=HAULURL[ch];$('icart').dataset.k=ch}
  $('tC').style.display=S.hauler!=='backpack'?'flex':'none';$('tC').classList.toggle('hi',nearCartP());if($('iwep').dataset.k!==S.weapon){$('iwep').src=WEPURL[S.weapon];$('iwep').dataset.k=S.weapon}$('pots').textContent='🧪'+S.potions;
  const px0=DG?DG.d.x:(P?P.x:0);const b=biomeAt(px0);const bn=DG?skulls(DG.d.diff)+' Cave':BIOMES[b].name;if($('bname').dataset.k!==bn){$('bname').innerHTML=bn;$('bname').dataset.k=bn}
@@ -494,7 +501,7 @@ function dropLoot(id,x,y){
  PICK.push({gear:id,x,y,vx:(rnd()-.5)*80,vy:-170,life:45,ground:false});part(x,y,'#fff4b0',8,60)}
 function giveMat(id){S.mats[id]=(S.mats[id]||0)+1;ftxt(P.x,P.y-30,'+1 '+MATS[id].name,MATS[id].col);part(P.x,P.y-12,MATS[id].col,8,50,-30);save()}
 // ===== crafting =====
-const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}},{id:'stonechest',kind:'g',need:{stone:3}},{id:'stonehelm',kind:'g',need:{stone:2}}];
+const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}},{id:'stonechest',kind:'g',need:{stone:3}},{id:'stonehelm',kind:'g',need:{stone:2}},{id:'witchboots',kind:'g',need:{essence:2}},{id:'stoneboots',kind:'g',need:{stone:2}}];
 function have(k){return k==='iron'?S.cargo.filter(s=>s.item===4).reduce((a,s)=>a+s.qty,0):(S.mats[k]||0)}
 function owns(r){return r.kind==='w'?S.weapons.includes(r.id):S.gear.includes(r.id)}
 function canCraft(r){return !owns(r)&&Object.entries(r.need).every(([k,n])=>have(k)>=n)}
@@ -518,17 +525,19 @@ function renderInv(){$('imoney').textContent=pr(S.money);let h='';const W=WEAPON
  h+='</div>';
  const owned=S.gear.filter(g=>!Object.values(S.eq).includes(g)),wps=S.weapons.filter(w=>w!==S.weapon);
  if(owned.length||wps.length){h+='<div class="sec">GEAR</div><div class="tiles">';for(const g of owned)h+=tile(GEARURL[g],GEAR[g].name,{act:'eq',id:g,s:GEAR[g].stat});for(const w of wps)h+=tile(WEPURL[w],WEAPONS[w].name,{act:'eqw',id:w,s:wstat(WEAPONS[w])});h+='</div>'}
+ for(const id in SETS){const st=SETS[id],ownN=st.pieces.filter(g=>S.gear.includes(g)).length,wear=st.pieces.filter(g=>S.eq[GEAR[g].slot]===g).length;if(!ownN)continue;const on=wear===3;
+  h+='<div class="row" style="'+(on?'box-shadow:0 0 0 2px #000,0 0 0 4px '+st.col+';background:#3e2a44':'')+'">'+st.pieces.map(g=>'<img class="px" style="width:20px;height:20px;'+(S.eq[GEAR[g].slot]===g?'':S.gear.includes(g)?'opacity:.5':'opacity:.15')+'" src="'+GEARURL[g]+'">').join('')+'<span class="nm">'+st.name+'<span class="sub" style="color:'+(on?'#7de07a':'#8a7a70')+'">'+st.desc+'</span></span><span class="'+(on?'up':'')+'">'+wear+'/3</span></div>'}
  const mk=Object.keys(MATS).filter(k=>S.mats[k]>0);if(mk.length){h+='<div class="sec">MATERIALS</div><div class="tiles">';for(const k of mk)h+=tile(MATURL[k],MATS[k].name,{q:'×'+S.mats[k]});h+='</div>'}
  h+='<div class="sec">'+(S.park?'🎒 ':'')+'CARGO '+cargoCount()+'/'+cap()+'</div><div class="tiles">';
  if(!S.cargo.length)h+=tile('','Empty',{cls:'empty'});for(const st of S.cargo)h+=tile(ICONURL[ITEMS[st.item].id],ITEMS[st.item].name,{q:'×'+st.qty,s:'<span style="color:#b49a88">'+TOWNS[st.origin].name+'</span>'});h+='</div>';
  if(S.park){h+='<div class="sec">🛒 🅿 '+cargoN(S.park.cargo)+'/'+(HAULERS[S.hauler].cap-PACK)+'</div><div class="tiles">';if(!S.park.cargo.length)h+=tile('','Empty',{cls:'empty'});for(const st of S.park.cargo)h+=tile(ICONURL[ITEMS[st.item].id],ITEMS[st.item].name,{cls:'dim',q:'×'+st.qty});h+='</div>'}
- h+='<div class="small" style="margin-top:8px">🧪'+S.potions+' · ❤ '+Math.ceil(S.hp)+'/'+S.maxhp+(gearSum('def')?' · 🛡 -'+Math.round(gearSum('def')*100)+'%':'')+(gearSum('rng')?' · 🏹 +'+Math.round(gearSum('rng')*100)+'%':'')+'</div>';
+ h+='<div class="small" style="margin-top:8px">🧪'+S.potions+' · ❤ '+Math.ceil(S.hp)+'/'+maxHP()+(gearSum('def')?' · 🛡 -'+Math.round(gearSum('def')*100)+'%':'')+(gearSum('rng')?' · 🏹 +'+Math.round(gearSum('rng')*100)+'%':'')+'</div>';
  $('ibody').innerHTML=h;drawPrev($('iprev'),0,false);updHUD()}
 $('ibody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const a=b.dataset.act,id=b.dataset.id;
  if(a==='eq'&&GEAR[id]&&S.gear.includes(id))S.eq[GEAR[id].slot]=id;
  else if(a==='uneq')S.eq[id]=null;
  else if(a==='eqw'&&S.weapons.includes(id))S.weapon=id;
- save();renderInv()};
+ S.hp=Math.min(S.hp,maxHP());save();renderInv()};
 // ===== gameplay =====
 const env={biome:-1,spawnD:0,next:350,bliz:0,blizT:25,rockT:3,lastX:0};
 function spawnEnemy(type,x){const d=ENEMY[type];const e={type,x,y:surfY(x),vy:0,vx:0,hp:d.hp,max:d.hp,dir:-1,t:0,state:'walk',cd:1+rnd(),onGround:true,hitT:0,loot:[],flee:0,seed:rnd()*10,moving:false,cast:0,hop:rnd()};
@@ -539,13 +548,15 @@ function spawnGroup(dir){const b=biomeAt(P.x);const max=2+b;if(ENEMIES.length>=m
 function part(x,y,col,n,sp,g,life){for(let i=0;i<n;i++)PARTS.push({x,y,vx:(rnd()-.5)*sp,vy:(rnd()-.8)*sp,col,g:g==null?300:g,life:(life||.5)*(.6+rnd()*.6)})}
 function ftxt(x,y,t,col){FTXT.push({x,y,t,col,life:1})}
 function dropUnit(u,x,y,vx){PICK.push({...u,x,y,vx:vx==null?(rnd()-.5)*120:vx,vy:-140-rnd()*60,life:30,ground:false})}
+function setOn(id){const st=SETS[id];return !!(S&&S.eq&&st.pieces.every(g=>S.eq[GEAR[g].slot]===g))}
+function maxHP(){return (S?S.maxhp:100)+(S&&setOn('stone')?30:0)}
 function gearSum(k){let v=0;for(const [sl] of GSLOTS){const g=S.eq&&S.eq[sl];if(g&&GEAR[g][k])v+=GEAR[g][k]}return v}
-function hurtPlayer(dmg,sx,knock){if(P.inv>0||MODE!=='play')return;dmg*=1-gearSum('def');S.hp-=dmg;P.inv=.9;P.kbx=(P.x>=sx?1:-1)*140;if(P.onGround){P.vy=-120;P.onGround=false}
+function hurtPlayer(dmg,sx,knock){if(P.inv>0||MODE!=='play')return;dmg*=1-gearSum('def');S.hp-=dmg;P.inv=.9;const rock=setOn('stone'),kr=rock?0:1-gearSum('kb');P.kbx=(P.x>=sx?1:-1)*140*kr;if(P.onGround&&kr>.6){P.vy=-120*kr;P.onGround=false}
  ftxt(P.x,P.y-24,'-'+Math.round(dmg),'#ff6a6a');part(P.x,P.y-10,'#e84a4a',6,80);
- if(!DG&&knock!==false&&cargoCount()&&rnd()<.4){const u=randomUnit();if(u){dropUnit(u,P.x,P.y-14,(P.x>=sx?-1:1)*(60+rnd()*60));ftxt(P.x,P.y-32,'-1 '+ITEMS[u.item].name,'#ffd75e')}}
+ if(!DG&&!rock&&knock!==false&&cargoCount()&&rnd()<.4){const u=randomUnit();if(u){dropUnit(u,P.x,P.y-14,(P.x>=sx?-1:1)*(60+rnd()*60));ftxt(P.x,P.y-32,'-1 '+ITEMS[u.item].name,'#ffd75e')}}
  if(S.hp<=0)die()}
 function die(){if(DG){dungeonKO();return}const lost=cargoCount();S.cargo=[];S.hp=0;S.stats.deaths++;PICK=[];ENEMIES=[];PROJ=[];ROCKS=[];
- $('deadTxt').innerHTML=(lost?'Lost '+lost+' goods.':'No goods lost.')+'<br><br>Money and gear kept.<br>Waking up in '+TOWNS[S.lastTown].name+'.';S.x=TOWNS[S.lastTown].x;S.hp=S.maxhp;
+ $('deadTxt').innerHTML=(lost?'Lost '+lost+' goods.':'No goods lost.')+'<br><br>Money and gear kept.<br>Waking up in '+TOWNS[S.lastTown].name+'.';S.x=TOWNS[S.lastTown].x;S.hp=maxHP();
  try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}setMode('dead')}
 function hitEnemy(e,dmg,dir,elem){const w=WEAPONS[S.weapon];const m=wmult({elem:elem},e.type);const d=dmg*m*(.9+rnd()*.2);e.hp-=d;e.hitT=.12;e.vx=dir*(ENEMY[e.type].base==='golem'?30:90);
  ftxt(e.x,e.y-ENEMY[e.type].h-4,Math.round(d)+(m>1?'!':''),m>1?'#ffd75e':m<1?'#9a9a9a':'#ffffff');part(e.x,e.y-8,'#ffffff',3,60);
@@ -554,8 +565,15 @@ function killEnemy(e){const d=ENEMY[e.type];e.dead=1;S.stats.kills++;const c=d.c
  const base=d.base||e.type;part(e.x,e.y-d.h/2,base==='slime'?'#5cc84a':base==='golem'?golemPal(e.type)[0]:base==='witch'?'#a060e0':'#6aa84f',14,140);
  for(const [id,ch] of (DROPS[base]||[]).concat(base!==e.type?DROPS[e.type]||[]:[]))if(rnd()<ch*DROPMUL)dropLoot(id,e.x,e.y-10);
  if(DG){let n=0;for(const u of e.loot)if(cargoCount()<cap()){addCargo(u.item,u.origin,1,u.paid);n++}if(n)ftxt(P.x,P.y-30,'+'+n,'#7de07a')}else for(const u of e.loot)dropUnit(u,e.x,e.y-10);e.loot=[]}
+// homing fireballs: pick the nearest enemy within range in a forward cone, turn toward it at a limited rate
+function steerProj(p,dt){const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp;let best=null,bd=190;
+ for(const e of ENEMIES){if(e.dead)continue;const tx=e.x-p.x,ty=e.y-ENEMY[e.type].h/2-p.y,d=Math.hypot(tx,ty);if(d<bd&&(tx*ux+ty*uy)/(d||1)>.34){bd=d;best=[tx,ty]}}
+ if(!best)return;const want=Math.atan2(best[1],best[0]),cur=Math.atan2(uy,ux);let da=want-cur;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
+ const a=cur+clamp(da,-3.6*dt,3.6*dt);p.vx=Math.cos(a)*sp;p.vy=Math.sin(a)*sp}
 function playerAttack(){const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd;P.atk=1;
- if(w.ranged){const fire=w.elem==='fire';PROJ.push({x:P.x+P.dir*8,y:P.y-9,vx:P.dir*w.pspd,vy:0,g:0,dmg:w.dmg*(1+gearSum('rng')),from:'p',elem:w.elem,kind:fire?'fire':'bolt',life:1.4});return}
+ if(w.ranged){const fire=w.elem==='fire',twin=setOn('witch'),n=twin?2:1;for(let i=0;i<n;i++){const a=twin?(i?-.13:.13):0;
+  PROJ.push({x:P.x+P.dir*8,y:P.y-9-(twin?(i?2:-2):0),vx:P.dir*w.pspd*Math.cos(a),vy:w.pspd*Math.sin(a),g:0,dmg:w.dmg*(1+gearSum('rng'))*(twin?.75:1),from:'p',elem:w.elem,kind:fire?'fire':'bolt',home:fire?1:0,life:fire?2.2:1.4})}
+  if(twin)part(P.x+P.dir*8,P.y-9,'#c060ff',4,40,0,.3);return}
  const x0=P.dir>0?P.x:P.x-w.range-4,x1=P.dir>0?P.x+w.range+4:P.x;
  for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(e.x+d.w/2>x0&&e.x-d.w/2<x1&&e.y-d.h<P.y+2&&e.y>P.y-24){hitEnemy(e,w.dmg,P.dir,w.elem);if(w.burn&&!e.dead&&e.type!=='lavaGolem')e.burn=2}}}
 function update(dt){S.time+=dt;
@@ -564,12 +582,12 @@ function update(dt){S.time+=dt;
  if(P.cd>0)P.cd-=dt;if(P.atk>0)P.atk=Math.max(0,P.atk-dt/.2);if(P.inv>0)P.inv-=dt;
  if(inp.attack())playerAttack();
  if(inp.swap()){const i=S.weapons.indexOf(S.weapon);S.weapon=S.weapons[(i+1)%S.weapons.length];toast(WEAPONS[S.weapon].name,900)}
- if(inp.pot()){if(S.potions>0&&S.hp<S.maxhp){S.potions--;S.hp=Math.min(S.maxhp,S.hp+45);ftxt(P.x,P.y-26,'+45','#7de07a');part(P.x,P.y-10,'#7de07a',10,60,-40)}else if(!S.potions)toast('No potions',900)}
+ if(inp.pot()){if(S.potions>0&&S.hp<maxHP()){S.potions--;S.hp=Math.min(maxHP(),S.hp+45);ftxt(P.x,P.y-26,'+45','#7de07a');part(P.x,P.y-10,'#7de07a',10,60,-40)}else if(!S.potions)toast('No potions',900)}
  // enemies
  for(const e of ENEMIES){if(e.dead)continue;updEnemy(e,dt)}
  ENEMIES=ENEMIES.filter(e=>!e.dead);
  // projectiles
- for(const p of PROJ){p.life-=dt;p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.kind==='fire'||p.kind==='lava')if(rnd()<.6)PARTS.push({x:p.x,y:p.y,vx:0,vy:-10,col:rnd()<.5?'#ff7a1a':'#ffd040',g:0,life:.25});
+ for(const p of PROJ){p.life-=dt;if(p.home)steerProj(p,dt);p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.kind==='fire'||p.kind==='lava')if(rnd()<(p.home?1:.6))PARTS.push({x:p.x-p.vx*.01,y:p.y-p.vy*.01,vx:(rnd()-.5)*12,vy:-10-rnd()*10,col:rnd()<.33?'#ff7a1a':rnd()<.5?'#ffd040':'#d8401a',g:0,life:p.home?.4:.25});
   let solid;if(DG)solid=dSolid(p.x,p.y);else{const gy=groundAt(p.x);solid=gy!==null&&p.y>gy}
   if(solid||p.life<=0||townAt(p.x,TOWNR-20)&&p.from==='e'){p.dead=1;part(p.x,p.y,p.kind==='bolt'?'#c8a060':'#ff8a2a',5,70);continue}
   if(p.from==='p'){for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(Math.abs(e.x-p.x)<d.w/2+2&&p.y>e.y-d.h&&p.y<e.y+1){hitEnemy(e,p.dmg,Math.sign(p.vx),p.elem);p.dead=1;break}}}
@@ -593,7 +611,7 @@ function updWorld(dt){const H=HAULERS[carriedH()];const b=biomeAt(P.x);const tow
  if(env.bliz>0&&b===1)mul*=.72;
  let mv=(inp.left()?-1:0)+(inp.right()?1:0);if(mv)P.dir=mv;
  if(b===2&&mv&&P.onGround){const s=(heightAt(P.x+3*mv)-heightAt(P.x-3*mv))/6;if(s>0)mul*=Math.max(.45,1-s*2.6);else mul*=Math.min(1.15,1-s*.8)}
- const vx=mv*92*mul;const ox=P.x;P.x=clamp(P.x+(vx+P.kbx)*dt,12,WORLD-12);P.kbx*=Math.pow(.004,dt);if(Math.abs(P.kbx)<2)P.kbx=0;
+ const vx=mv*92*mul*(1+gearSum('spd'));const ox=P.x;P.x=clamp(P.x+(vx+P.kbx)*dt,12,WORLD-12);P.kbx*=Math.pow(.004,dt);if(Math.abs(P.kbx)<2)P.kbx=0;
  const dx=P.x-ox;P.walk=mv&&P.onGround;P.wheel+=dx/4;
  const g=groundAt(P.x);
  if(P.onGround){if(g===null)P.onGround=false;else P.y=g}
@@ -663,7 +681,7 @@ function enterDungeon(d){if(dState(d)>0||DG)return;if(!S.park&&S.hauler!=='backp
  camX=Math.max(DG.minX,P.x-VW/2);camY=P.y-VH*.6;$('prompt').style.display='none';toast(skulls(d.diff),1100)}
 function exitDungeon(){if(!DG)return;const d=DG.d;DG=null;ENEMIES=[];PROJ=[];PICK=[];PARTS=[];FTXT=[];ROCKS=[];
  P=newPlayer(d.x+6);P.inv=1.2;env.spawnD=0;camX=clamp(P.x-VW/2,0,WORLD-VW);camY=P.y-VH*.64;save()}
-function dungeonKO(){S.hp=Math.max(1,Math.round(S.maxhp*.4));exitDungeon();toast('Knocked out<br><span class="small">dragged outside · nothing lost</span>',2400)}
+function dungeonKO(){S.hp=Math.max(1,Math.round(maxHP()*.4));exitDungeon();toast('Knocked out<br><span class="small">dragged outside · nothing lost</span>',2400)}
 function chestLoot(diff){if(diff===1)return {coin:15+Math.floor(rnd()*16),goods:rnd()<.5?[[2,3],[3,1]]:[[2,3],[1,2]]};
  if(diff===2)return {coin:40+Math.floor(rnd()*41),goods:[[3,3],[4,1]]};
  return {coin:100+Math.floor(rnd()*81),goods:rnd()<.6?[[4,3],[5,1]]:[[4,4]]}}
@@ -680,7 +698,7 @@ function updDungeon(dt){const D=DG;D.t+=dt;
  for(const p of D.plats)if(p.mv){const k=.5-.5*Math.cos(D.t*p.mv.sp+p.mv.ph);const nx=p.bx+p.mv.ax*k,ny=p.by+p.mv.ay*k;p.dx=nx-p.x0;p.dy=ny-p.y;p.x0=nx;p.x1=nx+p.w;p.y=ny}
  let mv=(inp.left()?-1:0)+(inp.right()?1:0);if(mv)P.dir=mv;
  if(P.onGround&&P.plat){P.x+=P.plat.dx;P.y=P.plat.y}
- const ox=P.x;P.x=clamp(P.x+(mv*94+P.kbx)*dt,D.minX+6,D.maxX-6);P.kbx*=Math.pow(.004,dt);if(Math.abs(P.kbx)<2)P.kbx=0;
+ const ox=P.x;P.x=clamp(P.x+(mv*94*(1+gearSum('spd'))+P.kbx)*dt,D.minX+6,D.maxX-6);P.kbx*=Math.pow(.004,dt);if(Math.abs(P.kbx)<2)P.kbx=0;
  P.walk=mv&&P.onGround;P.wheel+=(P.x-ox)/4;
  if(P.onGround){const p=P.plat;if(!p||P.x<p.x0-2||P.x>p.x1+2){P.onGround=false;P.plat=null}else P.y=p.y}
  if(inp.jump()&&P.onGround){P.vy=-262;P.onGround=false;P.plat=null}
@@ -785,6 +803,8 @@ function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==
  if(S&&S.park&&MODE!=='menu')cartArrow(ox,oy);
  drawFTXT(ox,oy);
 }
+function setAura(c,sx,sy,t){for(const id in SETS){if(!setOn(id))continue;const col=SETS[id].col;
+ for(let i=0;i<3;i++){const a=t*(id==='witch'?2.4:1.4)+i*2.094;const x=sx+Math.round(Math.cos(a)*8),y=sy-10+Math.round(Math.sin(a)*(id==='witch'?11:5));if(id==='witch'){if(Math.sin(t*9+i*3)>-.2){px(c,x,y,1,1,col);if(Math.sin(t*9+i*3)>.7)px(c,x,y-1,1,1,'#ffffff')}}else{px(c,x,y,2,2,'#8a8a8a');px(c,x,y,1,1,col)}}}}
 function drawActors(ox,oy){
  // pickups
  for(const k of PICK){if(k.life<3&&Math.floor(k.life*8)%2)continue;const bob=k.ground?Math.sin(menuT*4+k.x)*1.5:0;
@@ -795,11 +815,11 @@ function drawActors(ox,oy){
   let hy=sy;const H=carriedH();if(H!=='backpack'&&H!=='wheelbarrow'){const cxw=P.x-P.dir*(H==='bigwagon'?28:20);const g=groundAt(cxw);hy=Math.round((g===null?P.y:Math.min(g+(P.y-(groundAt(P.x)??P.y)),g))-oy)}
   const cols=cargoColors();
   if(H==='smallwagon'||H==='bigwagon')drawHauler(X,sx,hy,P.dir,H,cols,P.wheel);
-  drawPlayer(X,sx,sy,P.dir,menuT,P.walk,!P.onGround,fl,S.weapon,P.atk,{eq:S.eq,look:S.look});
+  drawPlayer(X,sx,sy,P.dir,menuT,P.walk,!P.onGround,fl,S.weapon,P.atk,{eq:S.eq,look:S.look});setAura(X,sx,sy,menuT);
   if(H==='backpack'||H==='wheelbarrow')drawHauler(X,sx,sy,P.dir,H,cols,P.wheel)}
  else if(MODE==='menu'){const sx=Math.round(VW/2),wx=camX+VW/2;const sy=Math.round(surfY(wx)-oy);drawHauler(X,sx,sy,1,'smallwagon',['#d83a3a','#c8a060','#8b5a2b','#ffd040','#d83a3a','#8b5a2b'],menuT*6);drawPlayer(X,sx,sy,1,menuT,true,false,false,'sword',0)}
  for(const p of PROJ){const sx=Math.round(p.x-ox),sy=Math.round(p.y-oy);if(p.kind==='bolt'){px(X,sx-3,sy,6,1,'#c8a060');px(X,p.vx>0?sx+2:sx-3,sy,1,1,'#e8eef4')}
-  else if(p.kind==='fire'){px(X,sx-2,sy-2,4,4,'#ff7a1a');px(X,sx-1,sy-1,2,2,'#fff0a0')}
+  else if(p.kind==='fire'){const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp;for(let i=3;i>=1;i--)px(X,sx-ux*i*3-1,sy-uy*i*3-1,3-(i>2?1:0),3-(i>2?1:0),i>2?'#a8301a':i>1?'#e8501a':'#ff8a2a');px(X,sx-2,sy-2,5,5,'#ff7a1a');px(X,sx-1,sy-1,3,3,'#ffd040');px(X,sx,sy,1,1,'#ffffff')}
   else if(p.kind==='lava'){px(X,sx-2,sy-2,5,5,'#d8401a');px(X,sx-1,sy-1,3,3,'#ffd040')}
   else{const c=p.v?'#ff8030':'#c060ff';px(X,sx-2,sy-2,4,4,c);px(X,sx-1,sy-1,2,2,'#ffffff')}}
  for(const p of PARTS)px(X,p.x-ox,p.y-oy,1,1,p.col);
@@ -889,6 +909,7 @@ let last=performance.now();
 function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;menuT+=dt;
  if(MODE==='play'){update(dt);for(const k in pressed)delete pressed[k]}else for(const k in pressed)delete pressed[k];
  if(MODE==='town'&&curTab==='barber')drawPrev($('cprev'),menuT,true);
+ if(S&&S.hp>maxHP())S.hp=maxHP();
  if(MODE==='menu'){camX=(camX+18*dt)%(WORLD-VW);camY=lerp(camY,surfY(camX+VW/2)-VH*.64,.05)}
  else if(P&&DG){const tx=clamp(P.x-VW/2+P.dir*28,DG.minX,Math.max(DG.minX,DG.maxX-VW));camX=lerp(camX,tx,Math.min(1,dt*5));camY=lerp(camY,P.y-VH*.6,Math.min(1,dt*4))}
  else if(P){const tx=clamp(P.x-VW/2+P.dir*28,0,WORLD-VW);camX=lerp(camX,tx,Math.min(1,dt*5));const ty=(P.onGround?P.y:Math.max(P.y,surfY(P.x)))-VH*.64;camY=lerp(camY,ty,Math.min(1,dt*4))}
@@ -897,5 +918,5 @@ setMode('menu');requestAnimationFrame(frame);
 addEventListener('beforeunload',()=>{if(MODE!=='menu')save()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&MODE==='play'){save();setMode('pause')}});
 // test hooks
-window.MR={giveMat,craft,RECIPES,have,MATS,giveGear,dropLoot,killEnemy,openInv,closeInv,GEAR,set dropMul(v){DROPMUL=v},gearSum,spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},get PROJ(){return PROJ},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,PITS,surfY,env,get DG(){return DG},DUNGEONS,enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
+window.MR={setOn,maxHP,SETS,giveMat,craft,RECIPES,have,MATS,giveGear,dropLoot,killEnemy,openInv,closeInv,GEAR,set dropMul(v){DROPMUL=v},gearSum,spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},get PROJ(){return PROJ},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,PITS,surfY,env,get DG(){return DG},DUNGEONS,enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
 </script></body></html>
