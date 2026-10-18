@@ -101,8 +101,8 @@ img.big{width:72px;height:42px}
  <p><b>Danger.</b> Plains: slimes, goblins. Snow: golems, goblins, deep snow, blizzards. Mountains: golems, witches, slopes, rockfall. Volcano: witches, lava golems, heat, lava pits.</p>
  <p><b>Risk.</b> Hits can knock goods off your hauler (pick them back up). Goblins steal goods and slow down while carrying them — catch and kill them to get them back. If you fall, you lose all cargo but keep money and gear, and wake at the last town.</p>
  <p><b>Carts.</b> Press <b>C</b> (🛒) to unhitch your cart and park it anywhere. You walk faster without it, but only your backpack (5) comes along, and you can only sell what you carry. Walk back and press C to hitch up again. Goblins may raid a cart left alone.</p>
- <p><b>Gear.</b> Press <b>I</b> (🎒) for your inventory: goods, cart and gear. Tap gear to equip. Monsters sometimes drop things: slimes apples (25%), goblins daggers, golems a <b>Stone Chestplate</b> (20% less damage), each 10%. Witches drop <b>Magic Essence</b> (30%), lava golems <b>Dried Lava</b> (10%). Materials don't use cargo space. Spare copies of gear are sold on the spot.</p>
- <p><b>Forge.</b> Frostholm, Stonepeak and Emberfall have a Forge (anvil sign). <b>Flame Sword</b>: 2 essence, 2 iron, 1 dried lava (iron comes from your cargo). <b>Witch Hat</b>: 2 essence (+25% ranged). <b>Witch Robes</b>: 3 essence (+15% ranged, 8% less damage).</p>
+ <p><b>Gear.</b> Press <b>I</b> (🎒) for your inventory: goods, cart and gear. Tap gear to equip. Monsters sometimes drop things: slimes apples (25%), goblins daggers, each 10%. Golems drop <b>Sentient Stone</b> (30%), witches <b>Magic Essence</b> (30%), lava golems <b>Dried Lava</b> (10%). Materials don't use cargo space. Spare copies of gear are sold on the spot.</p>
+ <p><b>Forge.</b> Frostholm, Stonepeak and Emberfall have a Forge (anvil sign). <b>Flame Sword</b>: 2 essence, 2 iron, 1 dried lava (iron comes from your cargo). <b>Witch Hat</b>: 2 essence (+25% ranged). <b>Witch Robes</b>: 3 essence (+15% ranged, 8% less damage). <b>Stone Chestplate</b>: 3 stone (20% less damage). <b>Stone Helm</b>: 2 stone (10% less damage). One hat at a time.</p>
  <p><b>Barber.</b> Wake Ridge, Pinehollow and Emberfall have a Barber (striped pole): change skin, body and hair for free. Your Top Hat goes on your head; take it off to show your hair. One hat at a time: wearing a Witch Hat puts the Top Hat back in your bag.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
  <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · I inventory · Q swap weapon · H potion · Esc pause.</p>
@@ -224,11 +224,14 @@ const ICONC={},ICONURL={};ITEMS.forEach(it=>{ICONC[it.id]=iconCanvas(it.id);ICON
 // ===== gear (enemy drops) =====
 const GEAR={stonechest:{name:'Stone Chestplate',slot:'chest',def:.2,val:75,stat:'🛡 -20%'},witchhat:{name:'Witch Hat',slot:'head',rng:.25,val:100,stat:'🏹 +25%'}};
 GEAR.tophat={name:'Top Hat',slot:'head',val:0,stat:'—',base:1};
+GEAR.stonehelm={name:'Stone Helm',slot:'head',def:.1,val:60,stat:'🛡 -10%'};
 GEAR.witchrobe={name:'Witch Robes',slot:'chest',def:.08,rng:.15,val:120,stat:'🏹 +15% 🛡 -8%'};
 const GSLOTS=[['head','Head'],['chest','Chest']];
-const MATS={essence:{name:'Magic Essence',col:'#c060ff'},lava:{name:'Dried Lava',col:'#ff6a1a'}};
+const MATS={stone:{name:'Sentient Stone',col:'#a8a8a8'},essence:{name:'Magic Essence',col:'#c060ff'},lava:{name:'Dried Lava',col:'#ff6a1a'}};
 ICONS.essence=['....w...','...pp...','..pmmp..','.pmwmmp.','.pmmmmp.','..pmmp..','...pp...','........'];ICONPAL2.essence={p:'#7a3aa0',m:'#c060ff',w:'#ffffff'};
 ICONS.lava=['........','..kkk...','.kkokkk.','kkookkk.','kokkkokk','kkkookk.','.kkkkk..','........'];ICONPAL2.lava={k:'#4a3030',o:'#ff6a1a'};
+ICONS.stone=['........','..ssss..','.sllsss.','sslsseds','ssssssss','.sssss..','..sss...','........'];ICONPAL2.stone={s:'#7a7a80',l:'#b8b8c0',e:'#7de0ff',d:'#4a4a50'};
+ICONS.stonehelm=['..aaaa..','.abbbba.','abbccbba','abbbbbba','aaaaaaaa','a.dddd.a','a......a','........'];ICONPAL2.stonehelm={a:'#5e5e5e',b:'#8a8a8a',c:'#d0d0d0',d:'#2a2a30'};
 ICONS.witchrobe=['..pppp..','.pmppmp.','pppppppp','.pppppp.','.pmmmmp.','.pppppp.','pppppppp','pppppppp'];ICONPAL2.witchrobe={p:'#5a3a7a',m:'#c060ff'};
 ICONS.stonechest=['.a....a.','aab..baa','aabbbbaa','.abccba.','.abbbba.','.abbbba.','.aabbaa.','..aaaa..'];ICONPAL2.stonechest={a:'#5e5e5e',b:'#8a8a8a',c:'#d0d0d0'};
 ICONS.tophat=['........','..hhhh..','..hhhh..','..hhhh..','..yyyy..','..hhhh..','hhhhhhhh','........'];ICONPAL2.tophat={h:'#8a2b2b',y:'#d8b040'};
@@ -236,7 +239,7 @@ ICONS.witchhat=['.....h..','....hh..','...hhh..','...hhh..','..hhhhh.','..ppppp.
 const GEARC={},GEARURL={};for(const id in GEAR){GEARC[id]=iconCanvas(id);GEARURL[id]=GEARC[id].toDataURL()}
 const MATC={},MATURL={};for(const id in MATS){MATC[id]=iconCanvas(id);MATURL[id]=MATC[id].toDataURL()}
 // drop chances by enemy family (DROPMUL lets tests force drops)
-const DROPS={slime:[['apple',.25]],goblin:[['dagger',.1]],golem:[['stonechest',.1]],witch:[['essence',.3]],lavaGolem:[['lava',.1]]};let DROPMUL=1;
+const DROPS={slime:[['apple',.25]],goblin:[['dagger',.1]],golem:[['stone',.3]],witch:[['essence',.3]],lavaGolem:[['lava',.1]]};let DROPMUL=1;
 // weapon pixel lines: [length, colors fn]
 function wepPixels(id){switch(id){
  case 'dagger':return ['#5a3818','#5a3818','#d8b040','#d0d8e0','#e8eef4','#e8eef4','#ffffff'];
@@ -291,7 +294,8 @@ function drawPlayer(c,x,y,dir,t,walking,air,flash,wep,atk,o){
  else if(EQ.chest==='stonechest'){P(-4,-11+bob,8,4,'#8a8a8a');P(-4,-11+bob,8,1,'#c8c8c8');P(-5,-11+bob,2,2,'#6a6a6a');P(-1,-10+bob,2,2,'#5e5e5e')}P(-4,-7+bob,8,1,'#5a3a1a');P(0,-7+bob,1,1,'#d8b040');
  P(-3,-16+bob,6,5,SK[0]);P(1,-14+bob,1,1,'#1a1420');P(3,-13+bob,1,1,SK[1]);if(LK.body===1){P(2,-15+bob,1,1,'#1a1420');P(1,-12+bob,1,1,'#c85a5a')}
  const HC=HAIRC[LK.hc]||HAIRC[0];for(const r of (HAIRS[LK.hair]||HAIRS[0]).r)P(r[0],r[1]+bob,r[2],r[3],HC);
- if(EQ.head==='witchhat'){P(-6,-17+bob,12,1,'#3a2450');P(-3,-20+bob,6,3,'#4a2e6a');P(-3,-18+bob,6,1,'#c060ff');P(-2,-22+bob,4,2,'#4a2e6a');P(-2,-24+bob,2,2,'#4a2e6a');P(-3,-25+bob,1,1,'#4a2e6a')}
+ if(EQ.head==='stonehelm'){P(-4,-19+bob,8,4,'#8a8a8a');P(-3,-20+bob,6,1,'#8a8a8a');P(-3,-20+bob,4,1,'#c8c8c8');P(-4,-16+bob,8,1,'#5e5e5e');P(-4,-15+bob,1,3,'#6a6a6a');P(1,-18+bob,2,1,'#7de0ff')}
+ else if(EQ.head==='witchhat'){P(-6,-17+bob,12,1,'#3a2450');P(-3,-20+bob,6,3,'#4a2e6a');P(-3,-18+bob,6,1,'#c060ff');P(-2,-22+bob,4,2,'#4a2e6a');P(-2,-24+bob,2,2,'#4a2e6a');P(-3,-25+bob,1,1,'#4a2e6a')}
  else if(EQ.head==='tophat'){P(-5,-17+bob,10,1,'#6a2424');P(-3,-20+bob,6,3,'#8a2b2b');P(-3,-18+bob,6,1,'#d8b040')}
  // arm + weapon
  const w=WEAPONS[wep];let ang=-1.1,ext=0;
@@ -490,7 +494,7 @@ function dropLoot(id,x,y){
  PICK.push({gear:id,x,y,vx:(rnd()-.5)*80,vy:-170,life:45,ground:false});part(x,y,'#fff4b0',8,60)}
 function giveMat(id){S.mats[id]=(S.mats[id]||0)+1;ftxt(P.x,P.y-30,'+1 '+MATS[id].name,MATS[id].col);part(P.x,P.y-12,MATS[id].col,8,50,-30);save()}
 // ===== crafting =====
-const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}}];
+const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}},{id:'stonechest',kind:'g',need:{stone:3}},{id:'stonehelm',kind:'g',need:{stone:2}}];
 function have(k){return k==='iron'?S.cargo.filter(s=>s.item===4).reduce((a,s)=>a+s.qty,0):(S.mats[k]||0)}
 function owns(r){return r.kind==='w'?S.weapons.includes(r.id):S.gear.includes(r.id)}
 function canCraft(r){return !owns(r)&&Object.entries(r.need).every(([k,n])=>have(k)>=n)}
