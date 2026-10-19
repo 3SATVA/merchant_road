@@ -99,11 +99,11 @@ img.big{width:72px;height:42px}
  <p><b>Goods:</b> Apple $5 · Potato $10 · Wood $30 · Coal $100 · Iron $500 · Gold $2000. Pricier goods are sold further east.</p>
  <p><b>Haulers:</b> Backpack 5 → Wheelbarrow 12 → Small Wagon 25 → Big Wagon 50. Bigger is slower.</p>
  <p><b>Danger.</b> Plains: slimes, goblins. Snow: golems, goblins, deep snow, blizzards. Mountains: golems, witches, slopes, rockfall. Volcano: witches, lava golems, heat, lava pits.</p>
- <p><b>Risk.</b> Hits can knock goods off your hauler (pick them back up). Goblins steal goods and slow down while carrying them — catch and kill them to get them back. If you fall, you lose all cargo but keep money and gear, and wake at the last town.</p>
+ <p><b>Risk.</b> Hits can knock goods off your hauler (pick them back up). Goblins steal one item at a time and slow down while carrying them — catch and kill them to get them back. If you fall, you lose all cargo but keep money and gear, and wake at the last town.</p>
  <p><b>Carts.</b> Press <b>C</b> (🛒) to unhitch your cart and park it anywhere. You walk faster without it, but only your backpack (5) comes along, and you can only sell what you carry. Walk back and press C to hitch up again. Goblins may raid a cart left alone.</p>
  <p><b>Gear.</b> Press <b>I</b> (🎒) for your inventory: goods, cart and gear. Tap gear to equip. Monsters sometimes drop things: slimes apples (25%), goblins daggers, each 10%. Golems drop <b>Sentient Stone</b> (30%), witches <b>Magic Essence</b> (30%), lava golems <b>Dried Lava</b> (10%). Materials don't use cargo space. Spare copies of gear are sold on the spot.</p>
- <p><b>Forge.</b> Frostholm, Stonepeak and Emberfall have a Forge (anvil sign). <b>Flame Sword</b>: 2 essence, 2 iron, 1 dried lava (iron comes from your cargo). <b>Witch Hat</b>: 2 essence (+25% ranged). <b>Witch Robes</b>: 3 essence (+15% ranged, 8% less damage). <b>Stone Chestplate</b>: 3 stone (20% less damage). <b>Stone Helm</b>: 2 stone (10% less damage). <b>Witch Boots</b>: 2 essence (+10% ranged, +8% speed). <b>Stone Boots</b>: 2 stone (6% less damage, half knockback). One item per slot.</p>
- <p><b>Sets.</b> Wear all 3 witch pieces: twin shots (each 75% damage). All 3 stone pieces: +30 max HP, no knockback, and hits never knock goods off your hauler. The <b>Fire Staff</b> now fires homing fireballs.</p>
+ <p><b>Forge.</b> Frostholm, Stonepeak and Emberfall have a Forge (anvil sign). <b>Flame Sword</b> or <b>Fire Staff</b> (homing fireballs): 2 essence, 2 iron, 1 dried lava each (iron comes from your cargo). <b>Witch Hat</b>: 2 essence (+25% ranged). <b>Witch Robes</b>: 3 essence (+15% ranged, 8% less damage). <b>Stone Chestplate</b>: 3 stone (20% less damage). <b>Stone Helm</b>: 2 stone (10% less damage). <b>Witch Boots</b>: 2 essence (+10% ranged, +8% speed). <b>Stone Boots</b>: 2 stone (6% less damage, half knockback). One item per slot.</p>
+ <p><b>Sets.</b> Wear all 3 witch pieces: twin shots (each 75% damage). All 3 stone pieces: +30 max HP, no knockback, and hits never knock goods off your hauler. Smiths in Frostholm and Emberfall sell the <b>Leaf Staff</b> ($600): lobbed leaves, 9 damage.</p>
  <p><b>Barber.</b> Wake Ridge, Pinehollow and Emberfall have a Barber (striped pole): change skin, body and hair for free. Your Top Hat goes on your head; take it off to show your hair. One hat at a time: wearing a Witch Hat puts the Top Hat back in your bag.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
  <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · I inventory · Q swap weapon · H potion · Esc pause.</p>
@@ -148,20 +148,21 @@ const WEAPONS={
  dagger:{name:'Dagger',dmg:8,range:16,cd:.22,price:40},
  sword:{name:'Sword',dmg:15,range:22,cd:.4,price:180},
  crossbow:{name:'Crossbow',dmg:13,cd:.6,ranged:1,pspd:280,price:350},
- firestaff:{name:'Fire Staff',dmg:15,cd:.65,ranged:1,pspd:180,elem:'fire',price:700},
+ firestaff:{name:'Fire Staff',dmg:15,cd:.65,ranged:1,pspd:180,elem:'fire',price:0,crafted:1},
+ leafstaff:{name:'Leaf Staff',dmg:9,cd:.75,ranged:1,pspd:165,leaf:1,price:600},
  warhammer:{name:'Warhammer',dmg:38,range:22,cd:.85,elem:'crush',price:1200},
  frostspear:{name:'Frost Spear',dmg:24,range:34,cd:.5,elem:'ice',price:1800},
  obsidian:{name:'Obsidian Blade',dmg:34,range:25,cd:.3,price:5000},
  flamesword:{name:'Flame Sword',dmg:30,range:24,cd:.38,elem:'fire',burn:1,price:0,crafted:1}};
-const WORDER=['fists','dagger','sword','crossbow','firestaff','warhammer','frostspear','obsidian','flamesword'];
+const WORDER=['fists','dagger','sword','crossbow','leafstaff','firestaff','warhammer','frostspear','obsidian','flamesword'];
 const WORLD=12000, BOUNDS=[0,3200,6400,9600,12000];
 const TOWNS=[
  {name:'Wake Ridge',x:300,barber:1,sells:[0,1,2],weapons:['dagger'],haulers:['wheelbarrow']},
  {name:'Bog Town',x:1800,sells:[0,1,2],weapons:['sword','crossbow'],haulers:['wheelbarrow','smallwagon']},
- {name:'Frostholm',x:4000,forge:1,sells:[1,2,3],weapons:['firestaff','sword'],haulers:['smallwagon']},
+ {name:'Frostholm',x:4000,forge:1,sells:[1,2,3],weapons:['leafstaff','sword'],haulers:['smallwagon']},
  {name:'Pinehollow',x:5600,barber:1,sells:[2,3,4],weapons:['warhammer','crossbow'],haulers:['smallwagon','bigwagon']},
  {name:'Stonepeak',x:8000,forge:1,sells:[3,4,5],weapons:['frostspear','warhammer'],haulers:['bigwagon']},
- {name:'Emberfall',x:11000,barber:1,forge:1,sells:[3,4,5],weapons:['obsidian','firestaff'],haulers:['bigwagon']}];
+ {name:'Emberfall',x:11000,barber:1,forge:1,sells:[3,4,5],weapons:['obsidian','leafstaff'],haulers:['bigwagon']}];
 TOWNS.forEach((t,i)=>{t.i=i;t.biome=biomeAt(t.x)});
 const TOWNR=110, DUNIT=1500;
 const DUNGEONS=[1050,2850,3600,4750,6750,7350,8900,10250,11650].map((x,i)=>({i,x,b:biomeAt(x),diff:clamp(1+Math.floor(x/4000),1,3)}));
@@ -252,6 +253,7 @@ function wepPixels(id){switch(id){
  case 'sword':return ['#5a3818','#5a3818','#d8b040','#c8d0dc','#d8e0ea','#d8e0ea','#d8e0ea','#d8e0ea','#e8eef4','#e8eef4','#ffffff'];
  case 'frostspear':return ['#5a4a6a','#5a4a6a','#6a5a7a','#6a5a7a','#6a5a7a','#6a5a7a','#6a5a7a','#6a5a7a','#6a5a7a','#6a5a7a','#9fe8ff','#9fe8ff','#e0faff','#ffffff'];
  case 'warhammer':return ['#5a3818','#5a3818','#6a4420','#6a4420','#6a4420','#6a4420','#6a4420','#6a4420','#6a4420'];
+ case 'leafstaff':return ['#8a6a3a','#8a6a3a','#9a7a44','#9a7a44','#9a7a44','#9a7a44','#9a7a44','#9a7a44','#9a7a44','#9a7a44'];
  case 'firestaff':return ['#4a2a18','#4a2a18','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418'];
  case 'flamesword':return ['#5a3818','#5a3818','#d8b040','#a8301a','#c83a1a','#e8501a','#ff6a1a','#ff8a2a','#ffa030','#ffd040','#fff0a0'];
  case 'obsidian':return ['#3a2a3a','#3a2a3a','#c04aa0','#2a1a2e','#3a2440','#3a2440','#3a2440','#3a2440','#4a2e52','#4a2e52','#e070d0'];
@@ -264,6 +266,7 @@ function drawWeapon(c,hx,hy,dir,ang,id,t){
  if(id==='warhammer'){for(let j=-3;j<=3;j++)for(let k=0;k<3;k++)px(c,ex+nx*j+ca*dir*k,ey+ny*j+sa*k,1,1,j===-3||j===3?'#6a707a':'#9aa0aa')}
  if(id==='crossbow'){const bx=hx+ca*dir*5,by=hy+sa*5;for(let j=-4;j<=4;j++)px(c,bx+nx*j-ca*dir*Math.abs(j)*.4,by+ny*j-sa*Math.abs(j)*.4,1,1,'#3a2a1a');}
  if(id==='flamesword'){const f=Math.floor((t||0)*12);for(let i=4;i<P.length;i+=2){const k=hash(i*3.1+f);if(k>.45){const x=hx+ca*i*dir-sa*dir*(k>.75?-1:2),y=hy+sa*i+ca*(k>.75?-1:2);px(c,x,y,1,1,k>.8?'#fff0a0':'#ff8a2a')}}}
+ if(id==='leafstaff'){px(c,ex-1,ey-1,3,3,'#3aa040');px(c,ex,ey-2,1,1,'#6cc04a');px(c,ex+1,ey,1,1,'#6cc04a');px(c,ex,ey,1,1,'#b8f080')}
  if(id==='firestaff'){const f=(Math.floor((t||0)*10)%2);px(c,ex-1,ey-1,3,3,'#ff7a1a');px(c,ex,ey,1,1,f?'#fff0a0':'#ffd040')}
 }
 function drawHauler(c,x,y,dir,type,fill,wheel){
@@ -443,7 +446,7 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   if(sale.length)h+='<div class="sec">FOR SALE</div>'+sale.map(row).join('');
   if(mine.length)h+='<div class="sec">YOURS</div>'+mine.map(row).join('');
  } else if(curTab==='weapons'){
-  const row=id=>{const W=WEAPONS[id];const own=S.weapons.includes(id),eq=S.weapon===id;const el=W.elem==='fire'?' · 🔥':W.elem==='ice'?' · ❄':W.elem==='crush'?' · 🪨':'';
+  const row=id=>{const W=WEAPONS[id];const own=S.weapons.includes(id),eq=S.weapon===id;const el=W.elem==='fire'?' · 🔥':W.elem==='ice'?' · ❄':W.elem==='crush'?' · 🪨':W.leaf?' · 🍃':'';
    const btn=eq?'<button disabled>Equipped</button>':own?'<button data-act="usew" data-id="'+id+'">Equip</button>':'<button data-act="buyw" data-id="'+id+'" '+(S.money<W.price?'disabled':'')+'>'+pr(W.price)+'</button>';
    return '<div class="row" data-w="'+id+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+W.dmg+' · '+(1/W.cd).toFixed(1)+'/s · '+(W.ranged?'ranged':'reach '+W.range)+el+'</span></span>'+btn+'</div>'};
   const sale=WORDER.filter(id=>t.weapons.includes(id)),mine=WORDER.filter(id=>S.weapons.includes(id)&&!t.weapons.includes(id));
@@ -501,7 +504,7 @@ function dropLoot(id,x,y){
  PICK.push({gear:id,x,y,vx:(rnd()-.5)*80,vy:-170,life:45,ground:false});part(x,y,'#fff4b0',8,60)}
 function giveMat(id){S.mats[id]=(S.mats[id]||0)+1;ftxt(P.x,P.y-30,'+1 '+MATS[id].name,MATS[id].col);part(P.x,P.y-12,MATS[id].col,8,50,-30);save()}
 // ===== crafting =====
-const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}},{id:'stonechest',kind:'g',need:{stone:3}},{id:'stonehelm',kind:'g',need:{stone:2}},{id:'witchboots',kind:'g',need:{essence:2}},{id:'stoneboots',kind:'g',need:{stone:2}}];
+const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'firestaff',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}},{id:'stonechest',kind:'g',need:{stone:3}},{id:'stonehelm',kind:'g',need:{stone:2}},{id:'witchboots',kind:'g',need:{essence:2}},{id:'stoneboots',kind:'g',need:{stone:2}}];
 function have(k){return k==='iron'?S.cargo.filter(s=>s.item===4).reduce((a,s)=>a+s.qty,0):(S.mats[k]||0)}
 function owns(r){return r.kind==='w'?S.weapons.includes(r.id):S.gear.includes(r.id)}
 function canCraft(r){return !owns(r)&&Object.entries(r.need).every(([k,n])=>have(k)>=n)}
@@ -572,7 +575,7 @@ function steerProj(p,dt){const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp
  const a=cur+clamp(da,-3.6*dt,3.6*dt);p.vx=Math.cos(a)*sp;p.vy=Math.sin(a)*sp}
 function playerAttack(){const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd;P.atk=1;
  if(w.ranged){const fire=w.elem==='fire',twin=setOn('witch'),n=twin?2:1;for(let i=0;i<n;i++){const a=twin?(i?-.13:.13):0;
-  PROJ.push({x:P.x+P.dir*8,y:P.y-9-(twin?(i?2:-2):0),vx:P.dir*w.pspd*Math.cos(a),vy:w.pspd*Math.sin(a),g:0,dmg:w.dmg*(1+gearSum('rng'))*(twin?.75:1),from:'p',elem:w.elem,kind:fire?'fire':'bolt',home:fire?1:0,life:fire?2.2:1.4})}
+  PROJ.push({x:P.x+P.dir*8,y:P.y-9-(twin?(i?2:-2):0),vx:P.dir*w.pspd*Math.cos(a),vy:w.pspd*Math.sin(a)+(w.leaf?-6:0),g:w.leaf?18:0,dmg:w.dmg*(1+gearSum('rng'))*(twin?.75:1),from:'p',elem:w.elem,kind:fire?'fire':w.leaf?'leaf':'bolt',home:fire?1:0,life:fire?2.2:1.4,spin:rnd()*6})}
   if(twin)part(P.x+P.dir*8,P.y-9,'#c060ff',4,40,0,.3);return}
  const x0=P.dir>0?P.x:P.x-w.range-4,x1=P.dir>0?P.x+w.range+4:P.x;
  for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(e.x+d.w/2>x0&&e.x-d.w/2<x1&&e.y-d.h<P.y+2&&e.y>P.y-24){hitEnemy(e,w.dmg,P.dir,w.elem);if(w.burn&&!e.dead&&e.type!=='lavaGolem')e.burn=2}}}
@@ -589,7 +592,7 @@ function update(dt){S.time+=dt;
  // projectiles
  for(const p of PROJ){p.life-=dt;if(p.home)steerProj(p,dt);p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.kind==='fire'||p.kind==='lava')if(rnd()<(p.home?1:.6))PARTS.push({x:p.x-p.vx*.01,y:p.y-p.vy*.01,vx:(rnd()-.5)*12,vy:-10-rnd()*10,col:rnd()<.33?'#ff7a1a':rnd()<.5?'#ffd040':'#d8401a',g:0,life:p.home?.4:.25});
   let solid;if(DG)solid=dSolid(p.x,p.y);else{const gy=groundAt(p.x);solid=gy!==null&&p.y>gy}
-  if(solid||p.life<=0||townAt(p.x,TOWNR-20)&&p.from==='e'){p.dead=1;part(p.x,p.y,p.kind==='bolt'?'#c8a060':'#ff8a2a',5,70);continue}
+  if(solid||p.life<=0||townAt(p.x,TOWNR-20)&&p.from==='e'){p.dead=1;part(p.x,p.y,p.kind==='bolt'?'#c8a060':p.kind==='leaf'?'#6cc04a':'#ff8a2a',5,70);continue}
   if(p.from==='p'){for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(Math.abs(e.x-p.x)<d.w/2+2&&p.y>e.y-d.h&&p.y<e.y+1){hitEnemy(e,p.dmg,Math.sign(p.vx),p.elem);p.dead=1;break}}}
   else if(Math.abs(p.x-P.x)<6&&p.y>P.y-17&&p.y<P.y+1){p.dead=1;hurtPlayer(p.dmg,p.x)}}
  PROJ=PROJ.filter(p=>!p.dead);
@@ -736,9 +739,9 @@ function updEnemy(e,dt){const d=ENEMY[e.type],base=d.base||e.type;e.t+=dt;if(e.h
   if(e.loot.length){e.flee=5;e.fdir=-Math.sign(dxp)||1;return}
   // raid a parked cart that's left alone
   const pk=S.park;if(!DG&&pk&&pk.cargo.length&&Math.abs(P.x-pk.x)>40&&Math.abs(pk.x-e.x)<adx){const dc=pk.x-e.x;if(Math.abs(dc)>4)walkTo(Math.sign(dc),d.spd);e.cd-=dt;
-   if(Math.abs(dc)<8&&e.cd<=0){e.cd=1.1;const n=Math.min(cargoN(pk.cargo),1+(rnd()<.5?1:0));for(let i=0;i<n;i++){const u=randomUnit(pk.cargo);if(u)e.loot.push(u)}ftxt(pk.x,surfY(pk.x)-22,'🛒 -'+n+'!','#ff6a6a');e.flee=5;e.fdir=Math.sign(e.x-P.x)||1;save()}return}
+   if(Math.abs(dc)<8&&e.cd<=0){e.cd=1.1;const n=Math.min(cargoN(pk.cargo),1);for(let i=0;i<n;i++){const u=randomUnit(pk.cargo);if(u)e.loot.push(u)}ftxt(pk.x,surfY(pk.x)-22,'🛒 -'+n+'!','#ff6a6a');e.flee=5;e.fdir=Math.sign(e.x-P.x)||1;save()}return}
   if(adx>4)walkTo(Math.sign(dxp),d.spd);e.cd-=dt;
-  if(near&&e.cd<=0){e.cd=1.1;if(cargoCount()){const n=Math.min(cargoCount(),1+(rnd()<.5?1:0));for(let i=0;i<n;i++){const u=randomUnit();if(u)e.loot.push(u)}ftxt(P.x,P.y-30,'Stolen ×'+n+'!','#ff6a6a');e.flee=5;e.fdir=-Math.sign(dxp)||1;P.inv=Math.max(P.inv,.4)}else hurtPlayer(d.dmg,e.x,false)}}
+  if(near&&e.cd<=0){e.cd=1.1;if(cargoCount()){const n=Math.min(cargoCount(),1);for(let i=0;i<n;i++){const u=randomUnit();if(u)e.loot.push(u)}ftxt(P.x,P.y-30,'Stolen ×'+n+'!','#ff6a6a');e.flee=5;e.fdir=-Math.sign(dxp)||1;P.inv=Math.max(P.inv,.4)}else hurtPlayer(d.dmg,e.x,false)}}
  else if(base==='golem'){e.y=gY(e.x);e.cd-=dt;
   if(e.state==='walk'){if(adx>20)walkTo(Math.sign(dxp),d.spd);else e.dir=Math.sign(dxp)||e.dir;if(adx<26&&e.cd<=0){e.state='wind';e.st=.55}
    if(e.type==='lavaGolem'&&e.cd<=0&&adx>60&&adx<230){e.cd=3.2;e.dir=Math.sign(dxp);const T=1.0;PROJ.push({x:e.x+e.dir*8,y:e.y-24,vx:dxp/T,vy:-(.5*400*T),g:400,dmg:16,from:'e',kind:'lava',life:2.5})}}
@@ -818,7 +821,8 @@ function drawActors(ox,oy){
   drawPlayer(X,sx,sy,P.dir,menuT,P.walk,!P.onGround,fl,S.weapon,P.atk,{eq:S.eq,look:S.look});setAura(X,sx,sy,menuT);
   if(H==='backpack'||H==='wheelbarrow')drawHauler(X,sx,sy,P.dir,H,cols,P.wheel)}
  else if(MODE==='menu'){const sx=Math.round(VW/2),wx=camX+VW/2;const sy=Math.round(surfY(wx)-oy);drawHauler(X,sx,sy,1,'smallwagon',['#d83a3a','#c8a060','#8b5a2b','#ffd040','#d83a3a','#8b5a2b'],menuT*6);drawPlayer(X,sx,sy,1,menuT,true,false,false,'sword',0)}
- for(const p of PROJ){const sx=Math.round(p.x-ox),sy=Math.round(p.y-oy);if(p.kind==='bolt'){px(X,sx-3,sy,6,1,'#c8a060');px(X,p.vx>0?sx+2:sx-3,sy,1,1,'#e8eef4')}
+ for(const p of PROJ){const sx=Math.round(p.x-ox),sy=Math.round(p.y-oy);if(p.kind==='leaf'){const f=Math.floor(menuT*10+p.spin)%4;const L=[[-2,0,4,1],[-1,-1,2,3],[-2,-1,3,2],[-1,0,3,2]][f];px(X,sx+L[0],sy+L[1],L[2],L[3],'#3aa040');px(X,sx,sy,1,1,'#b8f080');if(rnd()<.3)PARTS.push({x:p.x,y:p.y,vx:0,vy:8,col:'#6cc04a',g:0,life:.3})}
+  else if(p.kind==='bolt'){px(X,sx-3,sy,6,1,'#c8a060');px(X,p.vx>0?sx+2:sx-3,sy,1,1,'#e8eef4')}
   else if(p.kind==='fire'){const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp;for(let i=3;i>=1;i--)px(X,sx-ux*i*3-1,sy-uy*i*3-1,3-(i>2?1:0),3-(i>2?1:0),i>2?'#a8301a':i>1?'#e8501a':'#ff8a2a');px(X,sx-2,sy-2,5,5,'#ff7a1a');px(X,sx-1,sy-1,3,3,'#ffd040');px(X,sx,sy,1,1,'#ffffff')}
   else if(p.kind==='lava'){px(X,sx-2,sy-2,5,5,'#d8401a');px(X,sx-1,sy-1,3,3,'#ffd040')}
   else{const c=p.v?'#ff8030':'#c060ff';px(X,sx-2,sy-2,4,4,c);px(X,sx-1,sy-1,2,2,'#ffffff')}}
