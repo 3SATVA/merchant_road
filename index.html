@@ -61,12 +61,12 @@ img.big{width:72px;height:42px}
 .eslot.rev{animation:rev .7s}@keyframes rev{0%{box-shadow:0 0 0 2px #000,0 0 30px 12px #c060ff;background:#6a3a9a}100%{box-shadow:0 0 0 2px #000,inset 0 0 0 2px #5a3a7a}}@keyframes elin{from{opacity:0;transform:translateY(-6px) scale(1.2)}}
 .eslot.full[style*="--ec"]{box-shadow:0 0 0 2px #000,0 0 10px 2px var(--ec)}
 #ebtn{display:block;margin:0 auto 10px;width:100%;max-width:300px}
-.tray{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:6px 4px 8px;background:#1a1016;box-shadow:inset 0 0 0 2px #000;touch-action:pan-x;-webkit-overflow-scrolling:touch}
-.ti{flex:none;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#3a2830;box-shadow:0 0 0 2px #000;position:relative;cursor:grab;touch-action:pan-x}.ti img{width:30px;height:30px;pointer-events:none}
+.tray{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:6px;padding:6px;background:#1a1016;box-shadow:inset 0 0 0 2px #000;max-height:max(150px,min(440px,calc(92vh - 400px)));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}.wcols{display:block}@media (max-height:500px) and (min-width:600px){.wcols{display:flex;gap:10px;align-items:flex-start}.wsl{flex:0 0 220px}.wsl .eslot{margin-top:0;min-height:110px}.wtr{flex:1;min-width:0}.tray{max-height:calc(92vh - 120px)}}
+.ti{height:46px;display:flex;align-items:center;justify-content:center;background:#3a2830;box-shadow:0 0 0 2px #000;position:relative;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .12s}.ti.lift{transform:scale(1.15);background:#5a3a7a;z-index:2}.ti img{width:30px;height:30px;pointer-events:none}
 .ti .eb{position:absolute;left:2px;top:1px;font-size:7px;color:#ffd75e;text-shadow:1px 1px 0 #000}.ti .ed{position:absolute;right:2px;bottom:1px;font-size:7px;color:var(--ec);text-shadow:1px 1px 0 #000}
 .ti.ench::after{content:'';position:absolute;inset:2px;pointer-events:none;box-shadow:inset 0 0 0 1px var(--ec),inset 0 0 6px var(--ec);animation:shim 1.4s ease-in-out infinite}
 .ghost{position:fixed;width:44px;height:44px;z-index:60;pointer-events:none;image-rendering:pixelated;filter:drop-shadow(0 0 6px #c060ff)}
-@media (max-width:520px){#wpor{height:auto;width:38vw}.wwrap{gap:8px}#witch .row{gap:5px;padding:5px}#witch .row img.px{width:20px;height:20px}#witch .row button{padding:6px 5px}}@media (max-height:500px){.wq{margin:2px 0}}
+@media (max-width:520px){.tray{grid-template-columns:repeat(4,1fr);gap:5px;padding:5px}.tray .ti{height:42px}.ti img{width:28px;height:28px}#wpor{height:auto;width:38vw}.wwrap{gap:8px}#witch .row{gap:5px;padding:5px}#witch .row img.px{width:20px;height:20px}#witch .row button{padding:6px 5px}}@media (max-height:500px){.wq{margin:2px 0}}
 #touch{position:fixed;inset:0;z-index:9;pointer-events:none;display:none}
 #touch.on{display:block}
 .tb{position:absolute;pointer-events:auto;width:62px;height:62px;border-radius:50%;background:rgba(255,240,210,.16);box-shadow:0 0 0 2px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;text-shadow:2px 2px 0 #000;touch-action:none}
@@ -115,13 +115,13 @@ img.big{width:72px;height:42px}
  <p><b>Goods:</b> Apple $5 · Potato $10 · Wood $30 · Coal $100 · Iron $500 · Gold $2000. Pricier goods are sold further east.</p>
  <p><b>Haulers:</b> Backpack 5 → Wheelbarrow 12 → Small Wagon 25 → Big Wagon 50. Bigger is slower.</p>
  <p><b>Danger.</b> Plains: slimes, goblins. Snow: golems, goblins, deep snow, blizzards. Mountains: golems, witches, slopes, rockfall. Volcano: witches, lava golems, heat, lava pits.</p>
- <p><b>Risk.</b> Hits can knock goods off your hauler (pick them back up). Goblins steal one item at a time and slow down while carrying them — catch and kill them to get them back. If you fall, you lose all cargo but keep money and gear, and wake at the last town.</p>
+ <p><b>Risk.</b> Hits can knock goods off your hauler (pick them back up). Goblins steal one item at a time and slow down while carrying them — catch and kill them to get them back. If you fall, you lose all cargo (half of what you paid for it is refunded) but keep money and gear, and wake at the last town.</p>
  <p><b>Carts.</b> Press <b>C</b> (🛒) to unhitch your cart and park it anywhere. You walk faster without it, but only your backpack (5) comes along, and you can only sell what you carry. Walk back and press C to hitch up again. Goblins may raid a cart left alone.</p>
  <p><b>Gear.</b> Press <b>I</b> (🎒) for your inventory: goods, cart and gear. Tap gear to equip. Monsters sometimes drop things: slimes apples (25%), goblins daggers, each 10%. Golems drop <b>Sentient Stone</b> (30%), witches <b>Magic Essence</b> (30%), lava golems <b>Dried Lava</b> (10%). Materials don't use cargo space. Spare copies of gear are sold on the spot.</p>
  <p><b>Forge.</b> Frostholm, Stonepeak and Emberfall have a Forge (anvil sign). <b>Flame Sword</b> or <b>Fire Staff</b> (homing fireballs): 2 essence, 2 iron, 1 dried lava each (iron comes from your cargo). <b>Witch Hat</b>: 2 essence (+25% ranged). <b>Witch Robes</b>: 3 essence (+15% ranged, 8% less damage). <b>Stone Chestplate</b>: 3 stone (20% less damage). <b>Stone Helm</b>: 2 stone (10% less damage). <b>Witch Boots</b>: 2 essence (+10% ranged, +8% speed). <b>Stone Boots</b>: 2 stone (6% less damage, half knockback). One item per slot.</p>
  <p><b>Sets.</b> Wear all 3 witch pieces: twin shots (each 75% damage). All 3 stone pieces: +30 max HP, no knockback, and hits never knock goods off your hauler. Smiths in Frostholm and Emberfall sell the <b>Leaf Staff</b> ($600): homing leaves (gentler turn than fire), 9 damage.</p>
  <p><b>Barber.</b> Wake Ridge, Pinehollow and Emberfall have a Barber (striped pole): change skin, body and hair for free. Your Top Hat goes on your head; take it off to show your hair. One hat at a time: wearing a Witch Hat puts the Top Hat back in your bag.</p>
- <p><b>Witch.</b> Vex, a young witch with a knack for enchanting, parks her wagon (purple tarp) somewhere on the road and moves on every ~10 minutes. Get close and it shows on your map (purple). Press E at her wagon, drag (or tap) a weapon or armor piece into the slot and press <b>Enchant</b> for <b>3 Magic Essence</b>: it replaces the item's enchants with 1–3 random ones, levels I–III. Reroll as often as you like. Weapons: Sharp, Critical, Knockback, Burning, Freezing, Venom, Leeching. Armor: Guarded, Swift, Hardy, Thorns, Regen, Leeching. <span style="color:#ff4a6a">Curses</span> (about 1 in 6) are high risk, high reward: Bloodthirst, Berserk, Volatile, Heavy, Greedy.</p>
+ <p><b>Witch.</b> Vex, a young witch with a knack for enchanting, parks her wagon (purple tarp) somewhere on the road and moves on every ~10 minutes. Get close and it shows on your map (purple). Press E at her wagon, tap a weapon or armor piece (or hold it briefly and drag) into the slot and press <b>Enchant</b> for <b>3 Magic Essence</b>: it replaces the item's enchants with 1–3 random ones, levels I–III. Reroll as often as you like. Weapons: Sharp, Critical, Knockback, Burning, Freezing, Venom, Leeching. Armor: Guarded, Swift, Hardy, Thorns, Regen, Leeching. <span style="color:#ff4a6a">Curses</span> (about 1 in 6) are high risk, high reward: Bloodthirst, Berserk, Volatile, Heavy, Greedy.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
  <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · I inventory · Q swap weapon · H potion · Esc pause.</p>
  <p><b>Fire</b> melts ice golems, <b>ice</b> cracks lava golems, <b>hammers</b> crush all golems.</p></div></div>
@@ -380,12 +380,15 @@ function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo)
   if(!s.ench||typeof s.ench!=='object')s.ench={};for(const k in s.ench){let v=s.ench[k];if(v&&!Array.isArray(v))v=[{k:v.k,l:1}];/* old single enchant -> level I */v=Array.isArray(v)?v.filter(x=>x&&ENCH[x.k]).map(x=>({k:x.k,l:clamp(Math.floor(+x.l||1),1,3)})).slice(0,3):[];if(!v.length||!(s.weapons.includes(k)||s.gear.includes(k)))delete s.ench[k];else s.ench[k]=v}
   delete s.offers; // old 3-offer table is gone
   const wt=s.witch;if(!(wt&&isFinite(wt.x)&&isFinite(wt.t)))s.witch=null;else wt.seen=!!wt.seen;
+  /* cost basis: stacks from old saves without a valid price get the good's base price */
+  const fixPaid=a=>{if(Array.isArray(a))for(const c of a)if(c&&!(isFinite(c.paid)&&c.paid>=0))c.paid=ITEMS[c.item]?ITEMS[c.item].base:0};fixPaid(s.cargo);if(s.park)fixPaid(s.park.cargo);
   if(!HAULERS[s.hauler])s.hauler='backpack';return s}}catch(e){}return null}
 // ===== economy =====
 function tdist(a,b){return Math.abs(TOWNS[a].x-TOWNS[b].x)/DUNIT}
 function drift(seed,i,k){const T=S?S.time:0;return 1+k*(.7*Math.sin(T/90+seed*1.7+i*2.3)+.3*Math.sin(T/37+seed*3.1+i*.7))}
 function buyPrice(t,i){return Math.max(1,Math.round(ITEMS[i].base*drift(t,i,.04)))}
 function sellPrice(t,i,origin){const m=origin===t?.9:1+.2*tdist(t,origin);return Math.max(1,Math.round(ITEMS[i].base*m*drift(t+7,i,.05)))}
+const REFUND=.5; // on death, half of the purchase price of lost goods comes back
 function cargoN(a){return a.reduce((t,s)=>t+s.qty,0)}
 function cargoCount(){return cargoN(S.cargo)}
 function carriedH(){return S.park||DG?'backpack':S.hauler}
@@ -651,23 +654,34 @@ function itemName(id){return isWep(id)?WEAPONS[id].name:GEAR[id].name}
 function witchIds(){return S.weapons.filter(w=>w!=='fists').concat(S.gear)}
 function renderWitch(){$('wmoney').textContent=pr(S.money);const es=S.mats.essence||0,ids=witchIds();if(!ids.includes(wSel))wSel=null;
  let h='<div class="wwrap"><div class="wl"><div class="wq">“'+WQUOTES[Math.floor(S.time/40)%WQUOTES.length]+'”</div>';
- h+='<div class="eslot'+(wSel?' full':'')+(wRev?' rev':'')+'" id="eslot"'+(wSel&&encList(wSel).length?' style="--ec:'+enchCol(wSel)+'"':'')+'>';
+ h+='<div class="wcols"><div class="wsl"><div class="eslot'+(wSel?' full':'')+(wRev?' rev':'')+'" id="eslot"'+(wSel&&encList(wSel).length?' style="--ec:'+enchCol(wSel)+'"':'')+'>';
  if(wSel){const l=encList(wSel);h+='<img class="px si" data-id="'+wSel+'" src="'+gearIcon(wSel)+'"><b>'+itemName(wSel)+'</b>'+(l.length?l.map((x,i)=>'<span class="el" style="animation-delay:'+(i*.18)+'s">'+enchSpan(x)+'<span class="sub">'+ENCH[x.k].d(eVal(x))+'</span></span>').join(''):'<span class="sub">—</span>')}
  else h+='<span class="sub">'+(ids.length?'Drag or tap an item':'No gear yet')+'</span>';
  h+='</div><button id="ebtn" '+(!wSel||es<ENCHCOST?'disabled':'')+'>✨ Enchant · '+ENCHCOST+' <img class="px" style="width:12px;height:12px;vertical-align:middle" src="'+MATURL.essence+'"> <span style="opacity:.75">('+es+')</span></button>';
- h+='<div class="tray" id="etray">';for(const id of ids){if(id===wSel)continue;const on=isWep(id)?S.weapon===id:Object.values(S.eq).includes(id),l=encList(id);
+ h+='</div><div class="wtr"><div class="tray" id="etray">';for(const id of ids){if(id===wSel)continue;const on=isWep(id)?S.weapon===id:Object.values(S.eq).includes(id),l=encList(id);
   h+='<div class="ti'+(l.length?' ench':'')+'" data-id="'+id+'" title="'+itemName(id)+'"'+(l.length?' style="--ec:'+enchCol(id)+'"':'')+'><img class="px" src="'+gearIcon(id)+'">'+(on?'<span class="eb">E</span>':'')+(l.length?'<span class="ed">'+l.length+'</span>':'')+'</div>'}
- h+='</div><div class="small" style="line-height:1.6;margin-top:4px">1–3 random enchants · <span class="cz" style="color:'+CURSECOL+'">red = curse</span></div>';
+ h+='</div><div class="small" style="line-height:1.6;margin-top:4px">1–3 random enchants · <span class="cz" style="color:'+CURSECOL+'">red = curse</span></div></div></div>';
  h+='</div><img id="wpor" src="'+WPORTRAIT+'" alt="Vex"></div>';
  $('wbody').innerHTML=h;wRev=0}
 $('wX').onclick=closeWitch;
 function putSlot(id){wSel=id||null;renderWitch()}
-// drag & drop (mouse + touch pointer events); a tap is the phone fallback
 let wDrag=null;
-$('wbody').addEventListener('pointerdown',e=>{const t=e.target.closest('.ti,.si');if(!t)return;wDrag={id:t.dataset.id,from:t.classList.contains('si')?'slot':'tray',x:e.clientX,y:e.clientY,on:false,g:null,pid:e.pointerId}});
-addEventListener('pointermove',e=>{const d=wDrag;if(!d||e.pointerId!==d.pid)return;if(!d.on&&Math.hypot(e.clientX-d.x,e.clientY-d.y)>8){d.on=true;const g=document.createElement('img');g.src=gearIcon(d.id);g.className='px ghost';document.body.appendChild(g);d.g=g}
+// drag & drop (mouse + touch pointer events); a tap is the phone fallback.
+// Touch: when the tray or panel can scroll, a quick swipe scrolls and a short hold (180ms) lifts the item for dragging.
+const HOLDMS=180;
+function canScroll(){const t=$('etray'),pn=$('wbody').closest('.panel');return !!(t&&t.scrollHeight>t.clientHeight+2||pn&&pn.scrollHeight>pn.clientHeight+2)}
+function dropDrag(d){clearTimeout(d.tm);if(d.el)d.el.classList.remove('lift')}
+$('wbody').addEventListener('pointerdown',e=>{const t=e.target.closest('.ti,.si');if(!t)return;if(wDrag)dropDrag(wDrag);
+ const d=wDrag={id:t.dataset.id,from:t.classList.contains('si')?'slot':'tray',x:e.clientX,y:e.clientY,on:false,g:null,pid:e.pointerId,el:t,need:e.pointerType!=='mouse'&&!t.classList.contains('si')&&canScroll(),armed:false};
+ if(d.need)d.tm=setTimeout(()=>{if(wDrag===d&&!d.on){d.armed=true;t.classList.add('lift');if(navigator.vibrate)try{navigator.vibrate(8)}catch(_){}}},HOLDMS)});
+$('wbody').addEventListener('contextmenu',e=>{if(e.target.closest('.ti,.si'))e.preventDefault()});
+// once a drag is live (or armed), stop the browser from turning the touch into a scroll
+addEventListener('touchmove',e=>{const d=wDrag;if(d&&(d.on||d.armed||!d.need))e.preventDefault()},{passive:false});
+addEventListener('pointermove',e=>{const d=wDrag;if(!d||e.pointerId!==d.pid)return;if(!d.on&&Math.hypot(e.clientX-d.x,e.clientY-d.y)>8){
+  if(d.need&&!d.armed){dropDrag(d);wDrag=null;return} // quick swipe: let it scroll
+  d.on=true;dropDrag(d);const g=document.createElement('img');g.src=gearIcon(d.id);g.className='px ghost';document.body.appendChild(g);d.g=g}
  if(d.on){e.preventDefault();d.g.style.left=(e.clientX-22)+'px';d.g.style.top=(e.clientY-22)+'px';const over=document.elementFromPoint(e.clientX,e.clientY);const sl=$('eslot');if(sl)sl.classList.toggle('hov',!!(over&&over.closest('#eslot'))&&d.from==='tray')}},{passive:false});
-function endDrag(e,cancel){const d=wDrag;if(!d||e.pointerId!==d.pid)return;wDrag=null;if(d.g)d.g.remove();if(MODE!=='witch')return;
+function endDrag(e,cancel){const d=wDrag;if(!d||e.pointerId!==d.pid)return;wDrag=null;dropDrag(d);if(d.g)d.g.remove();if(MODE!=='witch')return;
  if(!d.on){if(!cancel)putSlot(d.from==='slot'?null:d.id);return}
  const over=cancel?null:document.elementFromPoint(e.clientX,e.clientY),inSlot=!!(over&&over.closest('#eslot'));
  if(d.from==='tray'&&inSlot)putSlot(d.id);else if(d.from==='slot'&&!inSlot)putSlot(null);else renderWitch()}
@@ -695,8 +709,9 @@ function hurtPlayer(dmg,sx,knock){if(P.inv>0||MODE!=='play')return;dmg*=(1-defTo
  ftxt(P.x,P.y-24,'-'+Math.round(dmg),'#ff6a6a');part(P.x,P.y-10,'#e84a4a',6,80);
  if(!DG&&!rock&&knock!==false&&cargoCount()&&rnd()<.4){const u=randomUnit();if(u){dropUnit(u,P.x,P.y-14,(P.x>=sx?-1:1)*(60+rnd()*60));ftxt(P.x,P.y-32,'-1 '+ITEMS[u.item].name,'#ffd75e')}}
  if(S.hp<=0)die()}
-function die(){if(DG){dungeonKO();return}const lost=cargoCount();S.cargo=[];S.hp=0;S.stats.deaths++;PICK=[];ENEMIES=[];PROJ=[];ROCKS=[];
- $('deadTxt').innerHTML=(lost?'Lost '+lost+' goods.':'No goods lost.')+'<br><br>Money and gear kept.<br>Waking up in '+TOWNS[S.lastTown].name+'.';S.x=TOWNS[S.lastTown].x;S.hp=maxHP();
+function refundOf(units){let t=0;for(const u of units)t+=(+u.paid||0)*(u.qty||1);return Math.round(t*REFUND)}
+function die(){if(DG){dungeonKO();return}const lost=cargoCount();const gnd=PICK.filter(k=>k.item!=null&&!k.mat&&!k.gear);const refund=refundOf(S.cargo)+refundOf(gnd);S.money+=refund;S.cargo=[];S.hp=0;S.stats.deaths++;PICK=[];ENEMIES=[];PROJ=[];ROCKS=[];
+ $('deadTxt').innerHTML=(lost?'Lost '+lost+' goods.':'No goods lost.')+(refund?'<br><br><span id="refund" style="color:#ffd75e;font-size:11px">+'+pr(refund)+' refunded</span><br><span style="opacity:.7">(half of what you paid)</span>':'')+'<br><br>Money and gear kept.<br>Waking up in '+TOWNS[S.lastTown].name+'.';S.x=TOWNS[S.lastTown].x;S.hp=maxHP();
  try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}setMode('dead')}
 function hitEnemy(e,dmg,dir,elem){const w=WEAPONS[S.weapon];const m=wmult({elem:elem},e.type);const cr=wv('crit'),crit=cr&&rnd()<cr;const d=dmg*m*dmgMul()*(crit?2:1)*(.9+rnd()*.2);e.hp-=d;onHitFx(e,d);e.hitT=.12;e.vx=dir*(ENEMY[e.type].base==='golem'?30:90)*(wv('knock')||1);if(crit){ftxt(e.x,e.y-ENEMY[e.type].h-12,'CRIT!','#ffe08a');part(e.x,e.y-8,'#ffe08a',6,90)}
  ftxt(e.x,e.y-ENEMY[e.type].h-4,Math.round(d)+(m>1?'!':''),m>1?'#ffd75e':m<1?'#9a9a9a':'#ffffff');part(e.x,e.y-8,'#ffffff',3,60);
