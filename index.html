@@ -74,7 +74,7 @@ img.big{width:72px;height:42px}
 #tL{left:14px;bottom:22px}#tR{left:90px;bottom:22px}
 #tJ{right:16px;bottom:22px;width:70px;height:70px}#tA{right:96px;bottom:40px;width:70px;height:70px}
 #tE{right:30px;bottom:110px;width:56px;height:56px;font-size:11px}
-#tH{right:176px;bottom:22px;width:50px;height:50px;font-size:14px}#tC{left:14px;bottom:96px;width:50px;height:50px;font-size:18px;display:none}.tb.hi{box-shadow:0 0 0 2px #000,0 0 0 4px #ffd75e}#tQ{right:176px;bottom:84px;width:50px;height:50px;font-size:10px}
+#tH{right:176px;bottom:22px;width:50px;height:50px;font-size:14px}#tC{left:14px;bottom:96px;width:50px;height:50px;font-size:18px;display:none}.tb.hi{box-shadow:0 0 0 2px #000,0 0 0 4px #ffd75e}#tQ{right:176px;bottom:84px;width:50px;height:50px;font-size:10px}#tM{left:72px;bottom:96px;width:50px;height:50px;font-size:20px;display:none}
 .th{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
 .tabs button{font-size:9px;padding:8px}
@@ -90,7 +90,7 @@ img.big{width:72px;height:42px}
 .help p{font-size:8px;line-height:1.9;margin-bottom:8px;color:#e8d8c0;text-align:left}
 .help b{color:#ffd75e}
 @media (max-width:520px){.tabs{gap:4px}.tabs button{padding:6px 4px;font-size:8px}.tabs button img{width:20px;height:20px}}
-@media (max-width:520px),(max-height:420px){.tb{width:54px;height:54px}#tC{width:46px;height:46px;bottom:86px}#tR{left:78px}#tA{right:84px}#mini{width:140px}}
+@media (max-width:520px),(max-height:420px){.tb{width:54px;height:54px}#tC{width:46px;height:46px;bottom:86px}#tM{width:46px;height:46px;bottom:86px;left:66px}#tR{left:78px}#tA{right:84px}#mini{width:140px}}
 </style><style id="nozoom">html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}canvas{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}input,select,textarea{font-size:16px!important}</style>
 <script>(function(){var pd=function(e){e.preventDefault()};['gesturestart','gesturechange','gestureend'].forEach(function(t){document.addEventListener(t,pd,{passive:false})});document.addEventListener('dblclick',pd,{passive:false});document.addEventListener('touchstart',function(e){if(e.touches.length>1)e.preventDefault()},{passive:false});document.addEventListener('touchmove',function(e){if(e.touches.length>1||(e.scale!==undefined&&e.scale!==1))e.preventDefault()},{passive:false});var last=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-last<400&&e.changedTouches.length===1){var t=e.target;if(!(t.closest&&t.closest('input,textarea,select,[contenteditable]'))){e.preventDefault();var b=t.closest&&t.closest('button,a');if(b&&!b.disabled&&b.click)b.click()}}last=n},{passive:false})})();</script>
 </head><body>
@@ -105,7 +105,7 @@ img.big{width:72px;height:42px}
  <div class="hr"><canvas id="mini" width="200" height="20"></canvas><div class="st" id="bname">Plains</div></div>
 </div>
 <div id="prompt"></div><div id="toasts"></div>
-<div id="touch"><div class="tb" id="tL">◀</div><div class="tb" id="tR">▶</div><div class="tb" id="tJ">▲</div><div class="tb" id="tA">⚔</div><div class="tb" id="tE">E</div><div class="tb" id="tH">🧪</div><div class="tb" id="tQ">Q</div><div class="tb" id="tC">🛒</div></div>
+<div id="touch"><div class="tb" id="tL">◀</div><div class="tb" id="tR">▶</div><div class="tb" id="tJ">▲</div><div class="tb" id="tA">⚔</div><div class="tb" id="tE">E</div><div class="tb" id="tH">🧪</div><div class="tb" id="tQ">Q</div><div class="tb" id="tC">🛒</div><div class="tb" id="tM">🐴</div></div>
 <button id="pbtn" style="display:none">II</button><button id="ibtn" class="alt" style="display:none" aria-label="Inventory">🎒</button>
 <div id="menu" class="ov on"><div class="mid"><h1>MERCHANT<br>ROAD</h1><div class="small" style="text-align:center">Buy low. Travel far. Sell high.</div>
  <button id="bCont">Continue</button><button id="bNew">New Game</button><button id="bHelp" class="alt">How to Play</button></div></div>
@@ -122,11 +122,12 @@ img.big{width:72px;height:42px}
  <p><b>Sets.</b> Wear all 3 witch pieces: twin shots (each 75% damage). All 3 stone pieces: +30 max HP, no knockback, and hits never knock goods off your hauler. Smiths in Frostholm and Emberfall sell the <b>Leaf Staff</b> ($600): homing leaves (gentler turn than fire), 9 damage.</p>
  <p><b>Barber.</b> Wake Ridge, Pinehollow and Emberfall have a Barber (striped pole): change skin, body and hair for free. Your Top Hat goes on your head; take it off to show your hair. One hat at a time: wearing a Witch Hat puts the Top Hat back in your bag.</p>
  <p><b>Witch.</b> Vex, a young witch with a knack for enchanting, parks her wagon (purple tarp) somewhere on the road and moves on every ~10 minutes. Get close and it shows on your map (purple). Press E at her wagon, tap a weapon or armor piece (or hold it briefly and drag) into the slot and press <b>Enchant</b> for <b>3 Magic Essence</b>: it replaces the item's enchants with 1–3 random ones, levels I–III. Reroll as often as you like. Weapons: Sharp, Critical, Knockback, Burning, Freezing, Venom, Leeching. Armor: Guarded, Swift, Hardy, Thorns, Regen, Leeching. <span style="color:#ff4a6a">Curses</span> (about 1 in 6) are high risk, high reward: Bloodthirst, Berserk, Volatile, Heavy, Greedy.</p>
+ <p><b>Horses.</b> Bog Town, Pinehollow and Stonepeak have a <b>Stable</b> (horseshoe sign): a horse costs $1,500, no upkeep, and comes with a Wooden Lance. Press <b>R</b> (🐴) next to it to ride or get off. Riding is 1.5× faster and pulls your cart (a loaded cart slows it a bit). On horseback you fight only with your lance: tap attack to lower it, and the faster you gallop into a foe, the harder it hits. Getting hit knocks you off (the horse waits, remount). Golems don't budge, so a fast charge into one bounces you off. Horses wait outside caves. Iron Lance at the Stable ($900); <b>Magma Lance</b> at the Forge (3 stone, 1 dried lava, 1 iron). Vex enchants lances too.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
- <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · I inventory · Q swap weapon · H potion · Esc pause.</p>
+ <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · R horse · I inventory · Q swap weapon · H potion · Esc pause.</p>
  <p><b>Fire</b> melts ice golems, <b>ice</b> cracks lava golems, <b>hammers</b> crush all golems.</p></div></div>
 <div id="town" class="ov"><div class="panel"><div class="th"><h2 id="tname">Town</h2><span class="gold" id="tmoney"></span><button id="tLeave" class="red">✕</button></div>
- <div class="tabs" id="ttabs"><button data-tab="market"><img data-b="market">Market</button><button data-tab="haulers"><img data-b="haulers">Haulers</button><button data-tab="weapons"><img data-b="weapons">Smith</button><button data-tab="inn"><img data-b="inn">Inn</button><button data-tab="barber"><img data-b="barber">Barber</button><button data-tab="craft"><img data-b="craft">Forge</button></div>
+ <div class="tabs" id="ttabs"><button data-tab="market"><img data-b="market">Market</button><button data-tab="haulers"><img data-b="haulers">Haulers</button><button data-tab="weapons"><img data-b="weapons">Smith</button><button data-tab="inn"><img data-b="inn">Inn</button><button data-tab="barber"><img data-b="barber">Barber</button><button data-tab="craft"><img data-b="craft">Forge</button><button data-tab="stable"><img data-b="stable">Stable</button></div>
  <div id="tbody"></div></div></div>
 <div id="inv" class="ov"><div class="panel"><div class="th"><h2>🎒</h2><span class="gold" id="imoney"></span><button id="invX" class="red">✕</button></div><div id="ibody"></div></div></div>
 <div id="witch" class="ov"><div class="panel"><div class="th"><h2 style="color:#c9b4ec">🔮 Vex</h2><span class="gold" id="wmoney"></span><button id="wX" class="red">✕</button></div><div id="wbody"></div></div></div>
@@ -171,15 +172,21 @@ const WEAPONS={
  warhammer:{name:'Warhammer',dmg:38,range:22,cd:.85,elem:'crush',price:1200},
  frostspear:{name:'Frost Spear',dmg:24,range:34,cd:.5,elem:'ice',price:1800},
  obsidian:{name:'Obsidian Blade',dmg:34,range:25,cd:.3,price:5000},
- flamesword:{name:'Flame Sword',dmg:30,range:24,cd:.38,elem:'fire',burn:1,price:0,crafted:1}};
-const WORDER=['fists','dagger','sword','crossbow','leafstaff','firestaff','warhammer','frostspear','obsidian','flamesword'];
+ flamesword:{name:'Flame Sword',dmg:30,range:24,cd:.38,elem:'fire',burn:1,price:0,crafted:1},
+ // lances: horseback only; damage scales with gallop speed (see lanceTick)
+ woodlance:{name:'Wooden Lance',dmg:14,range:30,cd:.5,lance:1,price:0},
+ ironlance:{name:'Iron Lance',dmg:24,range:32,cd:.5,lance:1,price:900},
+ magmalance:{name:'Magma Lance',dmg:32,range:32,cd:.5,lance:1,elem:'fire',burn:1,price:0,crafted:1}};
+const LORDER=['woodlance','ironlance','magmalance'];
+const HORSEPRICE=1500,RIDE=1.5,GALLOP=92*RIDE; // horse: one-off price, no upkeep; riding = 1.5x walking
+const WORDER=['fists','dagger','sword','crossbow','leafstaff','firestaff','warhammer','frostspear','obsidian','flamesword'];const ICONORDER=WORDER.concat(LORDER);
 const WORLD=12000, BOUNDS=[0,3200,6400,9600,12000];
 const TOWNS=[
  {name:'Wake Ridge',x:300,barber:1,sells:[0,1,2],weapons:['dagger'],haulers:['wheelbarrow']},
- {name:'Bog Town',x:1800,sells:[0,1,2],weapons:['sword','crossbow'],haulers:['wheelbarrow','smallwagon']},
+ {name:'Bog Town',x:1800,stable:1,sells:[0,1,2],weapons:['sword','crossbow'],haulers:['wheelbarrow','smallwagon']},
  {name:'Frostholm',x:4000,forge:1,sells:[1,2,3],weapons:['leafstaff','sword'],haulers:['smallwagon']},
- {name:'Pinehollow',x:5600,barber:1,sells:[2,3,4],weapons:['warhammer','crossbow'],haulers:['smallwagon','bigwagon']},
- {name:'Stonepeak',x:8000,forge:1,sells:[3,4,5],weapons:['frostspear','warhammer'],haulers:['bigwagon']},
+ {name:'Pinehollow',x:5600,barber:1,stable:1,sells:[2,3,4],weapons:['warhammer','crossbow'],haulers:['smallwagon','bigwagon']},
+ {name:'Stonepeak',x:8000,forge:1,stable:1,sells:[3,4,5],weapons:['frostspear','warhammer'],haulers:['bigwagon']},
  {name:'Emberfall',x:11000,barber:1,forge:1,sells:[3,4,5],weapons:['obsidian','leafstaff'],haulers:['bigwagon']}];
 TOWNS.forEach((t,i)=>{t.i=i;t.biome=biomeAt(t.x)});
 const TOWNR=110, DUNIT=1500;
@@ -276,6 +283,9 @@ function wepPixels(id){switch(id){
  case 'flamesword':return ['#5a3818','#5a3818','#d8b040','#a8301a','#c83a1a','#e8501a','#ff6a1a','#ff8a2a','#ffa030','#ffd040','#fff0a0'];
  case 'obsidian':return ['#3a2a3a','#3a2a3a','#c04aa0','#2a1a2e','#3a2440','#3a2440','#3a2440','#3a2440','#4a2e52','#4a2e52','#e070d0'];
  case 'crossbow':return ['#6a4420','#6a4420','#6a4420','#7a5228','#7a5228','#7a5228','#9aa0aa'];
+ case 'woodlance':return ['#5a3818','#5a3818','#5a3818','#a8743c','#8b5a2b','#a8743c','#8b5a2b','#a8743c','#8b5a2b','#a8743c','#8b5a2b','#a8743c','#c8a060','#d8b080','#f0d8a8'];
+ case 'ironlance':return ['#3a2414','#3a2414','#3a2414','#7a5228','#8a6030','#7a5228','#8a6030','#7a5228','#8a6030','#7a5228','#9aa0aa','#b8c0cc','#d0d8e0','#e8eef4','#ffffff'];
+ case 'magmalance':return ['#2a1a1a','#2a1a1a','#2a1a1a','#3a2626','#4a3030','#3a2626','#4a3030','#3a2626','#4a3030','#a8301a','#e8501a','#ff6a1a','#ff8a2a','#ffd040','#fff0a0'];
  default:return []}}
 function drawWeapon(c,hx,hy,dir,ang,id,t){
  const P=wepPixels(id);if(!P.length)return;const ca=Math.cos(ang),sa=Math.sin(ang);let ex=hx,ey=hy;
@@ -284,6 +294,8 @@ function drawWeapon(c,hx,hy,dir,ang,id,t){
  if(id==='warhammer'){for(let j=-3;j<=3;j++)for(let k=0;k<3;k++)px(c,ex+nx*j+ca*dir*k,ey+ny*j+sa*k,1,1,j===-3||j===3?'#6a707a':'#9aa0aa')}
  if(id==='crossbow'){const bx=hx+ca*dir*5,by=hy+sa*5;for(let j=-4;j<=4;j++)px(c,bx+nx*j-ca*dir*Math.abs(j)*.4,by+ny*j-sa*Math.abs(j)*.4,1,1,'#3a2a1a');}
  if(id==='flamesword'){const f=Math.floor((t||0)*12);for(let i=4;i<P.length;i+=2){const k=hash(i*3.1+f);if(k>.45){const x=hx+ca*i*dir-sa*dir*(k>.75?-1:2),y=hy+sa*i+ca*(k>.75?-1:2);px(c,x,y,1,1,k>.8?'#fff0a0':'#ff8a2a')}}}
+ if(WEAPONS[id]&&WEAPONS[id].lance){const vx=hx+ca*dir*3,vy=hy+sa*3,vc=id==='ironlance'?'#9aa0aa':id==='magmalance'?'#5a3a3a':'#6e4526';for(let j=-2;j<=2;j++)px(c,vx+nx*j,vy+ny*j,1,1,Math.abs(j)===2?'#2a1a10':vc);
+  if(id==='magmalance'){const f=Math.floor((t||0)*12);for(let i=9;i<P.length;i+=2){const k=hash(i*3.1+f);if(k>.5)px(c,hx+ca*i*dir-sa*dir*(k>.75?-1:1),hy+sa*i+ca*(k>.75?-1:1),1,1,k>.8?'#fff0a0':'#ff8a2a')}}}
  if(id==='leafstaff'){px(c,ex-1,ey-1,3,3,'#3aa040');px(c,ex,ey-2,1,1,'#6cc04a');px(c,ex+1,ey,1,1,'#6cc04a');px(c,ex,ey,1,1,'#b8f080')}
  if(id==='firestaff'){const f=(Math.floor((t||0)*10)%2);px(c,ex-1,ey-1,3,3,'#ff7a1a');px(c,ex,ey,1,1,f?'#fff0a0':'#ffd040')}
 }
@@ -327,11 +339,38 @@ function drawPlayer(c,x,y,dir,t,walking,air,flash,wep,atk,o){
  else if(EQ.head==='tophat'){P(-5,-17+bob,10,1,'#6a2424');P(-3,-20+bob,6,3,'#8a2b2b');P(-3,-18+bob,6,1,'#d8b040')}
  // arm + weapon
  const w=WEAPONS[wep];let ang=-1.1,ext=0;
- if(atk>0){const k=1-atk;if(w.ranged){ang=0;ext=k<.3?-1:0}else if(wep==='frostspear'){ang=-.05;ext=Math.round(Math.sin(k*Math.PI)*6)}else ang=lerp(-2.0,.7,smooth(k))}
+ if(w.lance){ang=atk>0?.04:-1.05;ext=atk>0?2:0}
+ else if(atk>0){const k=1-atk;if(w.ranged){ang=0;ext=k<.3?-1:0}else if(wep==='frostspear'){ang=-.05;ext=Math.round(Math.sin(k*Math.PI)*6)}else ang=lerp(-2.0,.7,smooth(k))}
  else if(w.ranged)ang=-.25;
  const hx=2+ext+(atk>0&&wep==='fists'?3:0);P(2,-11+bob,2,3,'#3a6ea5');P(hx,-8+bob,2,2,SK[0]);
  if(!flash)drawWeapon(c,dir>0?x+hx+1:x-hx-2,y-8+bob,dir,ang,wep,t);
 }
+// horse (facing +x; x,y = between the hooves). run: 0..1 gallop amount; idle: standing animation
+function drawHorse(c,x,y,dir,t,run,idle,flash){const P=(xo,yo,w,h,col)=>{px(c,dir>0?x+xo:x-xo-w,y+yo,w,h,flash?'#ffffff':col)};
+ const B='#8a5a32',BH='#a8743c',BS='#6e4526',M='#2a1a10',HF='#1e140c';
+ const ph=run>0?t*(10+8*run):0,g=run>.05;const leg=(lx,o)=>{const a=g?Math.sin(ph+o):0,lift=g?Math.max(0,Math.round(a*2.5)):0,sw=g?Math.round(Math.cos(ph+o)*2*Math.min(1,run*1.5)):0;
+  P(lx+sw,-7,2,6-lift,BS);P(lx+sw,-1-lift,2,1,HF)};
+ leg(-8,Math.PI);leg(5,0);
+ const bob=g?Math.round(Math.sin(ph*2)*.6):0;
+ P(-10,-14+bob,19,7,B);P(-9,-15+bob,16,1,B);P(-9,-15+bob,15,1,BH);P(-10,-8+bob,19,1,BS);P(-11,-13+bob,1,5,B);
+ leg(-6,0);leg(7,Math.PI);
+ // neck + head
+ const hb=idle?Math.round(Math.max(0,Math.sin(t*.8))*3):0;
+ P(6,-19+bob+hb,4,6,B);P(8,-21+bob+hb,3,4,B);P(10,-22+bob+hb,5,4,B);P(14,-21+bob+hb,2,3,BS);P(15,-19+bob+hb,1,1,HF);P(11,-21+bob+hb,1,1,HF);P(9,-24+bob+hb,2,2,B);P(9,-24+bob+hb,1,1,BS);
+ P(6,-21+bob+hb,2,7,M);P(8,-23+bob+hb,2,2,M);
+ // tail
+ const ts=Math.round(Math.sin(t*(g?14:2.2))*1.2)+(g?-1:1);P(-13,-15+bob,2,2,M);P(-14,-13+bob+ts,2,5,M);P(-13,-9+bob+ts,1,2,M);
+ // saddle + blanket
+ P(-4,-16+bob,7,2,'#7a2a1a');P(-4,-16+bob,7,1,'#a8402a');P(-5,-14+bob,9,4,'#3a6ea5');P(-5,-11+bob,9,1,'#d8b040');
+ if(idle){P(12,-20+hb,4,1,'#5a3818')}else{P(10,-20+bob,6,1,'#5a3818');P(4,-19+bob,7,1,'#5a3818')}}
+// rider on horseback: horse, then the player seated, then a leg down the flank; lance couched while charging
+function drawRider(c,sx,sy,d,t,fl,cols){const s=lanceSpeed();drawHorse(c,sx,sy,d,t,s,0,fl);const by=Math.round(Math.sin((P.ride||0)*.35)*(s>.05?.8:0));
+ const ry=sy-10+by;drawPlayer(c,sx-1*d,ry,d,t,false,false,fl,S.lance||S.weapon,P.couch>0?1:0,{eq:S.eq,look:S.look});
+ const L=(xo,yo,w,h,col)=>px(c,d>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col);const FT=S.eq.feet;L(-1,-12+by,2,4,'#4a3b2a');L(-1,-8+by,3,1,FT==='witchboots'?'#c060ff':FT==='stoneboots'?'#b8b8c0':'#2a1d14');
+ if(carriedH()==='backpack')drawHauler(c,sx-1*d,ry,d,'backpack',cols,0);
+ setAura(c,sx,ry,t);enchAura(c,sx,ry,t);
+ if(s>.7&&Math.floor(t*20)%2)part(P.x-d*12,P.y-1,'#c8b898',1,30,0,.3)}
+const HORSEURL=(()=>{const c=document.createElement('canvas');c.width=34;c.height=28;const g=c.getContext('2d');drawHorse(g,16,27,1,0,0,0);return c.toDataURL()})();
 function golemPal(type){return type==='iceGolem'?['#9cc8e8','#5f8fb8','#e8ffff','#c8e8ff']:type==='lavaGolem'?['#4a3030','#2a1a1a','#ffd040','#ff6a1a']:['#8a8a8a','#5e5e5e','#ffcc33','#a8a8a8']}
 function drawEnemy(c,e,sx,sy,t){
  const dir=e.dir,fl=e.hitT>0;const P=(xo,yo,w,h,col)=>{px(c,dir>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col)};
@@ -358,12 +397,12 @@ function drawEnemy(c,e,sx,sy,t){
 }
 function spriteURL(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');fn(g);return c.toDataURL()}
 const HAULURL={};HORDER.forEach(id=>{HAULURL[id]=spriteURL(56,32,g=>{drawHauler(g,id==='wheelbarrow'?20:id==='backpack'?30:50,30,1,id,['#d83a3a','#c8a060','#8b5a2b','#ffd040','#a8b0bc'],.4);if(id==='backpack')drawPlayer(g,30,30,1,0,false,false,false,'fists',0)})});
-const WEPURL={};const WEPC={};WORDER.forEach(id=>{const c=document.createElement('canvas');c.width=16;c.height=16;drawWeapon(c.getContext('2d'),3,13,1,-.78,id,0);WEPC[id]=c});WORDER.forEach(id=>{WEPURL[id]=spriteURL(16,16,g=>{if(id==='fists'){px(g,5,6,6,5,'#f1c28a');px(g,5,6,6,1,'#ffd8a8');px(g,6,8,1,1,'#c08a50');px(g,8,8,1,1,'#c08a50')}else drawWeapon(g,3,13,1,-.78,id,0)})});
+const WEPURL={};const WEPC={};ICONORDER.forEach(id=>{const c=document.createElement('canvas');c.width=16;c.height=16;drawWeapon(c.getContext('2d'),3,13,1,-.78,id,0);WEPC[id]=c});ICONORDER.forEach(id=>{WEPURL[id]=spriteURL(16,16,g=>{if(id==='fists'){px(g,5,6,6,5,'#f1c28a');px(g,5,6,6,1,'#ffd8a8');px(g,6,8,1,1,'#c08a50');px(g,8,8,1,1,'#c08a50')}else drawWeapon(g,3,13,1,-.78,id,0)})});
 // ===== state =====
 const KEY='merchantRoad.v1';
 let S,P,ENEMIES=[],PROJ=[],PARTS=[],PICK=[],ROCKS=[],FTXT=[];
 let MODE='menu';
-function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,v:2}}
+function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,horse:null,lances:[],lance:null,v:2}}
 function newPlayer(x){return {x,y:surfY(x),vy:0,kbx:0,dir:1,onGround:true,inv:0,cd:0,atk:0,walk:0,wheel:0,lastSafe:x,heat:0}}
 function save(){if(!S)return;S.x=Math.round(DG?DG.d.x:P.x);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo){const s=Object.assign(fresh(),d);
@@ -377,7 +416,11 @@ function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo)
   s.weapons=s.weapons.filter(w=>WEAPONS[w]);s.look=fixLook(s.look);for(const [sl] of GSLOTS){const g=s.eq[sl];if(!(g&&GEAR[g]&&GEAR[g].slot===sl&&s.gear.includes(g)))s.eq[sl]=null}
   if(!Array.isArray(s.weapons)||!s.weapons.length)s.weapons=['fists'];if(!WEAPONS[s.weapon])s.weapon=s.weapons[0];
   const pk=s.park;if(pk&&(!Array.isArray(pk.cargo)||!isFinite(pk.x)||s.hauler==='backpack'||!HAULERS[s.hauler])){if(Array.isArray(pk.cargo))s.cargo=s.cargo.concat(pk.cargo);s.park=null}
-  if(!s.ench||typeof s.ench!=='object')s.ench={};for(const k in s.ench){let v=s.ench[k];if(v&&!Array.isArray(v))v=[{k:v.k,l:1}];/* old single enchant -> level I */v=Array.isArray(v)?v.filter(x=>x&&ENCH[x.k]).map(x=>({k:x.k,l:clamp(Math.floor(+x.l||1),1,3)})).slice(0,3):[];if(!v.length||!(s.weapons.includes(k)||s.gear.includes(k)))delete s.ench[k];else s.ench[k]=v}
+  /* horse + lances (new): horse = null | {on, x, dir}; parked horses keep their spot */
+  if(!Array.isArray(s.lances))s.lances=[];s.lances=s.lances.filter((l,i,a)=>WEAPONS[l]&&WEAPONS[l].lance&&a.indexOf(l)===i);
+  {const h=s.horse;if(!h||typeof h!=='object')s.horse=null;else{h.on=!!h.on;h.dir=h.dir<0?-1:1;if(h.on)h.x=null;else if(!isFinite(h.x))h.x=TOWNS[s.lastTown|0].x+30;else h.x=clamp(+h.x,20,WORLD-20);if(!s.lances.length)s.lances=['woodlance']}}
+  if(!s.lances.includes(s.lance))s.lance=s.lances[0]||null;
+  if(!s.ench||typeof s.ench!=='object')s.ench={};for(const k in s.ench){let v=s.ench[k];if(v&&!Array.isArray(v))v=[{k:v.k,l:1}];/* old single enchant -> level I */v=Array.isArray(v)?v.filter(x=>x&&ENCH[x.k]).map(x=>({k:x.k,l:clamp(Math.floor(+x.l||1),1,3)})).slice(0,3):[];if(!v.length||!(s.weapons.includes(k)||s.gear.includes(k)||s.lances.includes(k)))delete s.ench[k];else s.ench[k]=v}
   delete s.offers; // old 3-offer table is gone
   const wt=s.witch;if(!(wt&&isFinite(wt.x)&&isFinite(wt.t)))s.witch=null;else wt.seen=!!wt.seen;
   /* cost basis: stacks from old saves without a valid price get the good's base price */
@@ -409,11 +452,11 @@ addEventListener('blur',()=>{for(const k in keys)keys[k]=0;for(const k in tkeys)
 const tkeys={};
 function bindTouch(id,k){const el=$(id);el.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});el.addEventListener('touchend',e=>e.preventDefault(),{passive:false});const dn=e=>{e.preventDefault();if(!tkeys[k])pressed['t'+k]=1;tkeys[k]=1;el.classList.add('dn')},up=e=>{e.preventDefault();tkeys[k]=0;el.classList.remove('dn')};
  el.addEventListener('pointerdown',dn);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',up);el.addEventListener('pointerleave',up)}
-[['tL','l'],['tR','r'],['tJ','j'],['tA','a'],['tE','e'],['tH','h'],['tQ','q'],['tC','c']].forEach(a=>bindTouch(a[0],a[1]));
+[['tL','l'],['tR','r'],['tJ','j'],['tA','a'],['tE','e'],['tH','h'],['tQ','q'],['tC','c'],['tM','m']].forEach(a=>bindTouch(a[0],a[1]));
 const isTouch=('ontouchstart' in window)||matchMedia('(pointer:coarse)').matches;
 $('c').addEventListener('pointerdown',e=>{if(MODE==='play'&&e.pointerType==='mouse'&&e.button===0)pressed.click=1});
 const inp={left:()=>keys.a||keys.arrowleft||tkeys.l,right:()=>keys.d||keys.arrowright||tkeys.r,
- jump:()=>pressed[' ']||pressed.w||pressed.arrowup||pressed.tj,attack:()=>keys.j||pressed.j||pressed.click||tkeys.a||pressed.ta,use:()=>pressed.e||pressed.te,pot:()=>pressed.h||pressed.th,swap:()=>pressed.q||pressed.tq,cart:()=>pressed.c||pressed.tc};
+ jump:()=>pressed[' ']||pressed.w||pressed.arrowup||pressed.tj,attack:()=>keys.j||pressed.j||pressed.click||tkeys.a||pressed.ta,use:()=>pressed.e||pressed.te,pot:()=>pressed.h||pressed.th,swap:()=>pressed.q||pressed.tq,cart:()=>pressed.c||pressed.tc,horse:()=>pressed.r||pressed.tm};
 // ===== canvas =====
 const C=$('c'),X=C.getContext('2d');let VW=400,VH=225,SC=0;
 const FXC=$('fx'),FX=FXC.getContext('2d');let DPR=1;
@@ -447,12 +490,13 @@ const BLDURL={};(function(){const mk=(roof,wall,fn)=>spriteURL(16,16,g=>{px(g,2,
  BLDURL.weapons=mk('#4a4c58','#8a8a90',g=>{px(g,11,9,1,6,'#e8eef4');px(g,10,13,3,1,'#d8b040');px(g,11,14,1,2,'#5a3818');px(g,2,12,3,2,'#3a3a40')});
  BLDURL.inn=mk('#3a5a9a','#c89a62',g=>{px(g,2,9,3,3,'#ffe08a');px(g,11,9,3,3,'#ffe08a');px(g,11,13,3,3,'#c8a060');px(g,14,14,1,1,'#c8a060')});
  BLDURL.craft=mk('#3a3a40','#6a6c78',g=>{px(g,9,10,6,2,'#c8ccd4');px(g,11,12,2,2,'#9aa0aa');px(g,10,14,4,1,'#9aa0aa');px(g,2,12,3,3,'#ff8a2a');px(g,3,11,1,1,'#ffd040');px(g,13,1,2,6,'#4a4c58');px(g,13,0,2,1,'#888')});
+ BLDURL.stable=mk('#6a3a1a','#a8743c',g=>{px(g,5,10,6,6,'#3a2414');px(g,5,10,6,1,'#5a3818');px(g,6,12,4,1,'#d8b060');px(g,7,13,2,1,'#d8b060');for(const [a,b] of [[11,9],[11,10],[11,11],[14,9],[14,10],[14,11],[12,12],[13,12]])px(g,a,b,1,1,'#c8ccd4');px(g,1,14,3,2,'#e8c860');px(g,12,14,3,2,'#e8c860')});
  BLDURL.barber=mk('#2a3a6a','#e8e0d0',g=>{px(g,12,8,3,1,'#c8c8c8');for(let i=0;i<6;i++)px(g,12,9+i,3,1,['#e83a3a','#f4f4f4','#3a6ad0'][i%3]);px(g,12,15,3,1,'#c8c8c8');px(g,2,10,3,3,'#ffe08a')})})();
 document.querySelectorAll('#ttabs img[data-b]').forEach(i=>i.src=BLDURL[i.dataset.b]);
 function lookPrev(look,eq,w,h,dx,dy){return spriteURL(w,h,g=>drawPlayer(g,dx,dy,1,0,false,false,false,'fists',0,{look,eq}))}
 function drawPrev(cv,t,walk){if(!cv)return;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);drawPlayer(g,Math.floor(cv.width/2),cv.height-4,1,t||0,!!walk,false,false,S.weapon,0,{eq:S.eq,look:S.look});setAura(g,Math.floor(cv.width/2),cv.height-4,t||0)}
 function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tmoney').textContent=pr(S.money);
- [...$('ttabs').children].forEach(b=>{b.classList.toggle('on',b.dataset.tab===curTab);const tb=b.dataset.tab;b.style.display=(tb==='haulers'&&!t.haulers.length&&S.haulers.length<2)||(tb==='weapons'&&!t.weapons.length&&S.weapons.length<2)||(tb==='barber'&&!t.barber)||(tb==='craft'&&!t.forge)?'none':''});let h='';
+ [...$('ttabs').children].forEach(b=>{b.classList.toggle('on',b.dataset.tab===curTab);const tb=b.dataset.tab;b.style.display=(tb==='haulers'&&!t.haulers.length&&S.haulers.length<2)||(tb==='weapons'&&!t.weapons.length&&S.weapons.length<2)||(tb==='barber'&&!t.barber)||(tb==='craft'&&!t.forge)||(tb==='stable'&&!t.stable)?'none':''});let h='';
  if(curTab==='market'){const n=cargoCount(),c=cap();
   h+='<div class="sec">CARGO '+n+'/'+c+'</div>';
   if(!S.cargo.length)h+='<div class="row dim"><span class="nm">Empty</span></div>';
@@ -482,9 +526,16 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   h+='<div class="row"><span class="nm">🧪 Potion ×'+S.potions+'<span class="sub">+45 HP · max 5 · press H</span></span><button data-act="pot" '+(S.potions>=5||S.money<pc?'disabled':'')+'>'+pr(pc)+'</button></div>';
   h+='<div class="sec">STATS</div><div class="small">Profit '+pr(S.stats.profit)+' · Goods sold '+S.stats.sold+' · Kills '+S.stats.kills+' · Falls '+S.stats.deaths+'</div>';
  } else if(curTab==='craft'&&t.forge){
-  for(const r of RECIPES){const isW=r.kind==='w',img=isW?WEPURL[r.id]:GEARURL[r.id],nm=isW?WEAPONS[r.id].name:GEAR[r.id].name,st=isW?'⚔'+WEAPONS[r.id].dmg+' 🔥':GEAR[r.id].stat;const own=owns(r),ok=canCraft(r);
+  for(const r of RECIPES){const isW=r.kind==='w',img=isW?WEPURL[r.id]:GEARURL[r.id],nm=isW?WEAPONS[r.id].name:GEAR[r.id].name,st=isW?(WEAPONS[r.id].lance?'🐴 ':'')+'⚔'+WEAPONS[r.id].dmg+' 🔥':GEAR[r.id].stat;const own=owns(r),ok=canCraft(r);
    const chips=Object.entries(r.need).map(([k,n])=>{const hv=have(k);return '<span class="ch'+(hv>=n?' ok':'')+'"><img src="'+(k==='iron'?ICONURL.iron:MATURL[k])+'">'+Math.min(hv,99)+'/'+n+'</span>'}).join('');
    h+='<div class="row'+(own?' dim':'')+'">'+iconImg(img)+'<span class="nm">'+nm+' <span class="up">'+st+'</span><span class="sub" style="margin-top:4px">'+chips+'</span></span><button data-act="craft" data-id="'+r.id+'" '+(own||!ok?'disabled':'')+'>'+(own?'✓':'Craft')+'</button></div>'}
+ } else if(curTab==='stable'&&t.stable){const Hs=S.horse;
+  h+='<div class="row">'+iconImg(HORSEURL,'big')+'<span class="nm">Horse<span class="sub">👟 ×'+RIDE+' · 🛒 pulls carts · 🐴 lances</span></span>'+(Hs?'<button disabled>✓</button>':'<button data-act="buyhorse" '+(S.money<HORSEPRICE?'disabled':'')+'>'+pr(HORSEPRICE)+'</button>')+'</div>';
+  if(Hs&&!Hs.on&&Math.abs(Hs.x-t.x)>TOWNR)h+='<div class="row"><span class="nm">🐴 → '+t.name+'<span class="sub">'+Math.round(Math.abs(Hs.x-t.x)/10)+'m away</span></span><button data-act="callhorse" '+(S.money<HORSECALL?'disabled':'')+'>'+pr(HORSECALL)+'</button></div>';
+  h+='<div class="sec">LANCES</div>';for(const id of LORDER){const W=WEAPONS[id],own=S.lances.includes(id);if(!own&&W.crafted&&!t.forge&&id!=='woodlance'){}
+   const btn=own?(S.lance===id?'<button disabled>Equipped</button>':'<button data-act="usel" data-id="'+id+'">Equip</button>'):W.crafted?'<button disabled>Forge</button>':W.price?'<button data-act="buyl" data-id="'+id+'" '+(S.money<W.price||!Hs?'disabled':'')+'>'+pr(W.price)+'</button>':'<button disabled>🐴</button>';
+   h+='<div class="row'+(encList(id).length?' ench':'')+'" style="'+(encList(id).length?'--ec:'+enchCol(id):'')+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+Math.round(W.dmg*LANCEMIN)+'–'+Math.round(W.dmg*LANCEMAX)+(W.elem==='fire'?' · 🔥':'')+'</span></span>'+btn+'</div>'}
+  h+='<div class="small" style="margin-top:6px">⚔ grows with speed · gallop in!</div>';
  } else if(curTab==='barber'&&t.barber){const L=S.look,noHat={head:null,chest:null,acc:null};
   const sw=(k,v,bg,on)=>'<button data-act="look" data-k="'+k+'" data-v="'+v+'" class="'+(on?'on':'')+'" style="background:'+bg+'"></button>';
   const opt=(k,v,img,lab)=>'<button class="tile'+(L[k]===v?' eq':'')+'" data-act="look" data-k="'+k+'" data-v="'+v+'"><img src="'+img+'">'+(lab?'<span>'+lab+'</span>':'')+'</button>';
@@ -506,19 +557,24 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  else if(a==='look'){const k=b.dataset.k;if(k in S.look)S.look[k]=+b.dataset.v;S.look=fixLook(S.look)}
  else if(a==='hat'){if(S.gear.includes('tophat'))S.eq.head=S.eq.head==='tophat'?null:'tophat'}
  else if(a==='craft'){craft(b.dataset.id)}
+ else if(a==='buyhorse'){buyHorse(t)}
+ else if(a==='callhorse'){if(S.horse&&!S.horse.on&&S.money>=HORSECALL){S.money-=HORSECALL;S.horse.x=TOWNS[t].x+30;S.horse.dir=-1}}
+ else if(a==='buyl'){const id=b.dataset.id,W=WEAPONS[id];if(W&&W.lance&&!S.lances.includes(id)&&S.horse&&S.money>=W.price){S.money-=W.price;S.lances.push(id);S.lance=id}}
+ else if(a==='usel'){if(S.lances.includes(b.dataset.id))S.lance=b.dataset.id}
  else if(a==='rest'){const rc=10+t*8;if(S.money>=rc){S.money-=rc;S.hp=maxHP()}}
  else if(a==='pot'){if(S.money>=30&&S.potions<5){S.money-=30;S.potions++}}
  save();renderTown()};
 const MINI=$('mini').getContext('2d');
 function updHUD(){if(!S)return;$('hpfill').style.width=clamp(S.hp/maxHP()*100,0,100)+'%';$('hpt').textContent=Math.ceil(Math.max(0,S.hp));$('money').textContent=pr(S.money);
  $('cargo').textContent=cargoCount()+'/'+cap();const ch=carriedH();if($('icart').dataset.k!==ch){$('icart').src=HAULURL[ch];$('icart').dataset.k=ch}
- $('tC').style.display=S.hauler!=='backpack'?'flex':'none';$('tC').classList.toggle('hi',nearCartP());if($('iwep').dataset.k!==S.weapon){$('iwep').src=WEPURL[S.weapon];$('iwep').dataset.k=S.weapon}$('pots').textContent='🧪'+S.potions;
+ $('tC').style.display=S.hauler!=='backpack'?'flex':'none';$('tC').classList.toggle('hi',nearCartP());{const hw=heldW();if($('iwep').dataset.k!==hw){$('iwep').src=WEPURL[hw];$('iwep').dataset.k=hw}}$('tM').style.display=S.horse?'flex':'none';$('tM').classList.toggle('hi',nearHorse()||mounted());$('pots').textContent='🧪'+S.potions;
  const px0=DG?DG.d.x:(P?P.x:0);const b=biomeAt(px0);const bn=DG?skulls(DG.d.diff)+' Cave':BIOMES[b].name;if($('bname').dataset.k!==bn){$('bname').innerHTML=bn;$('bname').dataset.k=bn}
  const w=200;MINI.clearRect(0,0,w,20);for(let i=0;i<4;i++){MINI.fillStyle=BIOMES[i].mm;MINI.fillRect(BOUNDS[i]/WORLD*w,6,(BOUNDS[i+1]-BOUNDS[i])/WORLD*w,8)}
  for(const t of TOWNS){const x=Math.round(t.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,3,5,14);MINI.fillStyle=t.i===S.lastTown?'#ffd75e':'#f6ead0';MINI.fillRect(x-1,4,3,12)}
  for(const i of S.caves){const d=DUNGEONS[i];if(!d)continue;const x=Math.round(d.x/WORLD*w);MINI.fillStyle=dState(d)>0?'#5a4a44':'#1a0c0c';MINI.fillRect(x-1,8,3,4)}
  if(S.witch&&S.witch.seen){const x=Math.round(S.witch.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,0,5,7);MINI.fillStyle='#c060ff';MINI.fillRect(x-1,1,3,5)}
  if(S.park){const x=Math.round(S.park.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,13,5,7);MINI.fillStyle='#ffa030';MINI.fillRect(x-1,14,3,5)}
+ if(S.horse&&!S.horse.on){const x=Math.round(S.horse.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,13,5,7);MINI.fillStyle='#c8864a';MINI.fillRect(x-1,14,3,5)}
  if(P){const x=Math.round(px0/WORLD*w);MINI.fillStyle='#ff3030';MINI.fillRect(x-1,0,3,20)}}
 // ===== drops & inventory =====
 function nearestTown(x){let o=0;for(const t of TOWNS)if(Math.abs(t.x-x)<Math.abs(TOWNS[o].x-x))o=t.i;return o}
@@ -529,13 +585,13 @@ function dropLoot(id,x,y){
  PICK.push({gear:id,x,y,vx:(rnd()-.5)*80,vy:-170,life:45,ground:false});part(x,y,'#fff4b0',8,60)}
 function giveMat(id){S.mats[id]=(S.mats[id]||0)+1;ftxt(P.x,P.y-30,'+1 '+MATS[id].name,MATS[id].col);part(P.x,P.y-12,MATS[id].col,8,50,-30);save()}
 // ===== crafting =====
-const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'firestaff',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}},{id:'stonechest',kind:'g',need:{stone:3}},{id:'stonehelm',kind:'g',need:{stone:2}},{id:'witchboots',kind:'g',need:{essence:2}},{id:'stoneboots',kind:'g',need:{stone:2}}];
+const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'firestaff',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'magmalance',kind:'w',need:{stone:3,lava:1,iron:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}},{id:'stonechest',kind:'g',need:{stone:3}},{id:'stonehelm',kind:'g',need:{stone:2}},{id:'witchboots',kind:'g',need:{essence:2}},{id:'stoneboots',kind:'g',need:{stone:2}}];
 function have(k){return k==='iron'?S.cargo.filter(s=>s.item===4).reduce((a,s)=>a+s.qty,0):(S.mats[k]||0)}
-function owns(r){return r.kind==='w'?S.weapons.includes(r.id):S.gear.includes(r.id)}
+function owns(r){return r.kind==='w'?(WEAPONS[r.id].lance?S.lances.includes(r.id):S.weapons.includes(r.id)):S.gear.includes(r.id)}
 function canCraft(r){return !owns(r)&&Object.entries(r.need).every(([k,n])=>have(k)>=n)}
 function craft(id){const r=RECIPES.find(r=>r.id===id);if(!r||!canCraft(r))return false;
  for(const [k,n] of Object.entries(r.need)){if(k==='iron'){let left=n;for(let i=S.cargo.length-1;i>=0&&left>0;i--){const st=S.cargo[i];if(st.item!==4)continue;const t=Math.min(left,st.qty);st.qty-=t;left-=t;if(st.qty<=0)S.cargo.splice(i,1)}}else S.mats[k]-=n}
- let nm;if(r.kind==='w'){S.weapons.push(id);S.weapon=id;nm=WEAPONS[id].name}else{S.gear.push(id);const sl=GEAR[id].slot;if(!S.eq[sl]||S.eq[sl]==='tophat')S.eq[sl]=id;nm=GEAR[id].name}
+ let nm;if(r.kind==='w'&&WEAPONS[id].lance){S.lances.push(id);S.lance=id;nm=WEAPONS[id].name}else if(r.kind==='w'){S.weapons.push(id);S.weapon=id;nm=WEAPONS[id].name}else{S.gear.push(id);const sl=GEAR[id].slot;if(!S.eq[sl]||S.eq[sl]==='tophat')S.eq[sl]=id;nm=GEAR[id].name}
  toast('<img class="px" style="width:20px;height:20px;vertical-align:middle" src="'+gearIcon(id)+'"> <b>'+nm+'</b> ✓',2000);save();return true}
 function gearIcon(id){return WEPURL[id]&&!GEAR[id]?WEPURL[id]:GEARURL[id]}
 function giveGear(id){if(GEAR[id]&&GEAR[id].base)return;const name=GEAR[id]?GEAR[id].name:WEAPONS[id].name;let msg;
@@ -555,6 +611,7 @@ function renderInv(){$('imoney').textContent=pr(S.money);let h='';const W=WEAPON
  if(owned.length||wps.length){h+='<div class="sec">GEAR</div><div class="tiles">';for(const g of owned)h+=tile(GEARURL[g],GEAR[g].name,{act:'eq',id:g,s:GEAR[g].stat,en:g});for(const w of wps)h+=tile(WEPURL[w],WEAPONS[w].name,{act:'eqw',id:w,s:wstat(WEAPONS[w]),en:w});h+='</div>'}
  for(const id in SETS){const st=SETS[id],ownN=st.pieces.filter(g=>S.gear.includes(g)).length,wear=st.pieces.filter(g=>S.eq[GEAR[g].slot]===g).length;if(!ownN)continue;const on=wear===3;
   h+='<div class="row" style="'+(on?'box-shadow:0 0 0 2px #000,0 0 0 4px '+st.col+';background:#3e2a44':'')+'">'+st.pieces.map(g=>'<img class="px" style="width:20px;height:20px;'+(S.eq[GEAR[g].slot]===g?'':S.gear.includes(g)?'opacity:.5':'opacity:.15')+'" src="'+GEARURL[g]+'">').join('')+'<span class="nm">'+st.name+'<span class="sub" style="color:'+(on?'#7de07a':'#8a7a70')+'">'+st.desc+'</span></span><span class="'+(on?'up':'')+'">'+wear+'/3</span></div>'}
+ if(S.lances.length){h+='<div class="sec">🐴 LANCE</div><div class="tiles">';for(const l of S.lances)h+=tile(WEPURL[l],WEAPONS[l].name,{cls:S.lance===l?'eq':'',act:'eql',id:l,s:'⚔'+WEAPONS[l].dmg,en:l});h+='</div>'}
  const mk=Object.keys(MATS).filter(k=>S.mats[k]>0);if(mk.length){h+='<div class="sec">MATERIALS</div><div class="tiles">';for(const k of mk)h+=tile(MATURL[k],MATS[k].name,{q:'×'+S.mats[k]});h+='</div>'}
  h+='<div class="sec">'+(S.park?'🎒 ':'')+'CARGO '+cargoCount()+'/'+cap()+'</div><div class="tiles">';
  if(!S.cargo.length)h+=tile('','Empty',{cls:'empty'});for(const st of S.cargo)h+=tile(ICONURL[ITEMS[st.item].id],ITEMS[st.item].name,{q:'×'+st.qty,s:'<span style="color:#b49a88">'+TOWNS[st.origin].name+'</span>'});h+='</div>';
@@ -565,6 +622,7 @@ $('ibody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  if(a==='eq'&&GEAR[id]&&S.gear.includes(id))S.eq[GEAR[id].slot]=id;
  else if(a==='uneq')S.eq[id]=null;
  else if(a==='eqw'&&S.weapons.includes(id))S.weapon=id;
+ else if(a==='eql'&&S.lances.includes(id))S.lance=id;
  S.hp=Math.min(S.hp,maxHP());save();renderInv()};
 // ===== witch & enchanting =====
 // Minecraft-style: each enchant has a level I-III; an offer holds 1-3 enchants (no duplicate types).
@@ -600,16 +658,16 @@ function rollEnchants(id){const c=isWep(id)?'w':'a',n=1+wIdx(ENCHN),out=[];
   out.push({k:pool[wIdx(pool.map(k=>ENCH[k].w[c]))],l:1+wIdx(ENCHL)})}return out}
 function enchCost(){return ENCHCOST}
 // replaces every enchant on the item with a fresh random roll
-function enchantItem(id){if(!(S.weapons.includes(id)||S.gear.includes(id))||id==='fists')return null;if((S.mats.essence||0)<ENCHCOST)return null;
+function enchantItem(id){if(!(S.weapons.includes(id)||S.gear.includes(id)||S.lances.includes(id))||id==='fists')return null;if((S.mats.essence||0)<ENCHCOST)return null;
  S.mats.essence-=ENCHCOST;S.ench[id]=rollEnchants(id);save();return S.ench[id]}
 function encList(id){const e=S&&S.ench&&S.ench[id];return Array.isArray(e)?e:[]}
 function eVal(x){return ENCH[x.k].v[x.l-1]}
 function eName(x){return ENCH[x.k].n+' '+RN[x.l-1]}
 // enchant sources currently active: held weapon + worn armor -> [key, 'w'|'a', level]
-function activeEnch(){const a=[];if(!S)return a;for(const x of encList(S.weapon))a.push([x.k,'w',x.l]);if(S.eq)for(const [sl] of GSLOTS){const g=S.eq[sl];if(g)for(const x of encList(g))a.push([x.k,'a',x.l])}return a}
+function activeEnch(){const a=[];if(!S)return a;for(const x of encList(heldW()))a.push([x.k,'w',x.l]);if(S.eq)for(const [sl] of GSLOTS){const g=S.eq[sl];if(g)for(const x of encList(g))a.push([x.k,'a',x.l])}return a}
 function ench(k){let n=0;for(const [x] of activeEnch())if(x===k)n++;return n}
 function ev(k,i){let s=0;for(const [x,,l] of activeEnch())if(x===k){const v=ENCH[k].v[l-1];s+=Array.isArray(v)?v[i||0]:v}return s} // summed value
-function wv(k){const x=encList(S.weapon).find(x=>x.k===k);return x?eVal(x):null} // held weapon's value
+function wv(k){const x=encList(heldW()).find(x=>x.k===k);return x?eVal(x):null} // held weapon's value
 function berserkMul(){const b=ev('berserk');return b?1+b*clamp(1-S.hp/maxHP(),0,1):1}
 function dmgMul(){return (1+ev('sharp'))*(1+ev('bloodthirst',0))*berserkMul()}
 function dmgTakenMul(){return 1+ev('bloodthirst',1)}
@@ -651,14 +709,14 @@ const WPORTRAIT='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH8AAAEACAYAAACav
 const WQUOTES=['Got essence? Let\'s make something cool.','Hand it over. I\'ll make it glow.','Curses hit hard. Both ways. Feeling lucky?'];
 let wSel=null,wRev=0;
 function itemName(id){return isWep(id)?WEAPONS[id].name:GEAR[id].name}
-function witchIds(){return S.weapons.filter(w=>w!=='fists').concat(S.gear)}
+function witchIds(){return S.weapons.filter(w=>w!=='fists').concat(S.lances,S.gear)}
 function renderWitch(){$('wmoney').textContent=pr(S.money);const es=S.mats.essence||0,ids=witchIds();if(!ids.includes(wSel))wSel=null;
  let h='<div class="wwrap"><div class="wl"><div class="wq">“'+WQUOTES[Math.floor(S.time/40)%WQUOTES.length]+'”</div>';
  h+='<div class="wcols"><div class="wsl"><div class="eslot'+(wSel?' full':'')+(wRev?' rev':'')+'" id="eslot"'+(wSel&&encList(wSel).length?' style="--ec:'+enchCol(wSel)+'"':'')+'>';
  if(wSel){const l=encList(wSel);h+='<img class="px si" data-id="'+wSel+'" src="'+gearIcon(wSel)+'"><b>'+itemName(wSel)+'</b>'+(l.length?l.map((x,i)=>'<span class="el" style="animation-delay:'+(i*.18)+'s">'+enchSpan(x)+'<span class="sub">'+ENCH[x.k].d(eVal(x))+'</span></span>').join(''):'<span class="sub">—</span>')}
  else h+='<span class="sub">'+(ids.length?'Drag or tap an item':'No gear yet')+'</span>';
  h+='</div><button id="ebtn" '+(!wSel||es<ENCHCOST?'disabled':'')+'>✨ Enchant · '+ENCHCOST+' <img class="px" style="width:12px;height:12px;vertical-align:middle" src="'+MATURL.essence+'"> <span style="opacity:.75">('+es+')</span></button>';
- h+='</div><div class="wtr"><div class="tray" id="etray">';for(const id of ids){if(id===wSel)continue;const on=isWep(id)?S.weapon===id:Object.values(S.eq).includes(id),l=encList(id);
+ h+='</div><div class="wtr"><div class="tray" id="etray">';for(const id of ids){if(id===wSel)continue;const on=isWep(id)?(WEAPONS[id].lance?S.lance===id:S.weapon===id):Object.values(S.eq).includes(id),l=encList(id);
   h+='<div class="ti'+(l.length?' ench':'')+'" data-id="'+id+'" title="'+itemName(id)+'"'+(l.length?' style="--ec:'+enchCol(id)+'"':'')+'><img class="px" src="'+gearIcon(id)+'">'+(on?'<span class="eb">E</span>':'')+(l.length?'<span class="ed">'+l.length+'</span>':'')+'</div>'}
  h+='</div><div class="small" style="line-height:1.6;margin-top:4px">1–3 random enchants · <span class="cz" style="color:'+CURSECOL+'">red = curse</span></div></div></div>';
  h+='</div><img id="wpor" src="'+WPORTRAIT+'" alt="Vex"></div>';
@@ -706,11 +764,39 @@ function setOn(id){const st=SETS[id];return !!(S&&S.eq&&st.pieces.every(g=>S.eq[
 function maxHP(){return (S?S.maxhp:100)+(S&&setOn('stone')?30:0)+(S&&S.ench?ev('hardy'):0)}
 function gearSum(k){let v=0;for(const [sl] of GSLOTS){const g=S.eq&&S.eq[sl];if(g&&GEAR[g][k])v+=GEAR[g][k]}return v}
 function hurtPlayer(dmg,sx,knock){if(P.inv>0||MODE!=='play')return;dmg*=(1-defTotal())*dmgTakenMul();S.hp-=dmg;thornsHit(dmg);P.inv=.9;const rock=setOn('stone'),kr=rock?0:1-gearSum('kb');P.kbx=(P.x>=sx?1:-1)*140*kr;if(P.onGround&&kr>.6){P.vy=-120*kr;P.onGround=false}
- ftxt(P.x,P.y-24,'-'+Math.round(dmg),'#ff6a6a');part(P.x,P.y-10,'#e84a4a',6,80);
+ ftxt(P.x,P.y-24,'-'+Math.round(dmg),'#ff6a6a');part(P.x,P.y-10,'#e84a4a',6,80);if(mounted())thrown(sx);
  if(!DG&&!rock&&knock!==false&&cargoCount()&&rnd()<.4){const u=randomUnit();if(u){dropUnit(u,P.x,P.y-14,(P.x>=sx?-1:1)*(60+rnd()*60));ftxt(P.x,P.y-32,'-1 '+ITEMS[u.item].name,'#ffd75e')}}
  if(S.hp<=0)die()}
+// ===== horse & lances =====
+const LANCEMIN=.25,LANCEMAX=1.75,HORSECALL=40; // lance damage x0.25 standing .. x1.75 at full gallop
+function mounted(){return !!(S&&S.horse&&S.horse.on&&!DG)}
+function heldW(){return S&&S.horse&&S.horse.on&&!DG&&S.lance?S.lance:S?S.weapon:'fists'}
+function nearHorse(){return !!(S&&S.horse&&!S.horse.on&&!DG&&P&&Math.abs(P.x-S.horse.x)<22)}
+function buyHorse(ti){if(S.horse||S.money<HORSEPRICE)return false;S.money-=HORSEPRICE;S.horse={on:false,x:TOWNS[ti].x+30,dir:-1};if(!S.lances.includes('woodlance'))S.lances.unshift('woodlance');if(!S.lance)S.lance='woodlance';
+ toast('<img class="px" style="width:28px;height:20px;vertical-align:middle" src="'+HORSEURL+'"> <b>Horse</b> ✓<br><span class="small">'+(isTouch?'tap 🐴':'press R')+' next to it</span>',2600);save();return true}
+function horseSpot(x){x=clamp(x,24,WORLD-24);if(PITS.some(p=>x>p.x0-16&&x<p.x1+16))x=P.lastSafe;return Math.round(x)}
+function mount(){if(!nearHorse())return false;S.horse.on=true;S.horse.x=null;P.hv=0;P.couch=0;P.x=clamp(P.x,12,WORLD-12);part(P.x,P.y-6,'#c8a060',8,60);toast('🐴 '+WEAPONS[S.lance].name,1000);save();return true}
+function dismount(at){if(!S.horse||!S.horse.on)return;S.horse.on=false;S.horse.x=horseSpot(at!=null?at:P.x);S.horse.dir=P.dir;P.hv=0;P.couch=0;P.ride=0;save()}
+function toggleHorse(){if(!S.horse){toast('🐴 Stables: Bog Town · Pinehollow · Stonepeak',1600);return}if(DG){toast('🐴 waits outside',900);return}
+ if(S.horse.on){dismount(P.x+P.dir*4);P.x=clamp(P.x-P.dir*10,12,WORLD-12);toast('🐴 🅿',800);return}
+ if(nearHorse())mount();else{const d=S.horse.x-P.x;toast('🐴 '+(d<0?'◀ ':'')+Math.round(Math.abs(d)/10)+'m'+(d>0?' ▶':''),1100)}}
+// knocked off: the horse stays where you fell, you tumble away
+function thrown(sx){if(!mounted())return;dismount(P.x);P.vy=-170;P.onGround=false;ftxt(P.x,P.y-34,'🐴!','#ffd75e');part(P.x,P.y-12,'#c8a060',10,90)}
+function lanceStrike(){const w=WEAPONS[S.lance];if(P.cd>0||P.couch>0)return;P.cd=w.cd;P.couch=.55;P.hits=[]}
+function lanceSpeed(){return clamp(Math.abs(P.hv||0)/GALLOP,0,1)}
+function lanceTick(dt){if(!(P.couch>0))return;P.couch-=dt;const w=WEAPONS[S.lance],s=lanceSpeed();
+ const x0=P.dir>0?P.x+4:P.x-w.range-6,x1=P.dir>0?P.x+w.range+6:P.x-4;
+ for(const e of ENEMIES){if(e.dead||P.hits.includes(e))continue;const d=ENEMY[e.type];if(!(e.x+d.w/2>x0&&e.x-d.w/2<x1&&e.y-d.h<P.y-6&&e.y>P.y-34))continue;
+  P.hits.push(e);const mul=LANCEMIN+(LANCEMAX-LANCEMIN)*s;const g=isGolem(e.type);const hp0=e.hp;
+  hitEnemy(e,w.dmg*mul,P.dir,w.elem);P.lastLance={type:e.type,s:+s.toFixed(3),mul:+mul.toFixed(3),dmg:Math.round(hp0-e.hp)};
+  if(w.burn&&!e.dead&&e.type!=='lavaGolem')e.burn=2;
+  if(s>.75){ftxt(e.x,e.y-d.h-18,'CHARGE!','#ffd75e');part(e.x,e.y-d.h/2,'#fff4b0',10,150)}
+  if(!g&&!e.dead)e.vx=P.dir*(90+220*s);
+  // golems don't budge: a fast head-on charge bounces you off the horse
+  if(g&&s>.35){P.couch=0;P.inv=0;const hit=Math.round(4+8*s);P.bounced=(P.bounced||0)+1;thrown(e.x);hurtPlayer(hit,e.x,true);P.kbx=-P.dir*190;ftxt(P.x,P.y-44,'BONK','#ff9a4a');break}
+  P.hv*=g?.2:.85}}
 function refundOf(units){let t=0;for(const u of units)t+=(+u.paid||0)*(u.qty||1);return Math.round(t*REFUND)}
-function die(){if(DG){dungeonKO();return}const lost=cargoCount();const gnd=PICK.filter(k=>k.item!=null&&!k.mat&&!k.gear);const refund=refundOf(S.cargo)+refundOf(gnd);S.money+=refund;S.cargo=[];S.hp=0;S.stats.deaths++;PICK=[];ENEMIES=[];PROJ=[];ROCKS=[];
+function die(){if(DG){dungeonKO();return}const lost=cargoCount();const gnd=PICK.filter(k=>k.item!=null&&!k.mat&&!k.gear);const refund=refundOf(S.cargo)+refundOf(gnd);S.money+=refund;S.cargo=[];if(S.horse&&S.horse.on){S.horse.on=false;S.horse.x=TOWNS[S.lastTown].x+30;S.horse.dir=-1}S.hp=0;S.stats.deaths++;PICK=[];ENEMIES=[];PROJ=[];ROCKS=[];
  $('deadTxt').innerHTML=(lost?'Lost '+lost+' goods.':'No goods lost.')+(refund?'<br><br><span id="refund" style="color:#ffd75e;font-size:11px">+'+pr(refund)+' refunded</span><br><span style="opacity:.7">(half of what you paid)</span>':'')+'<br><br>Money and gear kept.<br>Waking up in '+TOWNS[S.lastTown].name+'.';S.x=TOWNS[S.lastTown].x;S.hp=maxHP();
  try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}setMode('dead')}
 function hitEnemy(e,dmg,dir,elem){const w=WEAPONS[S.weapon];const m=wmult({elem:elem},e.type);const cr=wv('crit'),crit=cr&&rnd()<cr;const d=dmg*m*dmgMul()*(crit?2:1)*(.9+rnd()*.2);e.hp-=d;onHitFx(e,d);e.hitT=.12;e.vx=dir*(ENEMY[e.type].base==='golem'?30:90)*(wv('knock')||1);if(crit){ftxt(e.x,e.y-ENEMY[e.type].h-12,'CRIT!','#ffe08a');part(e.x,e.y-8,'#ffe08a',6,90)}
@@ -725,7 +811,7 @@ function steerProj(p,dt){const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp
  for(const e of ENEMIES){if(e.dead)continue;const tx=e.x-p.x,ty=e.y-ENEMY[e.type].h/2-p.y,d=Math.hypot(tx,ty);if(d<bd&&(tx*ux+ty*uy)/(d||1)>.34){bd=d;best=[tx,ty]}}
  if(!best)return;const want=Math.atan2(best[1],best[0]),cur=Math.atan2(uy,ux);let da=want-cur;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
  const tr=3.6*(p.home||1)*dt,a=cur+clamp(da,-tr,tr);p.vx=Math.cos(a)*sp;p.vy=Math.sin(a)*sp}
-function playerAttack(){const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd;P.atk=1;
+function playerAttack(){if(mounted()&&S.lance){lanceStrike();return}const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd;P.atk=1;
  if(w.ranged){const fire=w.elem==='fire',twin=setOn('witch'),n=twin?2:1;for(let i=0;i<n;i++){const a=twin?(i?-.13:.13):0;
   PROJ.push({x:P.x+P.dir*8,y:P.y-9-(twin?(i?2:-2):0),vx:P.dir*w.pspd*Math.cos(a),vy:w.pspd*Math.sin(a)+(w.leaf?-4:0),g:w.leaf?6:0,dmg:w.dmg*(1+gearSum('rng'))*(twin?.75:1),from:'p',elem:w.elem,kind:fire?'fire':w.leaf?'leaf':'bolt',home:fire?1:w.leaf?.6:0,life:fire?2.2:w.leaf?1.8:1.4,spin:rnd()*6})}
   if(twin)part(P.x+P.dir*8,P.y-9,'#c060ff',4,40,0,.3);return}
@@ -735,8 +821,8 @@ function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min
  if(DG)updDungeon(dt);else updWorld(dt);
  // actions
  if(P.cd>0)P.cd-=dt;if(P.atk>0)P.atk=Math.max(0,P.atk-dt/.2);if(P.inv>0)P.inv-=dt;
- if(inp.attack())playerAttack();
- if(inp.swap()){const i=S.weapons.indexOf(S.weapon);S.weapon=S.weapons[(i+1)%S.weapons.length];toast(WEAPONS[S.weapon].name,900)}
+ if(inp.attack())playerAttack();if(mounted())lanceTick(dt);else P.couch=0;
+ if(inp.swap()){if(mounted()&&S.lances.length){const i=S.lances.indexOf(S.lance);S.lance=S.lances[(i+1)%S.lances.length];toast(WEAPONS[S.lance].name,900)}else{const i=S.weapons.indexOf(S.weapon);S.weapon=S.weapons[(i+1)%S.weapons.length];toast(WEAPONS[S.weapon].name,900)}}
  if(inp.pot()){if(S.potions>0&&S.hp<maxHP()){S.potions--;const ph=ench('berserk')?23:45;S.hp=Math.min(maxHP(),S.hp+ph);ftxt(P.x,P.y-26,'+'+ph,'#7de07a');part(P.x,P.y-10,'#7de07a',10,60,-40)}else if(!S.potions)toast('No potions',900)}
  // enemies
  for(const e of ENEMIES){if(e.dead)continue;updEnemy(e,dt)}
@@ -746,7 +832,7 @@ function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min
   let solid;if(DG)solid=dSolid(p.x,p.y);else{const gy=groundAt(p.x);solid=gy!==null&&p.y>gy}
   if(solid||p.life<=0||townAt(p.x,TOWNR-20)&&p.from==='e'){p.dead=1;part(p.x,p.y,p.kind==='bolt'?'#c8a060':p.kind==='leaf'?'#6cc04a':'#ff8a2a',5,70);continue}
   if(p.from==='p'){for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(Math.abs(e.x-p.x)<d.w/2+2&&p.y>e.y-d.h&&p.y<e.y+1){hitEnemy(e,p.dmg,Math.sign(p.vx),p.elem);p.dead=1;break}}}
-  else if(Math.abs(p.x-P.x)<6&&p.y>P.y-17&&p.y<P.y+1){p.dead=1;hurtPlayer(p.dmg,p.x)}}
+  else if(Math.abs(p.x-P.x)<(mounted()?9:6)&&p.y>P.y-(mounted()?27:17)&&p.y<P.y+1){p.dead=1;hurtPlayer(p.dmg,p.x)}}
  PROJ=PROJ.filter(p=>!p.dead);
  // pickups (road only)
  if(!DG){for(const k of PICK){k.life-=dt;if(!k.ground){k.vy+=600*dt;k.x+=k.vx*dt;k.y+=k.vy*dt;const gy=groundAt(k.x);const pit=pitAt(k.x);if(pit&&k.y>pit.ly){k.dead=1;part(k.x,pit.ly,'#ff7a1a',6,60);continue}if(gy!==null&&k.y>=gy){k.y=gy;k.ground=true}}
@@ -760,17 +846,21 @@ function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min
 function updWorld(dt){const H=HAULERS[carriedH()];const b=biomeAt(P.x);const town=townAt(P.x);
  if(b!==env.biome){if(env.biome>=0||b>0)toast('<b>'+BIOMES[b].name+'</b><br>'+BIOMEINFO[b],2600);env.biome=b}
  // env
- let mul=H.spd;if(inDrift(P.x)&&P.onGround)mul*=.55;
+ let mul=H.spd;
+ // on horseback: 1.5x; a hitched cart drags a little (more when loaded), always faster than walking it
+ if(mounted()){const c=cap(),fill=c?cargoCount()/c:0;mul=RIDE*(carriedH()==='backpack'?1:1-(1-H.spd)*(.3+.4*fill))}
+ if(inDrift(P.x)&&P.onGround)mul*=.55;
  if(b===1&&!town){env.blizT-=dt;if(env.bliz<=0&&env.blizT<=0){env.bliz=8;env.blizT=22+rnd()*15;toast('❄ Blizzard!',1500)}}
  if(env.bliz>0){env.bliz-=dt;if(b!==1)env.bliz=0}
  if(env.bliz>0&&b===1)mul*=.72;
  let mv=(inp.left()?-1:0)+(inp.right()?1:0);if(mv)P.dir=mv;
  if(b===2&&mv&&P.onGround){const s=(heightAt(P.x+3*mv)-heightAt(P.x-3*mv))/6;if(s>0)mul*=Math.max(.45,1-s*2.6);else mul*=Math.min(1.15,1-s*.8)}
- const vx=mv*92*mul*spdMul();const ox=P.x;P.x=clamp(P.x+(vx+P.kbx)*dt,12,WORLD-12);P.kbx*=Math.pow(.004,dt);if(Math.abs(P.kbx)<2)P.kbx=0;
+ let vx=mv*92*mul*spdMul();if(mounted()){P.hv=(P.hv||0)+(vx-(P.hv||0))*Math.min(1,dt*(mv&&Math.sign(vx)===Math.sign(P.hv||vx)?2.2:5));if(Math.abs(P.hv)<1&&!mv)P.hv=0;vx=P.hv;P.ride=(P.ride||0)+Math.abs(vx)*dt}else P.hv=0;
+ const ox=P.x;P.x=clamp(P.x+(vx+P.kbx)*dt,12,WORLD-12);P.kbx*=Math.pow(.004,dt);if(Math.abs(P.kbx)<2)P.kbx=0;
  const dx=P.x-ox;P.walk=mv&&P.onGround;P.wheel+=dx/4;
  const g=groundAt(P.x);
  if(P.onGround){if(g===null)P.onGround=false;else P.y=g}
- if(inp.jump()&&P.onGround){P.vy=-255*H.jump;P.onGround=false}
+ if(inp.jump()&&P.onGround){P.vy=-255*H.jump*(mounted()?.97:1);P.onGround=false}
  if(!P.onGround){P.vy+=720*dt;P.y+=P.vy*dt;if(g!==null&&P.y>=g&&(P.vy>=0||P.y>g+3)){P.y=g;P.vy=0;P.onGround=true}
   const pit=pitAt(P.x);if(pit&&P.y>pit.ly){burnPit(pit)}}
  if(P.onGround&&g!==null&&!pitAt(P.x-6)&&!pitAt(P.x+6))P.lastSafe=P.x;
@@ -784,13 +874,14 @@ function updWorld(dt){const H=HAULERS[carriedH()];const b=biomeAt(P.x);const tow
  // caves you pass get marked on the map
  for(const d of DUNGEONS)if(Math.abs(d.x-P.x)<VW*.5&&!S.caves.includes(d.i))S.caves.push(d.i);
  witchTick();
- if(inp.cart())toggleCart();
+ if(inp.cart())toggleCart();if(inp.horse())toggleHorse();
  if(MODE!=='play'){$('prompt').style.display='none';return}
  const dn=dungAt(P.x,20),nearCart=nearCartP();let h='';
  if(town){h='<b class="gold">'+town.name+'</b><br>'+(isTouch?'Tap E':'Press E')+' to trade';if(S.lastTown!==town.i){S.lastTown=town.i;if(!S.visited.includes(town.i))S.visited.push(town.i);save()}if(inp.use())enterTown(town)}
  else if(dn){const l=dState(dn);h=l?skulls(dn.diff,1)+' ✓<br>⟳ '+Math.ceil(l/60)+'m':skulls(dn.diff)+'<br>'+(isTouch?'E':'[E]')+' Enter';if(inp.use()&&!l)enterDungeon(dn)}
  else if(nearWitch()){h='<b style="color:#c9b4ec">🔮 Vex</b><br>'+(isTouch?'Tap E':'Press E')+' to enchant';if(inp.use())openWitch()}
  if(nearCart)h+=(h?'<br>':'')+'🛒 '+(isTouch?'Tap 🛒':'[C]')+' Hitch';
+ if(nearHorse())h+=(h?'<br>':'')+'🐴 '+(isTouch?'Tap 🐴':'[R]')+' Ride';
  if(h&&MODE==='play'){$('prompt').style.display='block';$('prompt').innerHTML=h}else $('prompt').style.display='none'}
 // ===== carts =====
 function unitsOf(a){const u=[];for(const s of a)for(let k=0;k<s.qty;k++)u.push({item:s.item,origin:s.origin,paid:s.paid});return u}
@@ -832,7 +923,7 @@ function genDungeon(d){const R=mulberry((d.i+1)*7919+((S.dng[d.i]||{}).n||0)*131
   const fx=p===end?p.x0+40+R()*50:p.x0+18+R()*(p.w-36);foes.push({type,x:fx,p})}
  let maxY=-1e9;for(const p of plats)maxY=Math.max(maxY,p.by+(p.mv?Math.max(0,p.mv.ay):0));
  return {d,b:d.b,diff,plats,spikes,foes,chest,torches,doorX:-46,endX,minX:-70,maxX:end.x1,deathY:maxY+110,abyssY:maxY+46,t:0,start,end}}
-function enterDungeon(d){if(dState(d)>0||DG)return;if(!S.park&&S.hauler!=='backpack')unhitch(d.x-34);
+function enterDungeon(d){if(dState(d)>0||DG)return;if(S.horse&&S.horse.on){dismount(d.x+30);toast('🐴 waits outside',900)}if(!S.park&&S.hauler!=='backpack')unhitch(d.x-34);
  save();DG=genDungeon(d);ENEMIES=[];PROJ=[];PICK=[];PARTS=[];FTXT=[];ROCKS=[];
  P=newPlayer(0);P.x=-12;P.y=0;P.plat=DG.start;P.safe={x:-12,y:0,p:DG.start};P.inv=.6;
  for(const f of DG.foes){const e=spawnEnemy(f.type,f.x);e.plat=f.p;e.y=f.p.y-((ENEMY[f.type].base||f.type)==='witch'?30:0);e.dir=-1}
@@ -874,7 +965,7 @@ function updDungeon(dt){const D=DG;D.t+=dt;
  if(P.plat===D.start&&Math.abs(P.x-D.doorX)<18){h=k+' ⬅ Leave';if(inp.use()){$('prompt').style.display='none';exitDungeon();return}}
  else if(P.plat===D.end&&!D.chest.open&&Math.abs(P.x-D.chest.x)<18){h=k+' 🎁 Open';if(inp.use())openChest()}
  else if(P.plat===D.end&&D.chest.open&&Math.abs(P.x-D.endX)<18){h=k+' ➜ Exit';if(inp.use()){$('prompt').style.display='none';exitDungeon();return}}
- if(inp.cart())toggleCart();
+ if(inp.cart())toggleCart();if(inp.horse())toggleHorse();
  if(h&&MODE==='play'){$('prompt').style.display='block';$('prompt').innerHTML=h}else $('prompt').style.display='none'}
 function burnPit(pit){S.hp-=25;P.inv=.9;ftxt(P.x,P.y-24,'-25 🔥','#ff7a1a');part(P.x,pit.ly,'#ff7a1a',16,160);let lost=0;for(let i=0;i<2;i++)if(randomUnit())lost++;if(lost)ftxt(P.x,P.y-34,'-'+lost+' burned','#ffd75e');
  P.x=P.lastSafe;P.y=surfY(P.x);P.vy=0;P.onGround=true;P.kbx=0;if(S.hp<=0)die()}
@@ -959,6 +1050,7 @@ function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==
  if(S&&S.witch&&MODE!=='menu')drawWitchCamp(ox,oy);
  // parked cart
  if(S&&S.park&&MODE!=='menu')drawParked(ox,oy);
+ if(S&&S.horse&&!S.horse.on&&MODE!=='menu'&&Math.abs(S.horse.x-ox-VW/2)<VW/2+40){const hx=Math.round(S.horse.x-ox),hy=Math.round(surfY(S.horse.x)-oy);drawHorse(X,hx,hy,S.horse.dir,menuT,0,1);if(nearHorse()&&MODE==='play'&&Math.sin(menuT*4)>0)px(X,hx,hy-27,1,2,'#ffd75e')}
  drawActors(ox,oy);
  // weather
  const bm=biomeAt(mid);
@@ -978,9 +1070,14 @@ function drawActors(ox,oy){
  if(P&&S&&MODE!=='menu'){const sx=Math.round(P.x-ox),sy=Math.round(P.y-oy);const fl=P.inv>0&&Math.floor(P.inv*14)%2===0;
   let hy=sy;const H=carriedH();if(H!=='backpack'&&H!=='wheelbarrow'){const cxw=P.x-P.dir*(H==='bigwagon'?28:20);const g=groundAt(cxw);hy=Math.round((g===null?P.y:Math.min(g+(P.y-(groundAt(P.x)??P.y)),g))-oy)}
   const cols=cargoColors();
+  if(mounted()){const d=P.dir;
+   if(H==='smallwagon'||H==='bigwagon'){const cxw=P.x-d*(H==='bigwagon'?40:32),g=groundAt(cxw);const yy=Math.round((g===null?P.y:Math.min(g+(P.y-(groundAt(P.x)??P.y)),g))-oy);drawHauler(X,sx-d*12,yy,d,H,cols,P.wheel)}
+   else if(H==='wheelbarrow'){const g=groundAt(P.x-d*24);drawHauler(X,sx-d*12,Math.round((g===null?P.y:g)-oy),-d,H,cols,P.wheel)}
+   drawRider(X,sx,sy,d,menuT,fl,cols)}
+  else{
   if(H==='smallwagon'||H==='bigwagon')drawHauler(X,sx,hy,P.dir,H,cols,P.wheel);
   drawPlayer(X,sx,sy,P.dir,menuT,P.walk,!P.onGround,fl,S.weapon,P.atk,{eq:S.eq,look:S.look});setAura(X,sx,sy,menuT);enchAura(X,sx,sy,menuT);
-  if(H==='backpack'||H==='wheelbarrow')drawHauler(X,sx,sy,P.dir,H,cols,P.wheel)}
+  if(H==='backpack'||H==='wheelbarrow')drawHauler(X,sx,sy,P.dir,H,cols,P.wheel)}}
  else if(MODE==='menu'){const sx=Math.round(VW/2),wx=camX+VW/2;const sy=Math.round(surfY(wx)-oy);drawHauler(X,sx,sy,1,'smallwagon',['#d83a3a','#c8a060','#8b5a2b','#ffd040','#d83a3a','#8b5a2b'],menuT*6);drawPlayer(X,sx,sy,1,menuT,true,false,false,'sword',0)}
  for(const p of PROJ){const sx=Math.round(p.x-ox),sy=Math.round(p.y-oy);if(p.kind==='leaf'){const f=Math.floor(menuT*10+p.spin)%4;const L=[[-2,0,4,1],[-1,-1,2,3],[-2,-1,3,2],[-1,0,3,2]][f];px(X,sx+L[0],sy+L[1],L[2],L[3],'#3aa040');px(X,sx,sy,1,1,'#b8f080');if(rnd()<.3)PARTS.push({x:p.x,y:p.y,vx:0,vy:8,col:'#6cc04a',g:0,life:.3})}
   else if(p.kind==='bolt'){px(X,sx-3,sy,6,1,'#c8a060');px(X,p.vx>0?sx+2:sx-3,sy,1,1,'#e8eef4')}
@@ -1098,6 +1195,7 @@ function buildTown(g,tw){const b=tw.biome;const base=68;let seed=tw.i*17+3;const
  px(g,88,base-16,2,16,'#5a3818');px(g,82,base-20,14,7,'#a8743c');px(g,84,base-18,10,1,'#5a3818');px(g,84,base-16,8,1,'#5a3818');
  px(g,152+18,base-12,2,12,'#5a3818');px(g,148+18,base-16,12,6,'#ffd75e');px(g,151+18,base-14,1,2,'#7a5420');px(g,155+18,base-14,1,2,'#7a5420');
  if(tw.forge){px(g,45,base-13,2,13,'#5a3818');px(g,40,base-20,12,7,'#3a3a40');px(g,42,base-18,7,2,'#c8ccd4');px(g,44,base-16,3,1,'#9aa0aa');px(g,43,base-15,5,1,'#9aa0aa');px(g,49,base-22,2,2,'#ff8a2a');px(g,50,base-23,1,1,'#ffd040')}
+ if(tw.stable){px(g,134,base-6,14,1,'#7a5228');px(g,134,base-3,14,1,'#7a5228');px(g,134,base-7,1,7,'#5a3818');px(g,147,base-7,1,7,'#5a3818');px(g,140,base-16,2,16,'#5a3818');for(const [a,b2] of [[137,-23],[137,-22],[137,-21],[137,-20],[143,-23],[143,-22],[143,-21],[143,-20],[138,-19],[139,-18],[140,-18],[141,-18],[142,-19]])px(g,a,base+b2,2,1,'#c8ccd4');px(g,150,base-5,7,5,'#e8c860');px(g,150,base-5,7,1,'#fff0a0');px(g,152,base-3,3,1,'#c8a040')}
  if(tw.barber){px(g,219,base-17,4,1,'#c8c8c8');for(let i=0;i<12;i++)px(g,220,base-16+i,2,1,['#e83a3a','#f4f4f4','#3a6ad0'][(i>>1)%3]);px(g,219,base-4,4,1,'#c8c8c8');px(g,220,base-3,2,3,'#5a5a60')}
  if(b===3){px(g,4,base-26,2,26,'#3a2a2a');px(g,3,base-29,4,3,'#ff6a1a');px(g,234,base-26,2,26,'#3a2a2a');px(g,233,base-29,4,3,'#ff6a1a')}
  else{px(g,4,base-20,2,20,'#5a3818');px(g,2,base-22,6,3,'#ffd040');px(g,234,base-20,2,20,'#5a3818');px(g,232,base-22,6,3,'#ffd040')}}
@@ -1120,5 +1218,5 @@ setMode('menu');requestAnimationFrame(frame);
 addEventListener('beforeunload',()=>{if(MODE!=='menu')save()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&MODE==='play'){save();setMode('pause')}});
 // test hooks
-window.MR={enchantItem,enchCost,ENCH,rollEnchants,putSlot,get wSel(){return wSel},ev,encList,berserkMul,dmgTakenMul,openWitch,closeWitch,placeWitch,nearWitch,dmgMul,defTotal,spdMul,ench,hitEnemy,renderWitch,witchTick,setOn,maxHP,SETS,giveMat,craft,RECIPES,have,MATS,giveGear,dropLoot,killEnemy,openInv,closeInv,GEAR,set dropMul(v){DROPMUL=v},gearSum,spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},get PROJ(){return PROJ},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,PITS,surfY,env,get DG(){return DG},DUNGEONS,enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
+window.MR={mount,dismount,toggleHorse,mounted,heldW,nearHorse,buyHorse,lanceStrike,lanceSpeed,HORSEPRICE,RIDE,GALLOP,LANCEMIN,LANCEMAX,enchantItem,enchCost,ENCH,rollEnchants,putSlot,get wSel(){return wSel},ev,encList,berserkMul,dmgTakenMul,openWitch,closeWitch,placeWitch,nearWitch,dmgMul,defTotal,spdMul,ench,hitEnemy,renderWitch,witchTick,setOn,maxHP,SETS,giveMat,craft,RECIPES,have,MATS,giveGear,dropLoot,killEnemy,openInv,closeInv,GEAR,set dropMul(v){DROPMUL=v},gearSum,spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},get PROJ(){return PROJ},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,PITS,surfY,env,get DG(){return DG},DUNGEONS,enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
 </script></body></html>
