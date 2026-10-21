@@ -289,6 +289,7 @@ function wepPixels(id){switch(id){
  default:return []}}
 function drawWeapon(c,hx,hy,dir,ang,id,t){
  const P=wepPixels(id);if(!P.length)return;const ca=Math.cos(ang),sa=Math.sin(ang);let ex=hx,ey=hy;
+ if(WEAPONS[id]&&WEAPONS[id].lance)for(let i=3;i<P.length;i++)px(c,hx+ca*i*dir-sa*dir,hy+sa*i+ca,1,1,'#1e140c'); // dark underside so the lance reads against the horse
  for(let i=0;i<P.length;i++){const x=hx+ca*i*dir,y=hy+sa*i;px(c,x,y,1,1,P[i]);if(id==='sword'||id==='obsidian'||id==='flamesword'){if(i>2)px(c,x-sa*dir,y+ca,1,1,P[i])}ex=x;ey=y}
  const nx=-sa*dir,ny=ca;
  if(id==='warhammer'){for(let j=-3;j<=3;j++)for(let k=0;k<3;k++)px(c,ex+nx*j+ca*dir*k,ey+ny*j+sa*k,1,1,j===-3||j===3?'#6a707a':'#9aa0aa')}
