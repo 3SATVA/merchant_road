@@ -72,6 +72,7 @@ img.big{width:72px;height:42px}
 #touch.on{display:block}
 .tb{position:absolute;pointer-events:auto;width:62px;height:62px;border-radius:50%;background:rgba(255,240,210,.16);box-shadow:0 0 0 2px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;text-shadow:2px 2px 0 #000;touch-action:none}
 .tb.dn{background:rgba(255,215,94,.45)}
+.pi{image-rendering:pixelated;image-rendering:crisp-edges;vertical-align:middle;pointer-events:none;-webkit-user-drag:none;user-select:none}.tb .pi{width:32px;height:32px}#ibtn .pi{display:block;margin:-1px .5px}.th button .pi{display:block;margin:-2px -5px}h2 .pi{vertical-align:-2px}
 #tL{left:14px;bottom:22px}#tR{left:90px;bottom:22px}
 #tJ{right:16px;bottom:22px;width:70px;height:70px}#tA{right:96px;bottom:40px;width:70px;height:70px}
 #tE{right:30px;bottom:110px;width:56px;height:56px;font-size:11px}
@@ -106,8 +107,8 @@ img.big{width:72px;height:42px}
  <div class="hr"><canvas id="mini" width="200" height="20"></canvas><div class="st" id="bname">Plains</div></div>
 </div>
 <div id="prompt"></div><div id="toasts"></div>
-<div id="touch"><div class="tb" id="tL">◀</div><div class="tb" id="tR">▶</div><div class="tb" id="tJ">▲</div><div class="tb" id="tA">⚔</div><div class="tb" id="tE">E</div><div class="tb" id="tH">🧪</div><div class="tb" id="tQ">Q</div><div class="tb" id="tC">🛒</div><div class="tb" id="tM">🐴</div></div>
-<button id="pbtn" style="display:none">II</button><button id="ibtn" class="alt" style="display:none" aria-label="Inventory">🎒</button>
+<div id="touch"><div class="tb" id="tL" aria-label="Left"></div><div class="tb" id="tR" aria-label="Right"></div><div class="tb" id="tJ" aria-label="Jump"></div><div class="tb" id="tA" aria-label="Attack"></div><div class="tb" id="tE">E</div><div class="tb" id="tH" aria-label="Potion"></div><div class="tb" id="tQ">Q</div><div class="tb" id="tC" aria-label="Cart"></div><div class="tb" id="tM" aria-label="Horse"></div></div>
+<button id="pbtn" style="display:none">II</button><button id="ibtn" class="alt" style="display:none" aria-label="Inventory"></button>
 <div id="menu" class="ov on"><div class="mid"><h1>MERCHANT<br>ROAD</h1><div class="small" style="text-align:center">Buy low. Travel far. Sell high.</div>
  <button id="bCont">Continue</button><button id="bNew">New Game</button><button id="bHelp" class="alt">How to Play</button></div></div>
 <div id="pause" class="ov"><div class="panel mid"><h2>Paused</h2><button id="bRes">Resume</button><button id="bHelp2" class="alt">How to Play</button><button id="bMenu" class="red">Main Menu</button></div></div>
@@ -131,9 +132,9 @@ img.big{width:72px;height:42px}
 <div id="town" class="ov"><div class="panel"><div class="th"><h2 id="tname">Town</h2><span class="gold" id="tmoney"></span><button id="tLeave" class="red">✕</button></div>
  <div class="tabs" id="ttabs"><button data-tab="market"><img data-b="market">Market</button><button data-tab="haulers"><img data-b="haulers">Haulers</button><button data-tab="weapons"><img data-b="weapons">Smith</button><button data-tab="inn"><img data-b="inn">Inn</button><button data-tab="barber"><img data-b="barber">Barber</button><button data-tab="craft"><img data-b="craft">Forge</button><button data-tab="stable"><img data-b="stable">Stable</button></div>
  <div id="tbody"></div></div></div>
-<div id="inv" class="ov"><div class="panel"><div class="th"><h2>🎒</h2><span class="gold" id="imoney"></span><button id="invX" class="red">✕</button></div><div id="ibody"></div></div></div>
-<div id="witch" class="ov"><div class="panel"><div class="th"><h2 style="color:#c9b4ec">🔮 Vex</h2><span class="gold" id="wmoney"></span><button id="wX" class="red">✕</button></div><div id="wbody"></div></div></div>
-<div id="scrap" class="ov"><div class="panel" id="spanel"><div class="th"><h2>✈</h2><span class="gold" id="spct"></span><button id="sX" class="red">✕</button></div><div id="sbody"></div></div></div>
+<div id="inv" class="ov"><div class="panel"><div class="th"><h2 id="invH"></h2><span class="gold" id="imoney"></span><button id="invX" class="red">✕</button></div><div id="ibody"></div></div></div>
+<div id="witch" class="ov"><div class="panel"><div class="th"><h2 style="color:#c9b4ec"><span id="wH"></span> Vex</h2><span class="gold" id="wmoney"></span><button id="wX" class="red">✕</button></div><div id="wbody"></div></div></div>
+<div id="scrap" class="ov"><div class="panel" id="spanel"><div class="th"><h2 id="sH"></h2><span class="gold" id="spct"></span><button id="sX" class="red">✕</button></div><div id="sbody"></div></div></div>
 <div id="dead" class="ov"><div class="panel mid"><h2 style="color:#ff7a6a">Defeated</h2><div class="small" id="deadTxt"></div><button id="bRespawn">Continue</button></div></div>
 <script>
 'use strict';
@@ -411,6 +412,42 @@ function drawEnemy(c,e,sx,sy,t){
 function spriteURL(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');fn(g);return c.toDataURL()}
 const HAULURL={};HORDER.forEach(id=>{HAULURL[id]=spriteURL(56,32,g=>{drawHauler(g,id==='wheelbarrow'?20:id==='backpack'?30:50,30,1,id,['#d83a3a','#c8a060','#8b5a2b','#ffd040','#a8b0bc'],.4);if(id==='backpack')drawPlayer(g,30,30,1,0,false,false,false,'fists',0)})});
 const WEPURL={};const WEPC={};ICONORDER.forEach(id=>{const c=document.createElement('canvas');c.width=16;c.height=16;drawWeapon(c.getContext('2d'),3,13,1,-.78,id,0);WEPC[id]=c});ICONORDER.forEach(id=>{WEPURL[id]=spriteURL(16,16,g=>{if(id==='fists'){px(g,5,6,6,5,'#f1c28a');px(g,5,6,6,1,'#ffd8a8');px(g,6,8,1,1,'#c08a50');px(g,8,8,1,1,'#c08a50')}else drawWeapon(g,3,13,1,-.78,id,0)})});
+// ===== pixel UI icons (buttons/HUD draw these instead of emoji) =====
+// each icon is drawn at 1x into a small canvas, then gets an automatic 1px dark outline
+function icoURL(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');fn(g);
+ const d=g.getImageData(0,0,w,h),a=d.data,o=new Uint8ClampedArray(a);const op=(x,y)=>x>=0&&y>=0&&x<w&&y<h&&a[(y*w+x)*4+3]>0;
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){if(op(x,y))continue;if(op(x-1,y)||op(x+1,y)||op(x,y-1)||op(x,y+1)){const i=(y*w+x)*4;o[i]=26;o[i+1]=16;o[i+2]=20;o[i+3]=255}}
+ g.putImageData(new ImageData(o,w,h),0,0);return {url:c.toDataURL(),w,h}}
+const ICO={};{const L='#f4ead0',L2='#d8c8a4',WD='#8b5a2b',WD2='#5e3a1e',WD3='#a8743c',GD='#ffd040',GD2='#ffe88a',ST='#e8eef4',ST2='#a8b0bc',HB='#c8864a',HB2='#8a5530',HM='#5a3418',RD='#c83a3a';
+ const D=(n,fn,w,h)=>{ICO[n]=icoURL(w||16,h||16,fn)};
+ D('arR',g=>{for(let i=0;i<7;i++){const h=13-2*i;px(g,5+i,2+i,1,h,L);px(g,5+i,2+i+Math.ceil(h/2),1,Math.floor(h/2),L2)}});
+ D('arL',g=>{for(let i=0;i<7;i++){const h=13-2*i;px(g,10-i,2+i,1,h,L);px(g,10-i,2+i+Math.ceil(h/2),1,Math.floor(h/2),L2)}});
+ D('arU',g=>{for(let i=0;i<7;i++){const w=13-2*i;px(g,2+i,12-i,w,1,L);px(g,2+i+Math.ceil(w/2),12-i,Math.floor(w/2),1,L2)}});
+ D('sword',g=>{for(let k=0;k<7;k++){px(g,12-k,2+k,2,1,ST);px(g,13-k,2+k,1,1,ST2)}px(g,13,1,1,1,ST);for(let k=0;k<5;k++)px(g,3+k,7+k,1,1,GD);px(g,5,9,1,1,GD2);px(g,4,11,1,1,WD);px(g,3,12,1,1,WD);px(g,2,13,2,2,GD)});
+ D('potion',g=>{px(g,7,1,3,2,'#c8a060');px(g,7,3,3,2,'#c8e8ff');const W=[4,6,8,8,8,8,6,4];for(let j=0;j<8;j++){const w=W[j],x=8.5-w/2;px(g,x,5+j,w,1,j<2?'#c8e8ff':j<6?'#e84a4a':'#b02a2a')}px(g,6,7,1,2,'#ffffff');px(g,5,9,1,1,'#ff9088')});
+ D('pack',g=>{px(g,6,1,4,2,WD2);px(g,6,1,4,1,WD3);px(g,3,3,10,11,WD);px(g,3,3,10,4,WD3);px(g,3,7,10,1,WD2);px(g,7,6,2,2,GD);px(g,5,10,6,3,WD2);px(g,5,10,6,1,'#6e4526')});
+ const wagon=g=>{px(g,6,2,7,1,L);px(g,5,3,9,3,L);px(g,5,5,9,1,L2);px(g,7,3,1,3,L2);px(g,11,3,1,3,L2);px(g,5,6,9,3,WD);px(g,5,6,9,1,WD3);px(g,5,8,9,1,WD2);
+  for(const x of [6,11]){px(g,x,9,3,3,WD2);px(g,x+1,10,1,1,'#c8a060')}};
+ D('cartH',g=>{wagon(g);px(g,3,7,2,1,WD2);px(g,1,6,3,1,GD);px(g,1,8,3,1,GD);px(g,1,7,1,1,GD)}); // tow bar level, gold hitch ring
+ D('cartP',g=>{wagon(g);px(g,4,8,1,1,WD2);px(g,3,9,1,1,WD2);px(g,2,10,1,1,WD2);px(g,1,11,1,1,WD2);px(g,9,12,3,2,RD);px(g,9,12,3,1,'#e8705a')}); // bar down on the ground, red wheel chock
+ const horse=g=>{px(g,2,6,1,5,HM);px(g,1,9,1,3,HM);px(g,3,7,9,4,HB);px(g,3,10,9,1,'#a06a38');for(const x of [4,6,9,11]){px(g,x,11,1,2,HB2);px(g,x,13,1,1,'#3a2414')}
+  px(g,10,4,3,4,HB);px(g,11,2,4,3,HB);px(g,14,4,1,1,'#a06a38');px(g,11,1,1,1,HB);px(g,10,3,1,4,HM);px(g,12,3,1,1,'#1a1014')};
+ D('horseOff',g=>{horse(g);px(g,5,6,4,2,RD);px(g,5,6,4,1,'#e8705a');px(g,7,8,1,2,HB2)});
+ D('horseOn',g=>{horse(g);px(g,5,6,4,1,RD);px(g,6,1,3,2,'#f1c28a');px(g,6,1,3,1,'#5a3418');px(g,6,3,3,4,'#3a6ad0');px(g,7,7,1,3,'#2a4a9a');px(g,9,4,2,1,'#f1c28a');px(g,11,4,1,1,'#c8a060')});
+ D('x',g=>{for(let k=0;k<7;k++){px(g,4+k,4+k,2,2,'#ffffff');px(g,10-k,4+k,2,2,'#ffffff')}});
+ D('check',g=>{for(const [x,y] of [[2,8],[3,9],[4,10],[5,11],[6,10],[7,9],[8,8],[9,7],[10,6],[11,5],[12,4]])px(g,x,y,2,2,'#7de07a');px(g,5,12,1,1,'#4aa040')});
+ D('spark',g=>{px(g,6,3,2,10,GD);px(g,2,7,10,2,GD);px(g,5,6,4,4,GD);px(g,6,7,2,2,'#ffffff');px(g,12,1,1,5,GD2);px(g,10,3,5,1,GD2)});
+ D('down',g=>{px(g,6,2,4,6,L);px(g,8,2,2,6,L2);for(let i=0;i<5;i++){px(g,3+i,8+i,10-2*i,1,L);px(g,8,8+i,5-i,1,L2)}});
+ D('lock',g=>{px(g,5,2,6,1,ST2);px(g,4,3,2,4,ST2);px(g,10,3,2,4,ST2);px(g,3,7,10,7,GD);px(g,3,7,10,1,GD2);px(g,3,13,10,1,'#c8a030');px(g,7,9,2,3,'#6a4a1a')});
+ D('ship',g=>{for(let i=-6;i<=6;i++){const hh=Math.max(1,Math.round(3.4*Math.sqrt(1-(i/6.6)**2)));px(g,8+i,6-hh,1,hh*2,Math.floor((i+6)/3)%2?'#c84a3a':'#e8d8b0')}px(g,5,9,1,2,WD2);px(g,11,9,1,2,WD2);px(g,3,11,11,2,WD);px(g,3,11,11,1,WD3);px(g,4,13,9,1,WD2);px(g,13,10,1,1,WD);px(g,1,5,1,3,ST2)});
+ D('park',g=>{px(g,2,2,12,12,'#3a6ad0');px(g,2,2,12,1,'#6a9af0');px(g,5,4,2,8,'#ffffff');px(g,7,4,3,2,'#ffffff');px(g,9,5,2,3,'#ffffff');px(g,7,7,3,2,'#ffffff')});
+ D('ball',g=>{for(let i=-5;i<=5;i++){const hh=Math.round(5*Math.sqrt(1-(i/5.5)**2));px(g,8+i,7-hh,1,hh*2,i>1?'#8a3ac0':'#c060ff')}px(g,5,4,2,2,'#f0d0ff');px(g,4,12,8,2,WD);px(g,4,12,8,1,WD3)});
+ D('tsword',g=>{for(const [x,y] of [[7,1],[6,2],[5,3],[4,4]])px(g,x,y,1,1,ST);px(g,7,2,1,1,ST2);px(g,6,3,1,1,ST2);px(g,5,4,1,1,ST2);px(g,2,4,1,1,GD);px(g,3,5,1,1,GD);px(g,4,6,1,1,GD);px(g,2,6,1,1,WD);px(g,1,7,1,1,GD)},9,9);
+ D('tbow',g=>{px(g,3,1,2,1,WD);px(g,2,2,1,5,WD);px(g,3,7,2,1,WD);px(g,5,2,1,5,'#e8e0d0');px(g,1,4,6,1,ST2);px(g,7,3,1,3,ST)},9,9)}
+window.MR_ICO=n=>ICO[n];function ico(n,sc){const i=ICO[n];sc=sc||1;return '<img class="pi" alt="" draggable="false" src="'+i.url+'" style="width:'+i.w*sc+'px;height:'+i.h*sc+'px">'}
+for(const [id,n] of [['tL','arL'],['tR','arR'],['tJ','arU'],['tA','sword'],['tH','potion']])$(id).innerHTML=ico(n,2);
+$('ibtn').innerHTML=ico('pack');$('invH').innerHTML=ico('pack');$('wH').innerHTML=ico('ball');$('sH').innerHTML=ico('ship');
+for(const id of ['bHelpX','tLeave','invX','wX','sX']){$(id).innerHTML=ico('x');$(id).setAttribute('aria-label','Close')}
 // ===== state =====
 const KEY='merchantRoad.v1';
 let S,P,ENEMIES=[],PROJ=[],PARTS=[],PICK=[],ROCKS=[],FTXT=[];
@@ -523,7 +560,7 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
    h+='<div class="row" data-b="'+i+'">'+iconImg(ICONURL[ITEMS[i].id])+'<span class="nm">'+ITEMS[i].name+' '+pr(p)+tr+'<span class="sub">'+nb.name+' '+pr(nv)+' · '+far.o.name+' '+pr(far.v)+'</span></span><button data-act="buy" data-i="'+i+'" data-n="1" '+(can<1?'disabled':'')+'>+1</button><button data-act="buy" data-i="'+i+'" data-n="999" '+(can<1?'disabled':'')+'>Max</button></div>'});
  } else if(curTab==='haulers'){
   const row=id=>{const H=HAULERS[id];const own=S.haulers.includes(id),eq=S.hauler===id;
-   const btn=eq?'<button disabled>'+(S.park?'🅿 Parked':'Using')+'</button>':own?'<button data-act="useh" data-id="'+id+'" '+(cargoCount()>H.cap||S.park?'disabled':'')+'>Use</button>':'<button data-act="buyh" data-id="'+id+'" '+(S.money<H.price?'disabled':'')+'>'+pr(H.price)+'</button>';
+   const btn=eq?'<button disabled>'+(S.park?ico('park')+' Parked':'Using')+'</button>':own?'<button data-act="useh" data-id="'+id+'" '+(cargoCount()>H.cap||S.park?'disabled':'')+'>Use</button>':'<button data-act="buyh" data-id="'+id+'" '+(S.money<H.price?'disabled':'')+'>'+pr(H.price)+'</button>';
    return '<div class="row" data-h="'+id+'">'+iconImg(HAULURL[id],'big')+'<span class="nm">'+H.name+'<span class="sub">📦 '+H.cap+' · 👟 '+Math.round(H.spd*100)+'%</span></span>'+btn+'</div>'};
   const sale=HORDER.filter(id=>t.haulers.includes(id)),mine=HORDER.filter(id=>S.haulers.includes(id)&&!t.haulers.includes(id));
   if(sale.length)h+='<div class="sec">FOR SALE</div>'+sale.map(row).join('');
@@ -543,12 +580,12 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
  } else if(curTab==='craft'&&t.forge){
   for(const r of RECIPES){const isW=r.kind==='w',img=isW?WEPURL[r.id]:GEARURL[r.id],nm=isW?WEAPONS[r.id].name:GEAR[r.id].name,st=isW?(WEAPONS[r.id].lance?'🐴 ':'')+'⚔'+WEAPONS[r.id].dmg+' 🔥':GEAR[r.id].stat;const own=owns(r),ok=canCraft(r);
    const chips=Object.entries(r.need).map(([k,n])=>{const hv=have(k);return '<span class="ch'+(hv>=n?' ok':'')+'"><img src="'+(k==='iron'?ICONURL.iron:MATURL[k])+'">'+Math.min(hv,99)+'/'+n+'</span>'}).join('');
-   h+='<div class="row'+(own?' dim':'')+'">'+iconImg(img)+'<span class="nm">'+nm+' <span class="up">'+st+'</span><span class="sub" style="margin-top:4px">'+chips+'</span></span><button data-act="craft" data-id="'+r.id+'" '+(own||!ok?'disabled':'')+'>'+(own?'✓':'Craft')+'</button></div>'}
+   h+='<div class="row'+(own?' dim':'')+'">'+iconImg(img)+'<span class="nm">'+nm+' <span class="up">'+st+'</span><span class="sub" style="margin-top:4px">'+chips+'</span></span><button data-act="craft" data-id="'+r.id+'" '+(own||!ok?'disabled':'')+'>'+(own?ico('check'):'Craft')+'</button></div>'}
  } else if(curTab==='stable'&&t.stable){const Hs=S.horse;
-  h+='<div class="row">'+iconImg(HORSEURL,'big')+'<span class="nm">Horse<span class="sub">👟 ×'+RIDE+' · 🛒 pulls carts · 🐴 lances</span></span>'+(Hs?'<button disabled>✓</button>':'<button data-act="buyhorse" '+(S.money<HORSEPRICE?'disabled':'')+'>'+pr(HORSEPRICE)+'</button>')+'</div>';
+  h+='<div class="row">'+iconImg(HORSEURL,'big')+'<span class="nm">Horse<span class="sub">👟 ×'+RIDE+' · 🛒 pulls carts · 🐴 lances</span></span>'+(Hs?'<button disabled>'+ico('check')+'</button>':'<button data-act="buyhorse" '+(S.money<HORSEPRICE?'disabled':'')+'>'+pr(HORSEPRICE)+'</button>')+'</div>';
   if(Hs&&!Hs.on&&Math.abs(Hs.x-t.x)>TOWNR)h+='<div class="row"><span class="nm">🐴 → '+t.name+'<span class="sub">'+Math.round(Math.abs(Hs.x-t.x)/10)+'m away</span></span><button data-act="callhorse" '+(S.money<HORSECALL?'disabled':'')+'>'+pr(HORSECALL)+'</button></div>';
   h+='<div class="sec">LANCES</div>';for(const id of LORDER){const W=WEAPONS[id],own=S.lances.includes(id);if(!own&&W.crafted&&!t.forge&&id!=='woodlance'){}
-   const btn=own?(S.lance===id?'<button disabled>Equipped</button>':'<button data-act="usel" data-id="'+id+'">Equip</button>'):W.crafted?'<button disabled>Forge</button>':W.price?'<button data-act="buyl" data-id="'+id+'" '+(S.money<W.price||!Hs?'disabled':'')+'>'+pr(W.price)+'</button>':'<button disabled>🐴</button>';
+   const btn=own?(S.lance===id?'<button disabled>Equipped</button>':'<button data-act="usel" data-id="'+id+'">Equip</button>'):W.crafted?'<button disabled>Forge</button>':W.price?'<button data-act="buyl" data-id="'+id+'" '+(S.money<W.price||!Hs?'disabled':'')+'>'+pr(W.price)+'</button>':'<button disabled>'+ico('horseOff')+'</button>';
    h+='<div class="row'+(encList(id).length?' ench':'')+'" style="'+(encList(id).length?'--ec:'+enchCol(id):'')+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+Math.round(W.dmg*LANCEMIN)+'–'+Math.round(W.dmg*LANCEMAX)+(W.elem==='fire'?' · 🔥':'')+'</span></span>'+btn+'</div>'}
   h+='<div class="small" style="margin-top:6px">⚔ grows with speed · gallop in!</div>';
  } else if(curTab==='barber'&&t.barber){const L=S.look,noHat={head:null,chest:null,acc:null};
@@ -582,7 +619,7 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
 const MINI=$('mini').getContext('2d');
 function updHUD(){if(!S)return;$('hpfill').style.width=clamp(S.hp/maxHP()*100,0,100)+'%';$('hpt').textContent=Math.ceil(Math.max(0,S.hp));$('money').textContent=pr(S.money);
  $('cargo').textContent=cargoCount()+'/'+cap();const ch=carriedH();if($('icart').dataset.k!==ch){$('icart').src=HAULURL[ch];$('icart').dataset.k=ch}
- $('tC').style.display=S.hauler!=='backpack'?'flex':'none';$('tC').classList.toggle('hi',nearCartP());{const hw=heldW();if($('iwep').dataset.k!==hw){$('iwep').src=WEPURL[hw];$('iwep').dataset.k=hw}}$('tM').style.display=S.horse?'flex':'none';$('tM').classList.toggle('hi',nearHorse()||mounted());$('pots').textContent='🧪'+S.potions;
+ $('tC').style.display=S.hauler!=='backpack'?'flex':'none';{const k=S.park?'cartP':'cartH';if($('tC').dataset.k!==k){$('tC').dataset.k=k;$('tC').innerHTML=ico(k,2)}}{const k=mounted()?'horseOn':'horseOff';if($('tM').dataset.k!==k){$('tM').dataset.k=k;$('tM').innerHTML=ico(k,2)}}$('tC').classList.toggle('hi',nearCartP());{const hw=heldW();if($('iwep').dataset.k!==hw){$('iwep').src=WEPURL[hw];$('iwep').dataset.k=hw}}$('tM').style.display=S.horse?'flex':'none';$('tM').classList.toggle('hi',nearHorse()||mounted());{const k='p'+S.potions;if($('pots').dataset.k!==k){$('pots').dataset.k=k;$('pots').innerHTML=ico('potion')+S.potions}}
  const px0=DG?DG.d.x:(P?P.x:0);const b=biomeAt(px0);const bn=DG?skulls(DG.d.diff)+' Cave':BIOMES[b].name;if($('bname').dataset.k!==bn){$('bname').innerHTML=bn;$('bname').dataset.k=bn}
  const w=200;MINI.clearRect(0,0,w,20);for(let i=0;i<NB;i++){MINI.fillStyle=BIOMES[i].mm;MINI.fillRect(BOUNDS[i]/WORLD*w,6,(BOUNDS[i+1]-BOUNDS[i])/WORLD*w,8)}
  for(const t of TOWNS){const x=Math.round(t.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,3,5,14);MINI.fillStyle=t.i===S.lastTown?'#ffd75e':'#f6ead0';MINI.fillRect(x-1,4,3,12)}
@@ -618,7 +655,7 @@ function openInv(){if(MODE!=='play')return;setMode('inv');renderInv()}
 function closeInv(){setMode('play')}
 $('ibtn').onclick=openInv;$('invX').onclick=closeInv;
 function tile(img,label,o){o=o||{};if(o.en&&encList(o.en).length){o.cls=(o.cls?o.cls+' ':'')+'ench';o.st='--ec:'+enchCol(o.en);o.s=(o.s||'')+enchTag(o.en)}return '<button class="tile'+(o.cls?' '+o.cls:'')+'"'+(o.st?' style="'+o.st+'"':'')+(o.act?' data-act="'+o.act+'" data-id="'+o.id+'"':'')+'>'+(o.q?'<span class="q">'+o.q+'</span>':'')+(img?'<img src="'+img+'">':'<span style="font-size:20px;opacity:.5">·</span>')+'<span>'+label+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'')+'</button>'}
-function wstat(W){return '⚔'+W.dmg+(W.ranged?' 🏹':'')}
+function wstat(W){return ico('tsword')+W.dmg+(W.ranged?' '+ico('tbow'):'')}
 function renderInv(){$('imoney').textContent=pr(S.money);let h='';const W=WEAPONS[S.weapon];
  h+='<div class="tiles slots"><canvas id="iprev" width="28" height="28"></canvas>'+tile(WEPURL[S.weapon],W.name,{cls:'eq',s:wstat(W),en:S.weapon});
  for(const [sl,lab] of GSLOTS){const g=S.eq[sl];h+=g?tile(GEARURL[g],GEAR[g].name,{cls:'eq',act:'uneq',id:sl,s:GEAR[g].stat,en:g}):tile('','<span class="l">'+lab+'</span>',{cls:'empty'})}
@@ -627,7 +664,7 @@ function renderInv(){$('imoney').textContent=pr(S.money);let h='';const W=WEAPON
  if(owned.length||wps.length){h+='<div class="sec">GEAR</div><div class="tiles">';for(const g of owned)h+=tile(GEARURL[g],GEAR[g].name,{act:'eq',id:g,s:GEAR[g].stat,en:g});for(const w of wps)h+=tile(WEPURL[w],WEAPONS[w].name,{act:'eqw',id:w,s:wstat(WEAPONS[w]),en:w});h+='</div>'}
  for(const id in SETS){const st=SETS[id],ownN=st.pieces.filter(g=>S.gear.includes(g)).length,wear=st.pieces.filter(g=>S.eq[GEAR[g].slot]===g).length;if(!ownN)continue;const on=wear===3;
   h+='<div class="row" style="'+(on?'box-shadow:0 0 0 2px #000,0 0 0 4px '+st.col+';background:#3e2a44':'')+'">'+st.pieces.map(g=>'<img class="px" style="width:20px;height:20px;'+(S.eq[GEAR[g].slot]===g?'':S.gear.includes(g)?'opacity:.5':'opacity:.15')+'" src="'+GEARURL[g]+'">').join('')+'<span class="nm">'+st.name+'<span class="sub" style="color:'+(on?'#7de07a':'#8a7a70')+'">'+st.desc+'</span></span><span class="'+(on?'up':'')+'">'+wear+'/3</span></div>'}
- if(S.lances.length){h+='<div class="sec">🐴 LANCE</div><div class="tiles">';for(const l of S.lances)h+=tile(WEPURL[l],WEAPONS[l].name,{cls:S.lance===l?'eq':'',act:'eql',id:l,s:'⚔'+WEAPONS[l].dmg,en:l});h+='</div>'}
+ if(S.lances.length){h+='<div class="sec">🐴 LANCE</div><div class="tiles">';for(const l of S.lances)h+=tile(WEPURL[l],WEAPONS[l].name,{cls:S.lance===l?'eq':'',act:'eql',id:l,s:ico('tsword')+WEAPONS[l].dmg,en:l});h+='</div>'}
  const mk=Object.keys(MATS).filter(k=>S.mats[k]>0);if(mk.length){h+='<div class="sec">MATERIALS</div><div class="tiles">';for(const k of mk)h+=tile(MATURL[k],MATS[k].name,{q:'×'+S.mats[k]});h+='</div>'}
  h+='<div class="sec">'+(S.park?'🎒 ':'')+'CARGO '+cargoCount()+'/'+cap()+'</div><div class="tiles">';
  if(!S.cargo.length)h+=tile('','Empty',{cls:'empty'});for(const st of S.cargo)h+=tile(ICONURL[ITEMS[st.item].id],ITEMS[st.item].name,{q:'×'+st.qty,s:'<span style="color:#b49a88">'+TOWNS[st.origin].name+'</span>'});h+='</div>';
@@ -731,7 +768,7 @@ function renderWitch(){$('wmoney').textContent=pr(S.money);const es=S.mats.essen
  h+='<div class="wcols"><div class="wsl"><div class="eslot'+(wSel?' full':'')+(wRev?' rev':'')+'" id="eslot"'+(wSel&&encList(wSel).length?' style="--ec:'+enchCol(wSel)+'"':'')+'>';
  if(wSel){const l=encList(wSel);h+='<img class="px si" data-id="'+wSel+'" src="'+gearIcon(wSel)+'"><b>'+itemName(wSel)+'</b>'+(l.length?l.map((x,i)=>'<span class="el" style="animation-delay:'+(i*.18)+'s">'+enchSpan(x)+'<span class="sub">'+ENCH[x.k].d(eVal(x))+'</span></span>').join(''):'<span class="sub">—</span>')}
  else h+='<span class="sub">'+(ids.length?'Drag or tap an item':'No gear yet')+'</span>';
- h+='</div><button id="ebtn" '+(!wSel||es<ENCHCOST?'disabled':'')+'>✨ Enchant · '+ENCHCOST+' <img class="px" style="width:12px;height:12px;vertical-align:middle" src="'+MATURL.essence+'"> <span style="opacity:.75">('+es+')</span></button>';
+ h+='</div><button id="ebtn" '+(!wSel||es<ENCHCOST?'disabled':'')+'>'+ico('spark')+' Enchant · '+ENCHCOST+' <img class="px" style="width:12px;height:12px;vertical-align:middle" src="'+MATURL.essence+'"> <span style="opacity:.75">('+es+')</span></button>';
  h+='</div><div class="wtr"><div class="tray" id="etray">';for(const id of ids){if(id===wSel)continue;const on=isWep(id)?(WEAPONS[id].lance?S.lance===id:S.weapon===id):Object.values(S.eq).includes(id),l=encList(id);
   h+='<div class="ti'+(l.length?' ench':'')+'" data-id="'+id+'" title="'+itemName(id)+'"'+(l.length?' style="--ec:'+enchCol(id)+'"':'')+'><img class="px" src="'+gearIcon(id)+'">'+(on?'<span class="eb">E</span>':'')+(l.length?'<span class="ed">'+l.length+'</span>':'')+'</div>'}
  h+='</div><div class="small" style="line-height:1.6;margin-top:4px">1–3 random enchants · <span class="cz" style="color:'+CURSECOL+'">red = curse</span></div></div></div>';
@@ -1253,10 +1290,10 @@ $('sX').onclick=closeScrap;
 function shipPreview(){const c=document.createElement('canvas');c.width=120;c.height=100;const g=c.getContext('2d');g.fillStyle='#3a3238';g.fillRect(0,0,120,100);g.fillStyle='#4a423e';g.fillRect(0,92,120,8);g.fillStyle='#a29a90';g.fillRect(0,92,120,2);
  const st=scrapStage(),f=scrapFrac();drawShip(g,60,92,st,st<4?(f*4)%1:1,menuT,S.scrap.done?-14:0);return c.toDataURL()}
 function renderScrap(flash){const s=S.scrap;$('spct').textContent=Math.floor(scrapFrac()*100)+'%';let h='<img id="sprev" src="'+shipPreview()+'">';
- if(s.done){h+='<div class="w2">🌍 World 2<br><span class="small">coming soon</span></div><button class="srow" disabled style="justify-content:center">🔒 ✈</button>'}
+ if(s.done){h+='<div class="w2">🌍 World 2<br><span class="small">coming soon</span></div><button class="srow" disabled style="justify-content:center">'+ico('lock')+' '+ico('ship')+'</button>'}
  else{let any=0;for(const k of SCRAPK){const v=s[k],n=NEED[k],a=haveOf(k),full=v>=n,can=!full&&a>0;if(can)any=1;
-   h+='<button class="srow" data-k="'+k+'"'+(can?'':' disabled')+'><img src="'+ICONURL[k]+'"><span class="sbar"><i style="width:'+Math.round(100*Math.min(1,v/n))+'%'+(full?';background:#ffd75e':'')+'"></i></span><span class="sn">'+v+'/'+n+'</span><span class="sh">'+(full?'✓':a?'+'+Math.min(a,n-v):'')+'</span></button>'}
-  h+='<button id="sAll"'+(any?'':' disabled')+'>⬇ All</button>'}
+   h+='<button class="srow" data-k="'+k+'"'+(can?'':' disabled')+'><img src="'+ICONURL[k]+'"><span class="sbar"><i style="width:'+Math.round(100*Math.min(1,v/n))+'%'+(full?';background:#ffd75e':'')+'"></i></span><span class="sn">'+v+'/'+n+'</span><span class="sh">'+(full?ico('check'):a?'+'+Math.min(a,n-v):'')+'</span></button>'}
+  h+='<button id="sAll"'+(any?'':' disabled')+'>'+ico('down')+' All</button>'}
  $('sbody').innerHTML=h;
  for(const b of $('sbody').querySelectorAll('.srow[data-k]'))b.onclick=()=>depositKeys([b.dataset.k]);
  const all=$('sAll');if(all)all.onclick=()=>depositKeys(SCRAPK);
