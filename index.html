@@ -122,7 +122,7 @@ img.big{width:72px;height:42px}
  <p><b>Sets.</b> Wear all 3 witch pieces: twin shots (each 75% damage). All 3 stone pieces: +30 max HP, no knockback, and hits never knock goods off your hauler. Smiths in Frostholm and Emberfall sell the <b>Leaf Staff</b> ($600): homing leaves (gentler turn than fire), 9 damage.</p>
  <p><b>Barber.</b> Wake Ridge, Pinehollow and Emberfall have a Barber (striped pole): change skin, body and hair for free. Your Top Hat goes on your head; take it off to show your hair. One hat at a time: wearing a Witch Hat puts the Top Hat back in your bag.</p>
  <p><b>Witch.</b> Vex, a young witch with a knack for enchanting, parks her wagon (purple tarp) somewhere on the road and moves on every ~10 minutes. Get close and it shows on your map (purple). Press E at her wagon, tap a weapon or armor piece (or hold it briefly and drag) into the slot and press <b>Enchant</b> for <b>3 Magic Essence</b>: it replaces the item's enchants with 1–3 random ones, levels I–III. Reroll as often as you like. Weapons: Sharp, Critical, Knockback, Burning, Freezing, Venom, Leeching. Armor: Guarded, Swift, Hardy, Thorns, Regen, Leeching. <span style="color:#ff4a6a">Curses</span> (about 1 in 6) are high risk, high reward: Bloodthirst, Berserk, Volatile, Heavy, Greedy.</p>
- <p><b>Horses.</b> Bog Town, Pinehollow and Stonepeak have a <b>Stable</b> (horseshoe sign): a horse costs $1,500, no upkeep, and comes with a Wooden Lance. Press <b>R</b> (🐴) next to it to ride or get off. Riding is 1.5× faster and pulls your cart (a loaded cart slows it a bit). On horseback you fight only with your lance: tap attack to lower it, and the faster you gallop into a foe, the harder it hits. Getting hit knocks you off (the horse waits, remount). Golems don't budge, so a fast charge into one bounces you off. Horses wait outside caves. Iron Lance at the Stable ($900); <b>Magma Lance</b> at the Forge (3 stone, 1 dried lava, 1 iron). Vex enchants lances too.</p>
+ <p><b>Horses.</b> Bog Town, Pinehollow and Stonepeak have a <b>Stable</b> (horseshoe sign): a horse costs $1,500, no upkeep, and comes with a Wooden Lance. Press <b>R</b> (🐴) next to it to ride or get off. Riding is 1.5× faster and pulls your cart (a loaded cart slows it a bit). On horseback you fight only with your lance: tap attack to lower it, and the faster you gallop into a foe, the harder it hits. Hits never knock you off: you just take damage. Golems don't budge: a charge or a golem punch shoves you back (BONK), so circle round and charge again. Goblins can't snatch goods while you gallop. Horses wait outside caves. Iron Lance at the Stable ($900); <b>Magma Lance</b> at the Forge (3 stone, 1 dried lava, 1 iron). Vex enchants lances too.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
  <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · R horse · I inventory · Q swap weapon · H potion · Esc pause.</p>
  <p><b>Fire</b> melts ice golems, <b>ice</b> cracks lava golems, <b>hammers</b> crush all golems.</p></div></div>
@@ -764,8 +764,11 @@ function dropUnit(u,x,y,vx){PICK.push({...u,x,y,vx:vx==null?(rnd()-.5)*120:vx,vy
 function setOn(id){const st=SETS[id];return !!(S&&S.eq&&st.pieces.every(g=>S.eq[GEAR[g].slot]===g))}
 function maxHP(){return (S?S.maxhp:100)+(S&&setOn('stone')?30:0)+(S&&S.ench?ev('hardy'):0)}
 function gearSum(k){let v=0;for(const [sl] of GSLOTS){const g=S.eq&&S.eq[sl];if(g&&GEAR[g][k])v+=GEAR[g][k]}return v}
-function hurtPlayer(dmg,sx,knock){if(P.inv>0||MODE!=='play')return;dmg*=(1-defTotal())*dmgTakenMul();S.hp-=dmg;thornsHit(dmg);P.inv=.9;const rock=setOn('stone'),kr=rock?0:1-gearSum('kb');P.kbx=(P.x>=sx?1:-1)*140*kr;if(P.onGround&&kr>.6){P.vy=-120*kr;P.onGround=false}
- ftxt(P.x,P.y-24,'-'+Math.round(dmg),'#ff6a6a');part(P.x,P.y-10,'#e84a4a',6,80);if(mounted())thrown(sx);
+function hurtPlayer(dmg,sx,knock,src){if(P.inv>0||MODE!=='play')return;dmg*=(1-defTotal())*dmgTakenMul();S.hp-=dmg;thornsHit(dmg);P.inv=.9;const rock=setOn('stone'),kr=rock?0:1-gearSum('kb');
+ // on horseback nothing knocks you off: normal hits only hurt (you keep galloping); golem punches and BONKs shove the horse back
+ if(mounted()){P.kbx=0;if(src==='golem'||src==='bonk'){P.hv=(P.x>=sx?1:-1)*(src==='bonk'?170:150)*Math.max(.4,kr);if(P.onGround){P.vy=-110;P.onGround=false}}}
+ else{P.kbx=(P.x>=sx?1:-1)*140*kr;if(P.onGround&&kr>.6){P.vy=-120*kr;P.onGround=false}}
+ ftxt(P.x,P.y-24,'-'+Math.round(dmg),'#ff6a6a');part(P.x,P.y-10,'#e84a4a',6,80);
  if(!DG&&!rock&&knock!==false&&cargoCount()&&rnd()<.4){const u=randomUnit();if(u){dropUnit(u,P.x,P.y-14,(P.x>=sx?-1:1)*(60+rnd()*60));ftxt(P.x,P.y-32,'-1 '+ITEMS[u.item].name,'#ffd75e')}}
  if(S.hp<=0)die()}
 // ===== horse & lances =====
@@ -781,8 +784,6 @@ function dismount(at){if(!S.horse||!S.horse.on)return;S.horse.on=false;S.horse.x
 function toggleHorse(){if(!S.horse){toast('🐴 Stables: Bog Town · Pinehollow · Stonepeak',1600);return}if(DG){toast('🐴 waits outside',900);return}
  if(S.horse.on){dismount(P.x+P.dir*4);P.x=clamp(P.x-P.dir*10,12,WORLD-12);toast('🐴 🅿',800);return}
  if(nearHorse())mount();else{const d=S.horse.x-P.x;toast('🐴 '+(d<0?'◀ ':'')+Math.round(Math.abs(d)/10)+'m'+(d>0?' ▶':''),1100)}}
-// knocked off: the horse stays where you fell, you tumble away
-function thrown(sx){if(!mounted())return;dismount(P.x);P.vy=-170;P.onGround=false;ftxt(P.x,P.y-34,'🐴!','#ffd75e');part(P.x,P.y-12,'#c8a060',10,90)}
 function lanceStrike(){const w=WEAPONS[S.lance];if(P.cd>0||P.couch>0)return;P.cd=w.cd;P.couch=.55;P.hits=[]}
 function lanceSpeed(){return clamp(Math.abs(P.hv||0)/GALLOP,0,1)}
 function lanceTick(dt){if(!(P.couch>0))return;P.couch-=dt;const w=WEAPONS[S.lance],s=lanceSpeed();
@@ -794,7 +795,7 @@ function lanceTick(dt){if(!(P.couch>0))return;P.couch-=dt;const w=WEAPONS[S.lanc
   if(s>.75){ftxt(e.x,e.y-d.h-18,'CHARGE!','#ffd75e');part(e.x,e.y-d.h/2,'#fff4b0',10,150)}
   if(!g&&!e.dead)e.vx=P.dir*(90+220*s);
   // golems don't budge: a fast head-on charge bounces you off the horse
-  if(g&&s>.35){P.couch=0;P.inv=0;const hit=Math.round(4+8*s);P.bounced=(P.bounced||0)+1;thrown(e.x);hurtPlayer(hit,e.x,true);P.kbx=-P.dir*190;ftxt(P.x,P.y-44,'BONK','#ff9a4a');break}
+  if(g&&s>.35&&!e.dead){P.couch=0;P.inv=0;P.bounced=(P.bounced||0)+1;hurtPlayer(Math.round(3+4*s),e.x,false,'bonk');ftxt(P.x,P.y-44,'BONK','#ff9a4a');part(P.x+P.dir*10,P.y-16,'#ffd75e',8,110);break}
   P.hv*=g?.2:.85}}
 function refundOf(units){let t=0;for(const u of units)t+=(+u.paid||0)*(u.qty||1);return Math.round(t*REFUND)}
 function die(){if(DG){dungeonKO();return}const lost=cargoCount();const gnd=PICK.filter(k=>k.item!=null&&!k.mat&&!k.gear);const refund=refundOf(S.cargo)+refundOf(gnd);S.money+=refund;S.cargo=[];if(S.horse&&S.horse.on){S.horse.on=false;S.horse.x=TOWNS[S.lastTown].x+30;S.horse.dir=-1}S.hp=0;S.stats.deaths++;PICK=[];ENEMIES=[];PROJ=[];ROCKS=[];
@@ -993,11 +994,11 @@ function updEnemy(e,dt){const d=ENEMY[e.type],base=d.base||e.type;
   const pk=S.park;if(!DG&&pk&&pk.cargo.length&&Math.abs(P.x-pk.x)>40&&Math.abs(pk.x-e.x)<adx){const dc=pk.x-e.x;if(Math.abs(dc)>4)walkTo(Math.sign(dc),d.spd);e.cd-=dt;
    if(Math.abs(dc)<8&&e.cd<=0){e.cd=1.1;const n=Math.min(cargoN(pk.cargo),1);for(let i=0;i<n;i++){const u=randomUnit(pk.cargo);if(u)e.loot.push(u)}ftxt(pk.x,surfY(pk.x)-22,'🛒 -'+n+'!','#ff6a6a');e.flee=5;e.fdir=Math.sign(e.x-P.x)||1;save()}return}
   if(adx>4)walkTo(Math.sign(dxp),d.spd);e.cd-=dt;
-  if(near&&e.cd<=0){e.cd=1.1;if(cargoCount()){const n=Math.min(cargoCount(),1);for(let i=0;i<n;i++){const u=randomUnit();if(u)e.loot.push(u)}ftxt(P.x,P.y-30,'Stolen ×'+n+'!','#ff6a6a');e.flee=5;e.fdir=-Math.sign(dxp)||1;P.inv=Math.max(P.inv,.4)}else hurtPlayer(d.dmg,e.x,false)}}
+  if(near&&e.cd<=0){e.cd=1.1;if(cargoCount()&&!(mounted()&&lanceSpeed()>.5)){const n=Math.min(cargoCount(),1);for(let i=0;i<n;i++){const u=randomUnit();if(u)e.loot.push(u)}ftxt(P.x,P.y-30,'Stolen ×'+n+'!','#ff6a6a');e.flee=5;e.fdir=-Math.sign(dxp)||1;P.inv=Math.max(P.inv,.4)}else hurtPlayer(d.dmg,e.x,false)}}
  else if(base==='golem'){e.y=gY(e.x);e.cd-=dt;
   if(e.state==='walk'){if(adx>20)walkTo(Math.sign(dxp),d.spd);else e.dir=Math.sign(dxp)||e.dir;if(adx<26&&e.cd<=0){e.state='wind';e.st=.55}
    if(e.type==='lavaGolem'&&e.cd<=0&&adx>60&&adx<230){e.cd=3.2;e.dir=Math.sign(dxp);const T=1.0;PROJ.push({x:e.x+e.dir*8,y:e.y-24,vx:dxp/T,vy:-(.5*400*T),g:400,dmg:16,from:'e',kind:'lava',life:2.5})}}
-  else if(e.state==='wind'){e.st-=dt;if(e.st<=0){e.state='punch';e.st=.25;if(adx<32&&P.y>e.y-34)hurtPlayer(d.dmg,e.x)}}
+  else if(e.state==='wind'){e.st-=dt;if(e.st<=0){e.state='punch';e.st=.25;if(adx<32&&P.y>e.y-34)hurtPlayer(d.dmg,e.x,true,'golem')}}
   else{e.st-=dt;if(e.st<=0){e.state='walk';e.cd=1.5}}
   if(e.type==='lavaGolem'&&near)hurtPlayer(8,e.x,false)}
  else if(base==='witch'){const gy=gY(e.x);e.y=lerp(e.y,gy-30+Math.sin(e.t*2.5+e.seed)*5,dt*3);e.dir=Math.sign(dxp)||1;
