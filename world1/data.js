@@ -57,4 +57,8 @@ WORLDDEF[0]={name:'The Road',len:15000,bounds:[0,3200,6400,9600,12000,15000],wb:
  flat:[{x:SCRAPX,r:180,fade:80}], // extra flattened ground: the airship scrap pile
  pits(){const out=[];let x=9800,k=0;while(x<11900){const w=22+Math.floor(hash(k*3.1)*10);if(Math.abs(x-11000)>200&&!DUNGEONS.some(q=>Math.abs(q.x-x)<110))out.push({x0:x,x1:x+w,ly:Math.max(surfY(x),surfY(x+w))+9});x+=280+Math.floor(hash(k*7.7)*180);k++}return out}, // lava pits (volcano)
  decorOK(x){return Math.abs(x-SCRAPX)>140},
- town:5,money:null,arriveX:SCRAPX-60,horseOff:30}; // arriving from World 2: lastTown fallback, keep current money, land by the scrap pile
+ town:5,money:null,arriveX:SCRAPX-60,horseOff:30, // arriving from World 2: lastTown fallback, keep current money, land by the scrap pile
+ // cart: World 1's hauler is whatever wagon you bought (S.hauler). S.park is the parked cart of the CURRENT world only;
+ // on leaving, leave() files it (or cargo) into S.ws[0] and enterW restores it, so it can never be mistaken for the Winged Cart.
+ cart(){return S.hauler},parkIco:'cartP',carry:'stash',autoHitch:120, // carry: S.ws field that holds loose cargo while away; autoHitch: re-hitch on arrival within this range
+ leave(s,o){if(s.hauler!=='backpack'&&!s.park){o.park={x:SCRAPX-110,dir:-1,cargo:s.cargo}}else{o.park=s.park||null;o.stash=s.cargo}}}; // a hitched wagon waits by the scrap pile

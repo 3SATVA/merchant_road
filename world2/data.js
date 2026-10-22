@@ -46,4 +46,7 @@ WORLDDEF[1]={name:'Skylands',len:W2LEN,bounds:[0,ISLES[0].x1,ISLES[1].x0,W2LEN],
  rawH(x){return 22+8*Math.sin(x/170)+4*Math.sin(x/53)},
  flat:[],pits:null,
  decorOK(x){return onIsle(x-12)&&onIsle(x+12)&&DOCKS.every(d=>Math.abs(x-d.x)>80)},
- town:W2TOWN,money:W2START,arriveX:W2DOCK-34,horseOff:26}; // first arrival: Skyhaven, W2START coins, by the dock
+ town:W2TOWN,money:W2START,arriveX:W2DOCK-34,horseOff:26, // first arrival: Skyhaven, W2START coins, by the dock
+ // cart: World 2's hauler is the Winged Cart once bought (S.wcart); with drivable airships on, cargo rides in the ship instead
+ cart(){return S.wcart&&!FEATURE_DRIVABLE_AIRSHIPS?'wingcart':'backpack'},parkIco:'wcartP',carry:'hold',autoHitch:0,
+ leave(s,o){o.hold=s.cargo;o.park=s.park||null}};
