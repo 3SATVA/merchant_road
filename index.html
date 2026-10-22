@@ -195,6 +195,10 @@ const LORDER=['woodlance','ironlance','magmalance'];
 const SHIPS={small:{name:'Small Airship',cap:30,spd:1.15,hull:60,price:0,z:.72,pal:['#c84a3a','#e8d8b0']},
  medium:{name:'Medium Airship',cap:60,spd:1,hull:100,price:6000,z:.9,pal:['#3a8ad0','#f4ead0']},
  large:{name:'Large Airship',cap:100,spd:.85,hull:160,price:20000,z:1.08,pal:['#e0b440','#f8f4e8']}};const SORDER=['small','medium','large'];
+// shop + balance tunables that used to be inline literals (one place to tune; also the shape a JSON/Supabase config would take)
+const INN={rest:i=>10+i*8,pot:30,potMax:5,potHP:45,potHPBerserk:23}; // rest price grows with the town index; potions
+const SKY={dmg:.55,max:2,maxShip:3,pair:.3,gapHorse:[420,220],gapShip:[300,160],diveHorse:2.6,diveShip:1.6,diveRnd:1.2}; // air wilds: damage on the winged horse, foes at once, pair chance, px between spawns [min,+rnd], pegasus re-dive [s]
+const WCART={knockCd:4,keep:.4,flash:3.8}; // Winged Cart: seconds between knock-loose losses, chance a hit costs nothing, hit flash while cd > flash
 const HORSEPRICE=1500,RIDE=1.5,GALLOP=92*RIDE; // horse: one-off price, no upkeep; riding = 1.5x walking
 const WORDER=['fists','dagger','sword','crossbow','leafstaff','firestaff','warhammer','frostspear','obsidian','flamesword'];const ICONORDER=WORDER.concat(LORDER);
 // ===== worlds =====
@@ -650,6 +654,8 @@ function leaveTown(){setMode('play');save()}
 $('tLeave').onclick=leaveTown;
 $('ttabs').onclick=e=>{const b=e.target.closest('button');if(b){curTab=b.dataset.tab;renderTown()}};
 function pr(n){return '$'+Math.round(n).toLocaleString()}
+// shop list: what this town sells, then what you own that it doesn't (in catalogue order)
+function shopLists(order,sells,owned,row){const sale=order.filter(id=>sells.includes(id)),mine=order.filter(id=>owned.includes(id)&&!sells.includes(id));return (sale.length?'<div class="sec">FOR SALE</div>'+sale.map(row).join(''):'')+(mine.length?'<div class="sec">YOURS</div>'+mine.map(row).join(''):'')}
 function iconImg(id,cls){return '<img class="px '+(cls||'')+'" src="'+id+'">'}
 // building storefront icons for the town tabs
 const BLDURL={};(function(){const mk=(roof,wall,fn)=>spriteURL(16,16,g=>{px(g,2,7,12,9,wall);for(let i=0;i<=7;i++)px(g,i,7-i,16-2*i,1,roof);px(g,6,11,4,5,'#4a2a18');fn(g)});
@@ -682,20 +688,16 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   const row=id=>{const H=HAULERS[id];const own=S.haulers.includes(id),eq=S.hauler===id;
    const btn=eq?'<button disabled>'+(S.park?ico('park')+' Parked':'Using')+'</button>':own?'<button data-act="useh" data-id="'+id+'" '+(cargoCount()>H.cap||S.park?'disabled':'')+'>Use</button>':'<button data-act="buyh" data-id="'+id+'" '+(S.money<H.price?'disabled':'')+'>'+pr(H.price)+'</button>';
    return '<div class="row" data-h="'+id+'">'+iconImg(HAULURL[id],'big')+'<span class="nm">'+H.name+'<span class="sub">📦 '+H.cap+' · 👟 '+Math.round(H.spd*100)+'%</span></span>'+btn+'</div>'};
-  const sale=HORDER.filter(id=>t.haulers.includes(id)),mine=HORDER.filter(id=>S.haulers.includes(id)&&!t.haulers.includes(id));
-  if(sale.length)h+='<div class="sec">FOR SALE</div>'+sale.map(row).join('');
-  if(mine.length)h+='<div class="sec">YOURS</div>'+mine.map(row).join('');
+  h+=shopLists(HORDER,t.haulers,S.haulers,row);
  } else if(curTab==='weapons'){
   const row=id=>{const W=WEAPONS[id];const own=S.weapons.includes(id),eq=S.weapon===id;const el=W.elem==='fire'?' · 🔥':W.elem==='ice'?' · ❄':W.elem==='crush'?' · 🪨':W.leaf?' · 🍃':'';
    const btn=eq?'<button disabled>Equipped</button>':own?'<button data-act="usew" data-id="'+id+'">Equip</button>':'<button data-act="buyw" data-id="'+id+'" '+(S.money<W.price?'disabled':'')+'>'+pr(W.price)+'</button>';
    return '<div class="row" data-w="'+id+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+W.dmg+' · '+(1/W.cd).toFixed(1)+'/s · '+(W.ranged?'ranged':'reach '+W.range)+el+'</span></span>'+btn+'</div>'};
-  const sale=WORDER.filter(id=>t.weapons.includes(id)),mine=WORDER.filter(id=>S.weapons.includes(id)&&!t.weapons.includes(id));
-  if(sale.length)h+='<div class="sec">FOR SALE</div>'+sale.map(row).join('');
-  if(mine.length)h+='<div class="sec">YOURS</div>'+mine.map(row).join('');
+  const sale=WORDER.filter(id=>t.weapons.includes(id));h+=shopLists(WORDER,t.weapons,S.weapons,row);
   if(sale.some(id=>WEAPONS[id].elem))h+='<div class="small" style="margin-top:6px">🔥 melts ice golems · ❄ cracks lava golems · 🪨 crushes golems</div>';
- } else if(curTab==='inn'){const rc=10+t.i*8,pc=30;
+ } else if(curTab==='inn'){const rc=INN.rest(t.i),pc=INN.pot;
   h+='<div class="row"><span class="nm">❤ Rest<span class="sub">'+Math.ceil(S.hp)+'/'+maxHP()+' → full</span></span><button data-act="rest" '+(S.hp>=maxHP()||S.money<rc?'disabled':'')+'>'+pr(rc)+'</button></div>';
-  h+='<div class="row"><span class="nm">🧪 Potion ×'+S.potions+'<span class="sub">+45 HP · max 5 · press H</span></span><button data-act="pot" '+(S.potions>=5||S.money<pc?'disabled':'')+'>'+pr(pc)+'</button></div>';
+  h+='<div class="row"><span class="nm">🧪 Potion ×'+S.potions+'<span class="sub">+'+INN.potHP+' HP · max '+INN.potMax+' · press H</span></span><button data-act="pot" '+(S.potions>=INN.potMax||S.money<pc?'disabled':'')+'>'+pr(pc)+'</button></div>';
   h+='<div class="sec">STATS</div><div class="small">Profit '+pr(S.stats.profit)+' · Goods sold '+S.stats.sold+' · Kills '+S.stats.kills+' · Falls '+S.stats.deaths+'</div>';
  } else if(curTab==='craft'&&t.forge){
   for(const r of RECIPES){const isW=r.kind==='w',img=isW?WEPURL[r.id]:GEARURL[r.id],nm=isW?WEAPONS[r.id].name:GEAR[r.id].name,st=isW?(WEAPONS[r.id].lance?'🐴 ':'')+'⚔'+WEAPONS[r.id].dmg+' 🔥':GEAR[r.id].stat;const own=owns(r),ok=canCraft(r);
@@ -738,8 +740,8 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  else if(a==='buyhorse'){buyHorse(t)}
  else if(a==='buyl'){const id=b.dataset.id,W=WEAPONS[id];if(W&&W.lance&&!S.lances.includes(id)&&S.horse&&S.money>=W.price){S.money-=W.price;S.lances.push(id);S.lance=id}}
  else if(a==='usel'){if(S.lances.includes(b.dataset.id))S.lance=b.dataset.id}
- else if(a==='rest'){const rc=10+t*8;if(S.money>=rc){S.money-=rc;S.hp=maxHP()}}
- else if(a==='pot'){if(S.money>=30&&S.potions<5){S.money-=30;S.potions++}}
+ else if(a==='rest'){const rc=INN.rest(t);if(S.money>=rc){S.money-=rc;S.hp=maxHP()}}
+ else if(a==='pot'){if(S.money>=INN.pot&&S.potions<INN.potMax){S.money-=INN.pot;S.potions++}}
  save();renderTown()};
 const MINI=$('mini').getContext('2d');
 function setTxt(id,v){const e=$(id);v=String(v);if(e.textContent!==v)e.textContent=v}
@@ -942,6 +944,8 @@ function spawnGroup(dir){const b=biomeAt(P.x);const max=b===4?5:2+b;if(ENEMIES.l
  // greedy: goblins smell the coin
  const gr=ench('greedy');if(gr&&rnd()<.3*gr){const x=P.x+dir*(VW/2+18+n*26);if(x>20&&x<WORLD-20&&!townAt(x,TOWNR+40)&&!pitAt(x)){const e=spawnEnemy(b===1?'goblinS':b===4?'raider':'goblin',x);e.dir=-dir}}}
 let SHK=0;function shake(a){SHK=Math.min(3,Math.max(SHK,a))}function shk(){return SHK>.4?Math.round((Math.random()-.5)*2*SHK):0}
+// drop dead entries in place (keeps order; no new array every frame)
+function prune(a,keep){let j=0;for(let i=0;i<a.length;i++)if(keep(a[i]))a[j++]=a[i];a.length=j;return a}
 function part(x,y,col,n,sp,g,life){for(let i=0;i<n;i++)PARTS.push({x,y,vx:(rnd()-.5)*sp,vy:(rnd()-.8)*sp,col,g:g==null?300:g,life:(life||.5)*(.6+rnd()*.6)})}
 function ftxt(x,y,t,col){FTXT.push({x,y,t,col,life:1})}
 function dropUnit(u,x,y,vx){PICK.push({...u,x,y,vx:vx==null?(rnd()-.5)*120:vx,vy:-140-rnd()*60,life:30,ground:false})}
@@ -957,7 +961,7 @@ function hurtPlayer(dmg,sx,knock,src){if(P.inv>0||MODE!=='play')return;shake(dmg
  if(!DG&&!rock&&knock!==false&&cargoCount()&&rnd()<.4){const u=randomUnit();if(u){dropUnit(u,P.x,P.y-14,(P.x>=sx?-1:1)*(60+rnd()*60));ftxt(P.x,P.y-32,'-1 '+ITEMS[u.item].name,'#ffd75e')}}
  if(S.hp<=0)die()}
 // ===== horse & lances =====
-const LANCEMIN=.25,LANCEMAX=1.75,HORSECALL=40,MOUNTDMG=1.3,HITSLOW=.4; // mounted: +30% damage taken (after armor), a hit drops you to 40% of gallop // lance damage x0.25 standing .. x1.75 at full gallop
+const LANCEMIN=.25,LANCEMAX=1.75,MOUNTDMG=1.3,HITSLOW=.4; // mounted: +30% damage taken (after armor), a hit drops you to 40% of gallop // lance damage x0.25 standing .. x1.75 at full gallop
 function mounted(){return !!(S&&S.horse&&S.horse.on&&!DG)}
 function heldW(){return S&&S.horse&&S.horse.on&&!DG&&S.lance?S.lance:S?S.weapon:'fists'}
 function nearHorse(){return !!(S&&S.horse&&!S.horse.on&&!DG&&P&&Math.abs(P.x-S.horse.x)<22)}
@@ -1013,24 +1017,24 @@ function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min
  if(P.cd>0)P.cd-=dt;if(P.atk>0)P.atk=Math.max(0,P.atk-dt/.2);if(P.inv>0)P.inv-=dt;
  if(inp.attack())playerAttack();if(mounted())lanceTick(dt);else P.couch=0;
  if(inp.swap()){if(mounted()&&S.lances.length){const i=S.lances.indexOf(S.lance);S.lance=S.lances[(i+1)%S.lances.length];toast(WEAPONS[S.lance].name,900)}else{const i=S.weapons.indexOf(S.weapon);S.weapon=S.weapons[(i+1)%S.weapons.length];toast(WEAPONS[S.weapon].name,900)}}
- if(inp.pot()){if(S.potions>0&&S.hp<maxHP()){S.potions--;const ph=ench('berserk')?23:45;S.hp=Math.min(maxHP(),S.hp+ph);ftxt(P.x,P.y-26,'+'+ph,'#7de07a');part(P.x,P.y-10,'#7de07a',10,60,-40)}else if(!S.potions)toast('No potions',900)}
+ if(inp.pot()){if(S.potions>0&&S.hp<maxHP()){S.potions--;const ph=ench('berserk')?INN.potHPBerserk:INN.potHP;S.hp=Math.min(maxHP(),S.hp+ph);ftxt(P.x,P.y-26,'+'+ph,'#7de07a');part(P.x,P.y-10,'#7de07a',10,60,-40)}else if(!S.potions)toast('No potions',900)}
  // enemies
  for(const e of ENEMIES){if(e.dead)continue;updEnemy(e,dt)}
- ENEMIES=ENEMIES.filter(e=>!e.dead);
+ prune(ENEMIES,e=>!e.dead);
  // projectiles
  for(const p of PROJ){p.life-=dt;if(p.home)steerProj(p,dt);p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.kind==='fire'||p.kind==='lava')if(rnd()<(p.home?1:.6))PARTS.push({x:p.x-p.vx*.01,y:p.y-p.vy*.01,vx:(rnd()-.5)*12,vy:-10-rnd()*10,col:rnd()<.33?'#ff7a1a':rnd()<.5?'#ffd040':'#d8401a',g:0,life:p.home?.4:.25});
   let solid;if(DG)solid=dSolid(p.x,p.y);else{const gy=groundAt(p.x);solid=gy!==null&&p.y>gy}
   if(solid||p.life<=0||townAt(p.x,TOWNR-20)&&p.from==='e'){p.dead=1;part(p.x,p.y,p.kind==='bolt'?'#c8a060':p.kind==='leaf'?'#6cc04a':'#ff8a2a',5,70);continue}
   if(p.from==='p'){for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(Math.abs(e.x-p.x)<d.w/2+2&&p.y>e.y-d.h&&p.y<e.y+1){hitEnemy(e,p.dmg,Math.sign(p.vx),p.elem);p.dead=1;break}}}
   else if(Math.abs(p.x-P.x)<(mounted()?9:6)&&p.y>P.y-(mounted()?27:17)&&p.y<P.y+1){p.dead=1;hurtPlayer(p.dmg,p.x)}}
- PROJ=PROJ.filter(p=>!p.dead);
+ prune(PROJ,p=>!p.dead);
  // pickups (road only)
  if(!DG){for(const k of PICK){k.life-=dt;if(!k.ground){k.vy+=600*dt;k.x+=k.vx*dt;k.y+=k.vy*dt;const gy=groundAt(k.x);const pit=pitAt(k.x);if(pit&&k.y>pit.ly){k.dead=1;part(k.x,pit.ly,'#ff7a1a',6,60);continue}if(gy!==null&&k.y>=gy){k.y=gy;k.ground=true}}
   if(k.life<=0)k.dead=1;else if(Math.abs(k.x-P.x)<10&&Math.abs(k.y-(P.y-4))<14&&k.age>.4){if(k.mat){giveMat(k.mat);k.dead=1}else if(k.gear){giveGear(k.gear);k.dead=1}else if(cargoCount()<cap()){addCargo(k.item,k.origin,1,k.paid);k.dead=1;ftxt(P.x,P.y-26,'+1 '+ITEMS[k.item].name,'#7de07a')}}
   k.age=(k.age||0)+dt}
- PICK=PICK.filter(k=>!k.dead)}
- for(const p of PARTS){p.life-=dt;p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt}PARTS=PARTS.filter(p=>p.life>0);
- for(const f of FTXT){f.life-=dt;f.y-=18*dt}FTXT=FTXT.filter(f=>f.life>0);
+ prune(PICK,k=>!k.dead)}
+ for(const p of PARTS){p.life-=dt;p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt}prune(PARTS,p=>p.life>0);
+ for(const f of FTXT){f.life-=dt;f.y-=18*dt}prune(FTXT,f=>f.life>0);
  env.saveT=(env.saveT||0)+dt;if(env.saveT>5){env.saveT=0;save()}
 }
 function updWorld(dt){if(WI){w2Tick(dt);wcTick(dt)}const H=HAULERS[carriedH()];const b=biomeAt(P.x);const town=townAt(P.x);
@@ -1063,7 +1067,7 @@ function updWorld(dt){if(WI){w2Tick(dt);wcTick(dt)}const H=HAULERS[carriedH()];c
  if(b===2&&!town){env.rockT-=dt;if(env.rockT<=0){env.rockT=2.6+rnd()*3;const rx=P.x+vx*.9+(rnd()-.5)*70;if(!townAt(rx))ROCKS.push({x:rx,y:null,vy:0,warn:.9})}}
  if(b===3&&!town){P.heat+=dt;if(P.heat>2.5){P.heat=0;S.hp-=1;ftxt(P.x,P.y-24,'-1','#ff9a4a');if(S.hp<=0)die()}}
  for(const r of ROCKS){if(r.warn>0){r.warn-=dt;if(r.warn<=0)r.y=surfY(r.x)-150}else{r.vy+=520*dt;r.y+=r.vy*dt;const gy=surfY(r.x);if(r.y>=gy-3){r.dead=1;part(r.x,gy-2,'#8a8a8a',10,120);if(Math.abs(r.x-P.x)<10&&P.y>gy-30)hurtPlayer(14,r.x)}}}
- ROCKS=ROCKS.filter(r=>!r.dead);
+ prune(ROCKS,r=>!r.dead);
  // caves you pass get marked on the map
  for(const d of DUNGEONS)if(Math.abs(d.x-P.x)<VW*.5&&!S.caves.includes(d.i))S.caves.push(d.i);
  if(!WI)witchTick();
@@ -1282,7 +1286,7 @@ function drawActors(ox,oy){
  for(const e of ENEMIES)drawEnemyFx(e,Math.round(e.x-ox),Math.round(e.y-oy));
  if(WI&&S&&P&&P.wcx!=null&&MODE!=='menu'&&carriedH()==='wingcart'){const cx=Math.round(P.wcx-ox),cy=Math.round(P.wcy-oy),hx=Math.round(P.x-ox-P.dir*(mounted()?12:4)),hy=Math.round(P.y-oy-(mounted()?12:8));
   const ax=cx+P.dir*13,ay=cy-7;for(let k=0;k<=10;k++){const f=k/10;px(X,Math.round(ax+(hx-ax)*f),Math.round(ay+(hy-ay)*f+Math.sin(f*Math.PI)*3),1,1,'#5e3a1e')}
-  drawWingCart(X,cx,cy,P.dir,cargoColors(),menuT,!!P.fly||!P.onGround,(P.wcHit||0)>3.8)}
+  drawWingCart(X,cx,cy,P.dir,cargoColors(),menuT,!!P.fly||!P.onGround,(P.wcHit||0)>WCART.flash)}
  if(P&&S&&MODE!=='menu'){const sx=Math.round(P.x-ox),sy=Math.round(P.y-oy);const fl=P.inv>0&&Math.floor(P.inv*14)%2===0;
   let hy=sy;const H=carriedH();if(H!=='backpack'&&H!=='wheelbarrow'){const cxw=P.x-P.dir*(H==='bigwagon'?28:20);const g=groundAt(cxw);hy=Math.round((g===null?P.y:Math.min(g+(P.y-(groundAt(P.x)??P.y)),g))-oy)}
   const cols=cargoColors();
@@ -1460,7 +1464,6 @@ function drawDock(ox,oy){for(let i=0;i<liveDocks().length;i++){const D=DOCKS[i],
  if(nearDock()===D&&MODE==='play'&&Math.sin(menuT*4)>0)px(X,x,y-34,1,2,'#ffd75e')}}
 function plr(){return P}
 function canFly(){return WI===1&&mounted()&&!!S.horse.wings}
-function jumpHeld(){return !!(keys[' ']||keys.w||keys.arrowup||tkeys.j)}
 // pixel wings on the horse's back (World 2): folded when standing, flapping when running or flying
 function horseFlap(idle){const pl=plr();if(idle||!pl||!mounted())return null;if(pl.fly==='horse')return .09;if(!pl.onGround)return .07;return null}
 function drawWings(P0,t,bob,run,idle){const A='#ffffff',B='#e4ecf6',C='#a8bcd8',D='#7f94b4';const dur=horseFlap(idle),gal=!idle&&run>.05&&dur===null;
@@ -1495,7 +1498,7 @@ function wingFx(n){const h=S.horse;const hx=h&&!h.on?h.x:P.x,hy=surfY(hx)-16;for
 function cutTick(dt){CUT.t+=dt;const t=CUT.t,far=Math.max(0,WORLD-VW);
  camX=t<CUTA?lerp(CUT.x0,far,smooth(t/CUTA)):t<CUTA+CUTB?lerp(far,CUT.x0,smooth((t-CUTA)/CUTB)):CUT.x0;camY=CUT.cy;
  if(t>=CUTA+CUTB){if(!CUT.wing){CUT.wing=true;if(S.horse)S.horse.wings=true;wingFx(24)}else if(rnd()<.6)wingFx(1)}
- for(const p of PARTS){p.life-=dt;p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt}PARTS=PARTS.filter(p=>p.life>0);
+ for(const p of PARTS){p.life-=dt;p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt}prune(PARTS,p=>p.life>0);
  if(t>CUTA+CUTB+CUTW)endCut()}
 function endCut(){if(MODE!=='cut')return;$('cut').classList.remove('on');if(S.horse)S.horse.wings=true;S.w2seen=true;setMode('play');camX=clamp(P.x-VW/2,0,WORLD-VW);save();toast(ico('wing',2),1600)}
 $('cut').addEventListener('pointerdown',e=>{e.preventDefault();endCut()});
@@ -1553,7 +1556,7 @@ function updSky(dt){w2Tick(dt);wcTick(dt);if(env.leaveT>0)env.leaveT-=dt;const b
  const ty=flyTarget()+(w==='rain'?8:w==='up'?-8:0);P.vy+=((ty-P.y)*7-P.vy*4.2)*dt;P.y+=P.vy*dt;
  if(sh){P.onGround=true;if(P.hinv>0)P.hinv-=dt;if(P.shipHit>0)P.shipHit-=dt}else P.onGround=false;
  // air foes live in the wilds
- if(b===6){env.spawnD+=Math.abs(dx);if(env.spawnD>env.next){env.spawnD=0;env.next=sh?300+rnd()*160:420+rnd()*220;spawnAir(mv||P.dir)}}
+ if(b===6){env.spawnD+=Math.abs(dx);if(env.spawnD>env.next){env.spawnD=0;env.next=sh?SKY.gapShip[0]+rnd()*SKY.gapShip[1]:SKY.gapHorse[0]+rnd()*SKY.gapHorse[1];spawnAir(mv||P.dir)}}
  for(const e of ENEMIES)if(ENEMY[e.type].air&&Math.abs(e.x-P.x)>VW*1.3)e.dead=1;
  if(inp.leave()&&leaveFly())return;
  if(MODE!=='play'){$('prompt').style.display='none';return}
@@ -1569,15 +1572,14 @@ function leaveFly(){if(FEATURE_DRIVABLE_AIRSHIPS&&P.fly==='ship'){const i=shipDo
   toast(ico('horseOn',2)+' '+ico('ship')+' '+ico('arR')+' '+TOWNS[DOCKS[S.moor].town].name,1800);save();return true}
  if(groundAt(P.x)===null){if(!(env.leaveT>0)){env.leaveT=1;toast(ico('horseOff')+' Fly over land to dismount',1100)}return false}
  P.fly=null;dismount(P.x);P.vy=40;P.onGround=false;return true}
-function spawnAir(dir){const mx=P.fly==='ship'?3:SKYMAX,air=ENEMIES.filter(e=>!e.dead&&ENEMY[e.type].air).length;if(air>=mx)return;const n=rnd()<.3?2:1;
+function spawnAir(dir){const mx=P.fly==='ship'?SKY.maxShip:SKY.max,air=ENEMIES.filter(e=>!e.dead&&ENEMY[e.type].air).length;if(air>=mx)return;const n=rnd()<SKY.pair?2:1;
  for(let i=0;i<n&&air+i<mx;i++){const x=P.x+dir*(VW/2+24+i*30);if(x<ISLES[0].x1+40||x>ISLES[1].x0-40)continue;const t=pickType(6),e=spawnEnemy(t,x);e.dir=-dir;
   e.y=t==='skySlime'?BANDY[0]+6-rnd()*24:BANDY[1+Math.floor(rnd()*2)]-6;e.by=e.y;e.state='hover';e.cd=1.2+rnd();e.age=0;e.onGround=false}}
 function airTouch(e,d){if(P.fly==='ship'){const hw=shipHW();return Math.abs(e.x-P.x)<hw+d.w/2&&e.y>P.y-52&&e.y-d.h<P.y+14}const m=mounted();return Math.abs(e.x-P.x)<(m?10:6)+d.w/2&&e.y>P.y-(m?28:18)&&e.y-d.h<P.y+2}
 function cartTouch(e,d){return carriedH()==='wingcart'&&!!P.fly&&P.wcx!=null&&Math.abs(e.x-P.wcx)<10+d.w/2&&e.y>P.wcy-16&&e.y-d.h<P.wcy+2}
-function cartHit(e){if((P.wcHit||0)>0||cargoCount()<=PACK)return false;P.wcHit=4;if(rnd()<.4)return false;const u=unitsOf(S.cargo).sort((a,b)=>ITEMS[b.item].base-ITEMS[a.item].base),k=PACK+Math.floor(rnd()*(u.length-PACK)),lost=u.splice(k,1)[0];S.cargo=stacksOf(u);
+function cartHit(e){if((P.wcHit||0)>0||cargoCount()<=PACK)return false;P.wcHit=WCART.knockCd;if(rnd()<WCART.keep)return false;const u=unitsOf(S.cargo).sort((a,b)=>ITEMS[b.item].base-ITEMS[a.item].base),k=PACK+Math.floor(rnd()*(u.length-PACK)),lost=u.splice(k,1)[0];S.cargo=stacksOf(u);
  ftxt(P.wcx,P.wcy-18,'-1','#ffb060');part(P.wcx,P.wcy-8,ITEMS[lost.item].col,6,70,260,.8);part(P.wcx,P.wcy-8,'#c8a060',5,60);shake(1.2);S.stats.knocked=(S.stats.knocked||0)+1;return true}
-const SKYDMG=.55,SKYMAX=2; // on the winged horse: sky foes hit for 55% and at most 2 are around (3 vs an airship); pegasi wait longer between dives
-function airHit(e,d){if(P.fly==='ship')hullHit(d.hull,e.x);else hurtPlayer(d.dmg*SKYDMG,e.x,false)}
+function airHit(e,d){if(P.fly==='ship')hullHit(d.hull,e.x);else hurtPlayer(d.dmg*SKY.dmg,e.x,false)}
 function updAir(e,dt,d){const tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;e.age=(e.age||0)+dt;e.x+=e.vx*dt;e.vx*=Math.pow(.05,dt);
  if(e.gone==null&&biomeAt(P.x)!==6){e.gone=e.age;e.dir=e.x<P.x?-1:1}
  if(e.gone!=null){e.y-=70*dt;e.x+=e.dir*110*dt;if(e.age-e.gone>2.2){e.dead=1;part(e.x,e.y-d.h/2,'#ffffff',8,70,40,.5)}return}
@@ -1586,7 +1588,7 @@ function updAir(e,dt,d){const tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;e.age=(e.age
   if(e.state==='leave'){e.y-=60*dt;e.x+=e.dir*120*dt;if(e.age>22)e.dead=1;return}
   if(e.state==='hover'){const hx=tx+(e.x<tx?-70:70),hy=ty-40+Math.sin(e.t*2+e.seed)*10;e.x+=clamp((hx-e.x)*1.6,-d.spd*.95,d.spd*.95)*dt;e.y+=clamp((hy-e.y)*1.6,-80,80)*dt;e.dir=tx>e.x?1:-1;
    e.cd-=dt;if(e.cd<=0&&Math.abs(tx-e.x)<190){e.state='dive';e.hitDone=0;const a=Math.atan2(ty-e.y,tx-e.x);e.dvx=Math.cos(a)*d.spd;e.dvy=Math.sin(a)*d.spd;e.dT=0}}
-  else if(e.state==='dive'){e.dT+=dt;e.x+=e.dvx*dt;e.y+=e.dvy*dt;e.dir=e.dvx>0?1:-1;if(!e.hitDone&&airTouch(e,d)){e.hitDone=1;airHit(e,d)}else if(!e.hitDone&&cartTouch(e,d)){e.hitDone=1;cartHit(e)}if(e.dT>1.1){e.state='hover';e.cd=(P.fly==='ship'?1.6:2.6)+rnd()*1.2}}}
+  else if(e.state==='dive'){e.dT+=dt;e.x+=e.dvx*dt;e.y+=e.dvy*dt;e.dir=e.dvx>0?1:-1;if(!e.hitDone&&airTouch(e,d)){e.hitDone=1;airHit(e,d)}else if(!e.hitDone&&cartTouch(e,d)){e.hitDone=1;cartHit(e)}if(e.dT>1.1){e.state='hover';e.cd=(P.fly==='ship'?SKY.diveShip:SKY.diveHorse)+rnd()*SKY.diveRnd}}}
  else{const hop=Math.abs(Math.sin(e.t*2.6+e.seed));e.by+=clamp((ty+4-e.by)*.6,-22,22)*dt;e.by=Math.max(e.by,BANDY[1]-10);e.y=e.by-hop*16;e.onGround=hop<.15;
   const dx=tx-e.x;if(Math.abs(dx)<240){e.x+=Math.sign(dx)*d.spd*dt;e.dir=Math.sign(dx)||1}
   e.cd-=dt;if(e.cd<=0&&airTouch(e,d)){e.cd=1;airHit(e,d)}else if(e.cd<=0&&cartTouch(e,d)){e.cd=1;cartHit(e)}}}
