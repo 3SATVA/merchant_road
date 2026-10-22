@@ -13,6 +13,28 @@ document.addEventListener('DOMContentLoaded',()=>{const s=document.createElement
 const VPS=[[390,844,true,'p'],[844,390,true,'l'],[1280,800,false,'d']];
 const base=o=>Object.assign({money:500,hp:200,maxhp:200,potions:2,hauler:'bigwagon',haulers:['backpack','wheelbarrow','bigwagon'],weapons:['fists','sword','crossbow'],weapon:'sword',cargo:[{item:2,origin:1,qty:6,paid:30},{item:3,origin:2,qty:3,paid:100}],lastTown:1,x:2200,time:50,stats:{kills:3,profit:40,sold:5,deaths:0},visited:[0,1,2],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat'},mats:{essence:2,lava:1},look:{skin:1,body:0,hair:3,hc:2},ench:{sword:[{k:'fire',l:1}]},witch:{x:5000,t:40,seen:false},horse:null,lances:[],lance:null,scrap:{wood:20,apple:5,gold:0,done:false},wal:1,v:2,shelf:1},o);
 const W2=o=>base(Object.assign({w:1,x:1300,lastTown:6,money:600,w2seen:true,visited:[0,1,5,6],hauler:'bigwagon',cargo:[{item:6,origin:6,qty:3,paid:20}],horse:{on:true,x:null,dir:1,wings:true},lances:['woodlance'],lance:'woodlance',scrap:{wood:150,apple:50,gold:50,done:true},ws:{0:{x:14710,lastTown:5,money:900,park:null,stash:[],hold:[]}}},o));
+// End-game World 1 loadouts for World 2 balance (see ARCHITECTURE.md "World 2 difficulty"): max = best W1 kit, mid = partway through W1
+const ALLW=['fists','dagger','sword','crossbow','leafstaff','firestaff','warhammer','frostspear','obsidian','flamesword'];
+const BALPROF={
+ max:{hp:170,maxhp:100,potions:5,weapons:ALLW,weapon:'obsidian',lances:['woodlance','ironlance','magmalance'],lance:'magmalance',
+  gear:['tophat','stonehelm','stonechest','stoneboots','witchhat','witchrobe','witchboots'],eq:{head:'stonehelm',chest:'stonechest',feet:'stoneboots'},
+  ench:{magmalance:[{k:'sharp',l:3},{k:'bloodthirst',l:2}],obsidian:[{k:'sharp',l:3},{k:'crit',l:2},{k:'berserk',l:2}],stonechest:[{k:'guarded',l:3},{k:'hardy',l:3}],stonehelm:[{k:'hardy',l:2},{k:'regen',l:1}],stoneboots:[{k:'guarded',l:2},{k:'thorns',l:2}]},mats:{essence:4,stone:2,lava:1}},
+ mid:{hp:100,maxhp:100,potions:3,weapons:ALLW.slice(0,8),weapon:'frostspear',lances:['woodlance','ironlance'],lance:'ironlance',
+  gear:['tophat','stonehelm','stonechest','witchboots'],eq:{head:'stonehelm',chest:'stonechest',feet:'witchboots'},
+  ench:{ironlance:[{k:'sharp',l:1}],stonechest:[{k:'guarded',l:1}]},mats:{}}};
+// Skyhaven -> Sunspire crossing bot. c = careful (band discipline, dodges telegraphed bolts and dives, potion < 30%), r = careless (holds right, swings, potion < 15%)
+const BALRUN=(p,m)=>async h=>{await h.seed(W2(Object.assign({x:1900,cargo:[{item:6,origin:6,qty:6,paid:20}]},BALPROF[p])));
+ const r=await h.ev(m=>{let f=0,minhp=S.hp,hits=0,lh=S.hp,pots=0,lp=S.potions;const M=MR.maxHP();MR.P.dir=1;
+  for(;f<9000;f++){if(MR.mode!=='play'||MR.P.x>6790)break;tkeys.r=1;const P=MR.P;
+   if(!P.fly&&P.onGround&&!stormAt(P.x)&&!(m==='c'&&MR.E.some(e=>!e.dead&&ENEMY[e.type].isle&&Math.abs(e.x-P.x)<60)))pressed.tj=1;
+   if(m==='c'){if(P.fly&&!(f%6)){const tb=SKYISLES.some(I=>P.x>I.x0-70&&P.x<I.x1+20)?2:1;if(P.band<tb)pressed.tu=1;else if(P.band>tb)pressed.td=1}
+    for(const b of UB){const dx=b.x-P.x;if(Math.abs(dx)<70&&Math.sign(dx)!==Math.sign(b.vx)&&Math.abs(b.y-(P.y-10))<22){if(P.fly)pressed[b.y<P.y-10?'td':'tu']=1;else if(P.onGround)pressed.tj=1}}
+    if(P.fly&&!(f%4))for(const e of MR.E){if(e.dead||e.type!=='pegasus'||e.state!=='dive'||e.hitDone)continue;const dx=e.x-P.x;if(Math.abs(dx)<110&&Math.sign(e.dvx)!==Math.sign(dx)){pressed[(e.dvy>0?P.band<2:P.band===0)?'tu':'td']=1;break}}}
+   for(const e of MR.E){if(e.dead)continue;const dx=(e.x-P.x)*P.dir;if(dx>-4&&dx<44&&Math.abs((e.y-ENEMY[e.type].h/2)-(P.y-14))<30){pressed.ta=1;break}}
+   if(S.potions>0&&S.hp<M*(m==='c'?.3:.15))pressed.th=1;
+   window.__step(1);if(S.hp<lh)hits++;if(S.potions<lp)pots++;lp=S.potions;lh=S.hp;minhp=Math.min(minhp,S.hp)}
+  tkeys.r=0;return{f,mode:MR.mode,x:Math.round(MR.P?MR.P.x:0),hp:Math.round(S.hp),M,pct:Math.round(100*S.hp/M),minhp:Math.round(minhp),hits,pots,deaths:S.stats.deaths,money:S.money,kills:S.stats.kills}},m);
+ h.put('run',r);await h.step(30);await h.shot();await h.dig()};
 const ensureSaves=()=>fs.readdirSync(SAVEDIR).filter(f=>f.endsWith('.json')).sort();
 // scenario: [name, async(h)=>{}]  h: ev, step, seed, shot, dig
 const SC=[
@@ -46,7 +68,7 @@ const SC=[
  ['w2_town',async h=>{await h.seed(W2({x:1050}));await h.ev(()=>MR.enterTown(MR.TOWNS[6]));await h.step(3);await h.shot('market');for(const tb of ['haulers','weapons','inn']){const ok=await h.ev(tb=>{const b=document.querySelector('#ttabs button[data-tab="'+tb+'"]');if(!b||b.offsetParent===null)return false;b.click();return true},tb);if(ok){await h.step(3);await h.shot(tb)}}
    await h.ev(()=>{const b=document.querySelector('#tbody button[data-act="buywc"]');if(b)b.click()});await h.step(3);await h.shot('bought');await h.dig()}],
  ['w2_fly',async h=>{await h.seed(W2({x:1900,wcart:true,cargo:[{item:6,origin:6,qty:12,paid:20},{item:7,origin:6,qty:3,paid:260}]}));await h.step(10);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{pressed.tu=1});await h.step(40);await h.ev(()=>{tkeys.r=1});await h.step(200);await h.ev(()=>{MR.spawnAir(1)});await h.ev(()=>{tkeys.a=1});await h.step(120);await h.ev(()=>{tkeys.a=0});await h.step(60);await h.ev(()=>{tkeys.r=0});await h.step(10);await h.shot();await h.dig()}],
- ['w2_cross',async h=>{await h.seed(W2({x:1900,hp:100,maxhp:100,wcart:true,cargo:[{item:6,origin:6,qty:15,paid:20}]}));await h.step(10);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{pressed.tu=1;tkeys.r=1});for(let k=0;k<20;k++){await h.ev(k=>{tkeys.a=k%2===0},k);await h.step(60)}await h.ev(()=>{tkeys.r=0;tkeys.a=0});await h.step(10);await h.shot();await h.dig()}],
+ ['w2_cross',async h=>{await h.seed(W2({...BALPROF.max,x:1900,wcart:true,cargo:[{item:6,origin:6,qty:15,paid:20}]}));await h.step(10);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{pressed.tu=1;tkeys.r=1});for(let k=0;k<20;k++){await h.ev(k=>{tkeys.a=k%2===0},k);await h.step(60)}await h.ev(()=>{tkeys.r=0;tkeys.a=0});await h.step(10);await h.shot();await h.dig()}],
  ['w2_dock',async h=>{await h.seed(W2({x:1560}));await h.step(20);await h.ev(()=>{pressed.e=1});await h.step(10);await h.shot();await h.dig()}],
  ['fresh_new',async h=>{await h.fresh();await h.step(10);await h.ev(()=>document.getElementById('bNew').click());await h.step(30);await h.shot('start');
    await h.ev(()=>{keys.d=1});await h.step(240);await h.ev(()=>{keys.d=0;pressed.e=1});await h.step(10);await h.shot('town');await h.dig()}],
@@ -58,15 +80,20 @@ const SC=[
    await h.ev(()=>{keys.a=1});await h.step(40);await h.ev(()=>{keys.a=0});await h.ev(()=>MR.unhitch());await h.step(10);await h.ev(()=>MR.travelTo(1));await h.step(90);await h.shot('w2');await h.dig()}],
  ['w2_to_w1',async h=>{await h.seed(W2({x:1560}));await h.step(10);await h.ev(()=>{try{MR.travelTo(0)}catch(e){}});await h.step(400);await h.ev(()=>{if(MR.mode==='cut')MR.endCut()});await h.step(60);await h.shot();await h.dig()}],
  // sky islands (World 2)
- ['isle_land',async h=>{await h.seed(W2({x:1900,hp:100,maxhp:100}));await h.step(10);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{tkeys.r=1});for(let k=0;k<40&&await h.ev(()=>MR.P.x<2290);k++)await h.step(10);await h.ev(()=>{tkeys.r=0});await h.step(30);await h.shot('over');
+ ['isle_land',async h=>{await h.seed(W2({...BALPROF.max,x:1900}));await h.step(10);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{tkeys.r=1});for(let k=0;k<40&&await h.ev(()=>MR.P.x<2290);k++)await h.step(10);await h.ev(()=>{tkeys.r=0});await h.step(30);await h.shot('over');
    for(let k=0;k<3;k++){await h.ev(()=>{pressed.td=1});await h.step(20)}await h.step(40);await h.shot();await h.dig()}],
- ['isle_unicorn',async h=>{await h.seed(W2({x:3195,hp:100,maxhp:100}));await h.step(5);for(let k=0;k<150&&!await h.ev(()=>MR.E.some(e=>e.type==='unicorn'&&e.st==='charge'));k++)await h.step(2);await h.step(20);await h.shot('tele');
+ ['isle_unicorn',async h=>{await h.seed(W2({...BALPROF.max,x:3195}));await h.step(5);for(let k=0;k<150&&!await h.ev(()=>MR.E.some(e=>e.type==='unicorn'&&e.st==='charge'));k++)await h.step(2);await h.step(20);await h.shot('tele');
    for(let k=0;k<60&&!await h.ev(()=>UB.length);k++)await h.step(1);await h.step(7);await h.shot('bolt');await h.step(40);await h.dig('hit');
    for(let k=0;k<200&&!await h.ev(()=>MR.E.some(e=>e.type==='unicorn'&&e.st==='charge'&&e.sT<.2));k++)await h.step(1);await h.ev(()=>{pressed.tj=1});await h.step(40);await h.shot('jump');await h.dig()}],
- ['isle_slime',async h=>{await h.seed(W2({x:2300,hp:100,maxhp:100,horse:{on:false,x:2270,dir:1,wings:true}}));await h.step(5);
+ ['isle_slime',async h=>{await h.seed(W2(Object.assign({},BALPROF.max,{x:2300,horse:{on:false,x:2270,dir:1,wings:true}})));await h.step(5);
    for(let k=0;k<60;k++){if(!await h.ev(()=>MR.E.some(e=>e.type==='bigSlime'&&!e.dead)))break;await h.ev(k=>{const e=MR.E.find(e=>e.type==='bigSlime'&&!e.dead);const d=e.x-MR.P.x;keys.d=d>14;keys.a=d<-14;keys.j=k%2===0;if(Math.abs(d)<=14)MR.P.dir=d>0?1:-1},k);await h.step(8);if(k===5)await h.shot('fight')}
    await h.ev(()=>{for(const k in keys)keys[k]=0});await h.step(12);await h.shot('split');await h.dig()}],
- ['isle_storm',async h=>{await h.seed(W2({x:3200,hp:100,maxhp:100}));await h.step(4);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{tkeys.r=1});
+ ['isle_elite',async h=>{await h.seed(W2(Object.assign({},BALPROF.max,{x:4510})));await h.step(5);
+   await h.ev(()=>{for(const e of MR.E){if(e.type==='dreadUni'){e.x=e.tx=MR.P.x+130;e.cd=.2}else if(e.type==='bigSlime')e.x=e.tx=SKYISLES[3].x1-12}});
+   for(let k=0;k<200&&!await h.ev(()=>MR.E.some(e=>e.type==='dreadUni'&&e.st==='charge'));k++)await h.step(2);await h.step(18);await h.shot('tele');
+   for(let k=0;k<90&&await h.ev(()=>UB.length<2);k++)await h.step(1);await h.step(3);await h.shot('burst');await h.step(60);await h.dig()}],
+ ['bal_max_careful',BALRUN('max','c')],['bal_max_careless',BALRUN('max','r')],['bal_mid_careful',BALRUN('mid','c')],
+ ['isle_storm',async h=>{await h.seed(W2({...BALPROF.max,x:3200}));await h.step(4);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{tkeys.r=1});
    for(let k=0;k<140&&await h.ev(()=>!!MR.P.fly||MR.P.x<3850);k++)await h.step(5);await h.step(24);await h.shot('drop');await h.dig('drop');await h.ev(()=>{pressed.tj=1});await h.step(30);await h.ev(()=>MR.toggleHorse());await h.step(20);await h.ev(()=>MR.toggleHorse());await h.step(20);await h.dig('summon');
    for(let k=0;k<120&&await h.ev(()=>MR.P.x<4165);k++)await h.step(5);await h.ev(()=>{pressed.tj=1});await h.step(40);await h.ev(()=>{tkeys.r=0});await h.step(10);await h.shot('out');await h.dig()}],
  ['isle_save',async h=>{await h.seed(W2({x:5846,hp:100,maxhp:100,time:500}));await h.step(30);await h.shot('chest');await h.ev(()=>MR.save());const sv=await h.ev(()=>localStorage.getItem('merchantRoad.v1'));
@@ -87,6 +114,7 @@ const LEGACY={ // synthetic older saves exercising stacked migrations
    const ev=(f,a)=>pg.evaluate(f,a);const h={ev,step:n=>ev(n=>window.__step(n),n),
     shot:async s=>{await pg.screenshot({path:path.join(OUT,tag+'_'+name+(s?'_'+s:'')+'.png')})},
     fresh:async()=>{await ev(()=>localStorage.clear());await pg.reload();await ev(()=>document.fonts.ready.then(()=>1))},
+    put:(s,v)=>{res[tag+'_'+name+'_'+s]=v},
     seed:async o=>{await ev(s=>localStorage.setItem('merchantRoad.v1',s),typeof o==='string'?o:JSON.stringify(o));await pg.reload();await ev(()=>document.fonts.ready.then(()=>1));await h.step(10);await ev(()=>document.getElementById('bCont').click());await h.step(20)},
     dig:async(sfx)=>{if(CAP&&tag==='p'){await ev(()=>{if(MR.mode!=='menu')MR.save()});fs.writeFileSync(path.join(SAVEDIR,'live_'+name+'.json'),await ev(()=>localStorage.getItem('merchantRoad.v1')))}
      res[tag+'_'+name+(sfx?'_'+sfx:'')]=await ev(()=>{const r=v=>typeof v==='number'?Math.round(v*1000)/1000:v;const P=MR.P;return JSON.stringify({mode:MR.mode,S:MR.S,P:P&&Object.fromEntries(Object.entries(P).map(([k,v])=>[k,typeof v==='object'&&v?'obj':r(v)])),E:MR.E.map(e=>[e.type,r(e.x),r(e.y),r(e.hp)]),proj:MR.PROJ.length,pick:MR.PICK.length,cam:[r(camX),r(camY)],WI:MR.WI,DG:!!MR.DG,ov:[...document.querySelectorAll('.ov.on')].map(o=>o.id+':'+o.innerHTML.replace(/data:image[^"]*/g,u=>'img'+u.length)),hud:document.getElementById('hud').innerText,touch:[...document.querySelectorAll('#touch .tb')].map(b=>b.id+getComputedStyle(b).display+b.className).join()},(k,v)=>typeof v==='number'?Math.round(v*1000)/1000:v)})}};

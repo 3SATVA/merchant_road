@@ -14,6 +14,7 @@ python3 tests/regression/cmp.py /tmp/out_before /tmp/out_after   # digest + pixe
 ```
 
 - 26 scripted scenarios (World 1 walk/fight/long playthrough/horse/cart park, towns and every tab, inventory, witch, caves, Ashen Wastes, volcano, scrap pile, death + respawn, World 2 island/town/flight/crossing/dock, fresh no-save start, World 1 → 2 → 1 round trip, World 2 → 1, wagon/Winged Cart swap across worlds), each at 390x844, 844x390 (touch) and 1280x800.
+- World 2 balance: `bal_max_careful`, `bal_max_careless` and `bal_mid_careful` run `BALRUN` (a Skyhaven to Sunspire bot) with the `BALPROF` end-game / mid World 1 loadouts. The result (survived, HP %, potions, hits) is in the digest as `<vp>_bal_*_run`. `isle_elite` screenshots the Dread Unicorn telegraph and 3-bolt burst.
 - `saves/live_*.json` were produced by the live build (59268d3) after each scenario; `saves/legacy_*.json` are hand-made older formats (pre-v2 accessory hat, pre-wallet World 2, airships owned, junk values). Each is loaded, the migrated state is compared, and the game is stepped and screenshotted.
 - The digest compares the full save state, player, enemies, camera, open panels' HTML, HUD text and touch-button visibility; `cmp.py` reports any digest key that differs and any screenshot with pixels off by more than 8/255.
 - `node reg.js <url> <out> capture` also rewrites `saves/` from that build.
