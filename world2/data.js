@@ -41,3 +41,9 @@ Object.assign(ENEMY,{
  pegasus:{hp:55,dmg:11,hull:10,spd:190,w:18,h:14,coin:[6,12],air:1},
  skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1}});
 reg(SPAWNS,5,[[['slime',1]],[['pegasus',.55],['skySlime',.45]],[['slime',1]]]);
+// World 2 definition (see WORLDDEF in core/registry.js)
+WORLDDEF[1]={name:'Skylands',len:W2LEN,bounds:[0,ISLES[0].x1,ISLES[1].x0,W2LEN],wb:[5,6,7],xmin:ISL0+24,xmax:ISLES[1].x1-24,dungeons:[],
+ rawH(x){return 22+8*Math.sin(x/170)+4*Math.sin(x/53)},
+ flat:[],pits:null,
+ decorOK(x){return onIsle(x-12)&&onIsle(x+12)&&DOCKS.every(d=>Math.abs(x-d.x)>80)},
+ town:W2TOWN,money:W2START,arriveX:W2DOCK-34,horseOff:26}; // first arrival: Skyhaven, W2START coins, by the dock
