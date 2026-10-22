@@ -126,7 +126,7 @@ img.big{width:72px;height:42px}
  <p><b>Barber.</b> Wake Ridge, Pinehollow and Emberfall have a Barber (striped pole): change skin, body and hair for free. Your Top Hat goes on your head; take it off to show your hair. One hat at a time: wearing a Witch Hat puts the Top Hat back in your bag.</p>
  <p><b>Witch.</b> Vex, a young witch with a knack for enchanting, parks her wagon (purple tarp) somewhere on the road and moves on every ~10 minutes. Get close and it shows on your map (purple). Press E at her wagon, tap a weapon or armor piece (or hold it briefly and drag) into the slot and press <b>Enchant</b> for <b>3 Magic Essence</b>: it replaces the item's enchants with 1–3 random ones, levels I–III. Reroll as often as you like. Weapons: Sharp, Critical, Knockback, Burning, Freezing, Venom, Leeching. Armor: Guarded, Swift, Hardy, Thorns, Regen, Leeching. <span style="color:#ff4a6a">Curses</span> (about 1 in 6) are high risk, high reward: Bloodthirst, Berserk, Volatile, Heavy, Greedy.</p>
  <p><b>Horses.</b> Bog Town, Pinehollow and Stonepeak have a <b>Stable</b> (horseshoe sign): a horse costs $1,500, no upkeep, and comes with a Wooden Lance. Press <b>R</b> (🐴) to ride or get off; if your horse is somewhere else it gallops over to you (not inside caves). Riding is 1.5× faster and pulls your cart (a loaded cart slows it a bit). On horseback you fight only with your lance: tap attack to lower it, and the faster you gallop into a foe, the harder it hits. Hits never knock you off, but a rider is an easy target: you take 30% more damage and each hit knocks you out of your gallop. Golems don't budge: a charge or a golem punch shoves you back (BONK), so circle round and charge again. Goblins can't snatch goods while you gallop (right after a hit they can). Horses wait outside caves. Iron Lance at the Stable ($900); <b>Magma Lance</b> at the Forge (3 stone, 1 dried lava, 1 iron). Vex enchants lances too.</p>
- <p><b>Ashen Wastes.</b> Past Emberfall: no towns, just raiders (they steal!), cinder slimes, scrap golems and ash storms. At the far end, build an <b>airship</b> from the scrap heap: 150 Wood, 50 Apples, 50 Gold (press E; a cart parked there counts). Deposits are never lost. You need a horse to fly it to <b>World 2, the Skylands</b>: your horse grows wings there (tap jump in the air to flap), carts stay parked by the airship and each world has its own money (you start the Skylands with $100) and its own goods: World 1 goods wait in your wagon by the airship, sky goods wait in your airship's hold. Gear, materials, lances and your horse come with you. Skyhaven sells bigger airships; fly home from its dock.</p><p><b>Sky travel:</b> on the winged horse, jump takes off. In the air the up/down arrows on the left change altitude (3 bands; high is fastest; keys W/S). The big right button leaves the airship at a dock (or leaps onto your horse mid-air, the airship flies home with its hold) and gets off the horse over land (key R). The winged horse is slow and only carries your backpack. Board your airship at its dock to haul a full hold to <b>Sunspire</b>; pegasi and sky slimes hit its hull, and a broken hull limps back to the dock losing some cargo (half refunded). Rain pushes you down, updrafts lift you.</p>
+ <p><b>Ashen Wastes.</b> Past Emberfall: no towns, just raiders (they steal!), cinder slimes, scrap golems and ash storms. At the far end, build an <b>airship</b> from the scrap heap: 150 Wood, 50 Apples, 50 Gold (press E; a cart parked there counts). Deposits are never lost. You need a horse to fly it to <b>World 2, the Skylands</b>: your horse grows wings there (tap jump in the air to flap), carts stay parked by the airship and each world has its own money (you start the Skylands with $100) and its own goods: World 1 goods wait in your wagon by the airship, sky goods wait in your airship's hold. Gear, materials, lances and your horse come with you. Skyhaven sells bigger airships; fly home from its dock.</p><p id="helpSky"><b>Sky travel:</b> on the winged horse, jump takes off. In the air the up/down arrows on the left change altitude (3 bands; high is fastest; keys W/S). The big right button leaves the airship at a dock (or leaps onto your horse mid-air, the airship flies home with its hold) and gets off the horse over land (key R). The winged horse is slow and only carries your backpack. Board your airship at its dock to haul a full hold to <b>Sunspire</b>; pegasi and sky slimes hit its hull, and a broken hull limps back to the dock losing some cargo (half refunded). Rain pushes you down, updrafts lift you.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
  <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · R horse · I inventory · Q swap weapon · H potion · Esc pause.</p>
  <p><b>Fire</b> melts ice golems, <b>ice</b> cracks lava golems, <b>hammers</b> crush all golems.</p></div></div>
@@ -206,6 +206,10 @@ const ISLES=[{x0:150,x1:1950},{x0:6800,x1:8600}];
 const DOCKS=[{x:1560,side:1,isl:0,town:6},{x:6990,side:-1,isl:1,town:7}]; // side: which way the moored airship hangs off the pier
 const BANDY=[-70,-140,-210]; // altitude bands: low (near islands, sky slimes), mid (pegasi), high (pegasi + tailwind)
 const WX=[{x0:2500,x1:3150,k:'rain'},{x0:3450,x1:3700,k:'up'},{x0:4250,x1:4950,k:'rain'},{x0:5300,x1:5550,k:'up'},{x0:6000,x1:6450,k:'rain'}]; // rain pushes you down a band, updrafts lift you
+// ===== FEATURE FLAG: drivable airships in World 2 (shop, boarding/mooring, piloting, hull + wrecks, airship cargo hold, mid-air leap to horse).
+// Shelved for now (see SHELVED.md): all the code and sprites stay below, intact; set this to true to bring them back.
+// The World 1 scrap-pile airship build and the airship that carries you between worlds (and the cutscene) are NOT affected.
+const FEATURE_DRIVABLE_AIRSHIPS=false;
 const SHIPV=118,HFLY=.5,JET=1.2,HULLFIX=12,WRECKLOSS=.3; // airship base speed (x ship spd); winged horse = gallop x0.5 (~69px/s: slower than any airship, the ship is the way to travel); high band x1.2; hull repairs 12/s while moored; a wreck loses 30% of the hold
 function islAt(x){for(let i=0;i<ISLES.length;i++)if(x>ISLES[i].x0&&x<ISLES[i].x1)return i;return -1}
 function onIsle(x){return islAt(x)>=0}
@@ -402,10 +406,11 @@ function drawPlayer(c,x,y,dir,t,walking,air,flash,wep,atk,o){
 // horse (facing +x; x,y = between the hooves). run: 0..1 gallop amount; idle: standing animation
 function drawHorse(c,x,y,dir,t,run,idle,flash){const P=(xo,yo,w,h,col)=>{px(c,dir>0?x+xo:x-xo-w,y+yo,w,h,flash?'#ffffff':col)};
  const B='#8a5a32',BH='#a8743c',BS='#6e4526',M='#2a1a10',HF='#1e140c';
- const ph=run>0?t*(10+8*run):0,g=run>.05;const leg=(lx,o)=>{const a=g?Math.sin(ph+o):0,lift=g?Math.max(0,Math.round(a*(2.2+run))):0,sw=g?Math.round(Math.cos(ph+o)*(2+run)*Math.min(1,run*1.5)):0;
+ const hf=WI===1&&S&&S.horse&&S.horse.wings?horseFlap(idle):null,hfly=hf!==null&&!!(plr()&&plr().fly==='horse');
+ const ph=run>0?t*(10+8*run):0,g=run>.05&&!hfly;const leg=(lx,o)=>{if(hfly){const k=lx<0?1:0;P(lx-k,-7,2,4,BS);P(lx-1-k,-4,2,1,BS);P(lx-1-k,-3,2,1,HF);return}const a=g?Math.sin(ph+o):0,lift=g?Math.max(0,Math.round(a*(2.2+run))):0,sw=g?Math.round(Math.cos(ph+o)*(2+run)*Math.min(1,run*1.5)):0;
   P(lx+sw,-7,2,6-lift,BS);P(lx+sw,-1-lift,2,1,HF)};
  const gal=run>.55;leg(-8,Math.PI);leg(5,0);
- const bob=g?Math.round(Math.sin(ph*2)*(.5+.9*Math.min(1,run))):0; // walk = trot pairs, gallop = paired legs slightly out of step
+ const bob=hfly?FLAPBOB[flapF(t,hf)]:g?Math.round(Math.sin(ph*2)*(.5+.9*Math.min(1,run))):0; // walk = trot pairs, gallop = paired legs slightly out of step
  P(-10,-14+bob,19,7,B);P(-9,-15+bob,16,1,B);P(-9,-15+bob,15,1,BH);P(-10,-8+bob,19,1,BS);P(-11,-13+bob,1,5,B);
  leg(-6,gal?Math.PI+.8:0);leg(7,gal?.8:Math.PI);
  // neck + head
@@ -419,7 +424,7 @@ function drawHorse(c,x,y,dir,t,run,idle,flash){const P=(xo,yo,w,h,col)=>{px(c,di
  if(idle){P(12,-20+hb,4,1,'#5a3818')}else{P(10,-20+bob,6,1,'#5a3818');P(4,-19+bob,7,1,'#5a3818')}
  if(WI===1&&S&&S.horse&&S.horse.wings)drawWings(P,t,bob,idle?0:run,idle)}
 // rider on horseback: horse, then the player seated, then a leg down the flank; lance couched while charging
-function drawRider(c,sx,sy,d,t,fl,cols){const s=lanceSpeed();drawHorse(c,sx,sy,d,t,s,0,fl);const by=Math.round(Math.sin((P.ride||0)*.35)*(s>.05?.8:0));
+function drawRider(c,sx,sy,d,t,fl,cols){const s=lanceSpeed();drawHorse(c,sx,sy,d,t,s,0,fl);const hf=WI===1&&S.horse.wings?horseFlap(0):null,by=hf!==null&&P.fly==='horse'?FLAPBOB[flapF(t,hf)]:Math.round(Math.sin((P.ride||0)*.35)*(s>.05?.8:0));
  const ry=sy-10+by;drawPlayer(c,sx-1*d,ry,d,t,false,false,fl,S.lance||S.weapon,P.couch>0?1:0,{eq:S.eq,look:S.look});
  const L=(xo,yo,w,h,col)=>px(c,d>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col);const FT=S.eq.feet;L(-1,-12+by,2,4,'#4a3b2a');L(-1,-8+by,3,1,FT==='witchboots'?'#c060ff':FT==='stoneboots'?'#b8b8c0':'#2a1d14');
  if(carriedH()==='backpack')drawHauler(c,sx-1*d,ry,d,'backpack',cols,0);
@@ -551,7 +556,17 @@ function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo)
   const wt=s.witch;if(!(wt&&isFinite(wt.x)&&isFinite(wt.t)))s.witch=null;else wt.seen=!!wt.seen;
   /* cost basis: stacks from old saves without a valid price get the good's base price */
   const fixPaid=a=>{if(Array.isArray(a))for(const c of a)if(c&&!(isFinite(c.paid)&&c.paid>=0))c.paid=ITEMS[c.item]?ITEMS[c.item].base:0};fixPaid(s.cargo);if(s.park)fixPaid(s.park.cargo);
+  if(!FEATURE_DRIVABLE_AIRSHIPS)shelveShips(s);
   if(!HAULERS[s.hauler])s.hauler='backpack';return s}}catch(e){}return null}
+// airships shelved: land everyone at Skyhaven, World 2 goods fit the backpack (most valuable first), the rest and any bought airships are refunded in full to the World 2 wallet
+function shelveShips(s){const act=s.w===1,o=act?null:s.ws[1];let rf=0;
+ for(const id of s.ships)if(id!=='small'&&SHIPS[id])rf+=SHIPS[id].price;
+ const g=act?s.cargo.concat(s.park&&Array.isArray(s.park.cargo)?s.park.cargo:[]):(o?cargoOK(o.hold).concat(o.park&&Array.isArray(o.park.cargo)?cargoOK(o.park.cargo):[]):[]);
+ const u=unitsOf(g).sort((a,b)=>ITEMS[b.item].base-ITEMS[a.item].base),keep=u.slice(0,PACK);for(const x of u.slice(PACK))rf+=+x.paid||0;rf=Math.round(rf);
+ if(act){s.cargo=stacksOf(keep);s.park=null;if(s.moor!==0||!onIsleX(s.x)){s.x=DOCKS[0].x;s.lastTown=W2TOWN}s.money=Math.max(0,Math.round(+s.money||0))+rf}
+ else if(o){o.hold=stacksOf(keep);o.park=null;if(s.moor!==0){o.x=DOCKS[0].x-34;o.lastTown=W2TOWN}o.money=(isFinite(o.money)?o.money:W2START)+rf}
+ s.ships=['small'];s.ship='small';s.moor=0;s.hull=SHIPS.small.hull;if(rf>0)s.shelfRf=(s.shelfRf||0)+rf}
+function onIsleX(x){return ISLES.some(I=>x>=I.x0&&x<=I.x1)}
 // ===== economy =====
 function tdist(a,b){if(TOWNS[a].w!==TOWNS[b].w)return 0; // goods never cross worlds
  return Math.abs(TOWNS[a].x-TOWNS[b].x)/DUNIT}
@@ -562,7 +577,7 @@ const REFUND=.5; // on death, half of the purchase price of lost goods comes bac
 function cargoN(a){return a.reduce((t,s)=>t+s.qty,0)}
 function cargoCount(){return cargoN(S.cargo)}
 function carriedH(){return S.w||S.park||DG?'backpack':S.hauler}
-function cap(){return S.w?(S.park?PACK:SHIPS[S.ship].cap):S.park?PACK:HAULERS[S.hauler].cap}
+function cap(){return S.w?(FEATURE_DRIVABLE_AIRSHIPS&&!S.park?SHIPS[S.ship].cap:PACK):S.park?PACK:HAULERS[S.hauler].cap}
 function addCargo(item,origin,qty,paid){let s=S.cargo.find(s=>s.item===item&&s.origin===origin);if(s){s.paid=(s.paid*s.qty+paid*qty)/(s.qty+qty);s.qty+=qty}else S.cargo.push({item,origin,qty,paid})}
 function takeUnit(stackIdx,a){a=a||S.cargo;const s=a[stackIdx];s.qty--;const u={item:s.item,origin:s.origin,paid:s.paid};if(s.qty<=0)a.splice(stackIdx,1);return u}
 function randomUnit(a){a=a||S.cargo;const n=cargoN(a);if(!n)return null;let r=Math.floor(rnd()*n);for(let i=0;i<a.length;i++){if(r<a[i].qty)return takeUnit(i,a);r-=a[i].qty}return null}
@@ -602,7 +617,8 @@ $('bCont').onclick=()=>{S=load()||fresh();startGame()};
 $('bHelp').onclick=$('bHelp2').onclick=()=>$('help').classList.add('on');$('bHelpX').onclick=()=>$('help').classList.remove('on');
 $('bRes').onclick=()=>setMode('play');$('bMenu').onclick=()=>{save();DG=null;ENEMIES=[];PROJ=[];setMode('menu')};$('pbtn').onclick=()=>setMode('pause');
 $('bRespawn').onclick=()=>{fadeIn();P=newPlayer(TOWNS[S.lastTown].x);S.hp=maxHP();save();setMode('play')};
-function startGame(){DG=null;setWorld(S.w);if(S.horse&&!S.horse.on)S.horse.x=clamp(S.horse.x,XMIN,XMAX);if(S.w===1){if(!onIsle(S.x))S.x=DOCKS[S.moor].x;if(S.horse&&!S.horse.on&&!onIsle(S.horse.x))S.horse.x=S.x-DOCKS[S.moor].side*26}P=newPlayer(clamp(S.x,XMIN,XMAX));camX=clamp(P.x-VW/2,0,WORLD-VW);camY=P.y-VH*.64;ENEMIES=[];PROJ=[];PICK=[];ROCKS=[];FTXT=[];PARTS=[];env.biome=-1;env.spawnD=0;env.next=350;setMode('play');if(S.w===1&&!S.w2seen&&S.horse)startCut();save()}
+if(!FEATURE_DRIVABLE_AIRSHIPS)$('helpSky').innerHTML='<b>Sky travel:</b> in the Skylands you cross the open sky on your winged horse: jump to take off, the up/down arrows on the left change altitude (3 bands; high is fastest; keys W/S), the big right button gets off over land (key R). The horse is slow and carries only your backpack (5 goods), so pick valuable ones. Pegasi and sky slimes attack in the Air Wilds; rain pushes you down, updrafts lift you. Skyhaven\'s airship takes you back to World 1.';
+function startGame(){if(S&&S.shelfRf){const r=S.shelfRf;delete S.shelfRf;setTimeout(()=>toast(ico('ship',2)+' '+ico('x')+'<br>Airships are grounded for now<br><span class="gold">+'+pr(r)+'</span> refunded',3600),600)}DG=null;setWorld(S.w);if(S.horse&&!S.horse.on)S.horse.x=clamp(S.horse.x,XMIN,XMAX);if(S.w===1){if(!onIsle(S.x))S.x=DOCKS[S.moor].x;if(S.horse&&!S.horse.on&&!onIsle(S.horse.x))S.horse.x=S.x-DOCKS[S.moor].side*26}P=newPlayer(clamp(S.x,XMIN,XMAX));camX=clamp(P.x-VW/2,0,WORLD-VW);camY=P.y-VH*.64;ENEMIES=[];PROJ=[];PICK=[];ROCKS=[];FTXT=[];PARTS=[];env.biome=-1;env.spawnD=0;env.next=350;setMode('play');if(S.w===1&&!S.w2seen&&S.horse)startCut();save()}
 let curTab='market',curTown=0;
 function enterTown(t){curTown=t.i;S.lastTown=t.i;if(!S.visited.includes(t.i))S.visited.push(t.i);curTab='market';setMode('town');renderTown();save()}
 function leaveTown(){setMode('play');save()}
@@ -623,7 +639,7 @@ BLDURL.ships=ICO.ship.url;document.querySelectorAll('#ttabs img[data-b]').forEac
 function lookPrev(look,eq,w,h,dx,dy){return spriteURL(w,h,g=>drawPlayer(g,dx,dy,1,0,false,false,false,'fists',0,{look,eq}))}
 function drawPrev(cv,t,walk){if(!cv)return;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);drawPlayer(g,Math.floor(cv.width/2),cv.height-4,1,t||0,!!walk,false,false,S.weapon,0,{eq:S.eq,look:S.look});setAura(g,Math.floor(cv.width/2),cv.height-4,t||0)}
 function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tmoney').textContent=pr(S.money);
- [...$('ttabs').children].forEach(b=>{b.classList.toggle('on',b.dataset.tab===curTab);const tb=b.dataset.tab;b.style.display=(tb==='haulers'&&!t.haulers.length&&S.haulers.length<2)||(tb==='weapons'&&!t.weapons.length&&S.weapons.length<2)||(tb==='barber'&&!t.barber)||(tb==='craft'&&!t.forge)||(tb==='stable'&&!t.stable)||(tb==='ships'&&!t.ships)||(tb==='haulers'&&t.w)?'none':''});let h='';
+ [...$('ttabs').children].forEach(b=>{b.classList.toggle('on',b.dataset.tab===curTab);const tb=b.dataset.tab;b.style.display=(tb==='haulers'&&!t.haulers.length&&S.haulers.length<2)||(tb==='weapons'&&!t.weapons.length&&S.weapons.length<2)||(tb==='barber'&&!t.barber)||(tb==='craft'&&!t.forge)||(tb==='stable'&&!t.stable)||(tb==='ships'&&(!t.ships||!FEATURE_DRIVABLE_AIRSHIPS))||(tb==='haulers'&&t.w)?'none':''});let h='';
  if(curTab==='market'){const n=cargoCount(),c=cap();
   h+='<div class="sec">CARGO '+n+'/'+c+'</div>';
   if(!S.cargo.length)h+='<div class="row dim"><span class="nm">Empty</span></div>';
@@ -662,7 +678,7 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
    const btn=own?(S.lance===id?'<button disabled>Equipped</button>':'<button data-act="usel" data-id="'+id+'">Equip</button>'):W.crafted?'<button disabled>Forge</button>':W.price?'<button data-act="buyl" data-id="'+id+'" '+(S.money<W.price||!Hs?'disabled':'')+'>'+pr(W.price)+'</button>':'<button disabled>'+ico('horseOff')+'</button>';
    h+='<div class="row'+(encList(id).length?' ench':'')+'" style="'+(encList(id).length?'--ec:'+enchCol(id):'')+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+Math.round(W.dmg*LANCEMIN)+'–'+Math.round(W.dmg*LANCEMAX)+(W.elem==='fire'?' · 🔥':'')+'</span></span>'+btn+'</div>'}
   h+='<div class="small" style="margin-top:6px">⚔ grows with speed · gallop in!</div>';
- } else if(curTab==='ships'&&t.ships){
+ } else if(curTab==='ships'&&t.ships&&FEATURE_DRIVABLE_AIRSHIPS){
   for(const id of SORDER){const sh=SHIPS[id],own=S.ships.includes(id),eq=S.ship===id;
    const btn=eq?'<button disabled>'+ico('check')+'</button>':own?'<button data-act="useship" data-id="'+id+'" '+(cargoCount()>sh.cap||S.moor!==0||S.park?'disabled':'')+'>Use</button>':'<button data-act="buyship" data-id="'+id+'" '+(S.money<sh.price?'disabled':'')+'>'+pr(sh.price)+'</button>';
    h+='<div class="row'+(eq?' on':'')+'"><img class="px shipi" src="'+SHIPURL[id]+'"><span class="nm">'+sh.name+'<span class="sub">'+ico('pack')+' '+sh.cap+' · '+ico('arR')+' ×'+sh.spd+' · Hull '+sh.hull+'</span></span>'+btn+'</div>'}
@@ -687,8 +703,8 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  else if(a==='look'){const k=b.dataset.k;if(k in S.look)S.look[k]=+b.dataset.v;S.look=fixLook(S.look)}
  else if(a==='hat'){if(S.gear.includes('tophat'))S.eq.head=S.eq.head==='tophat'?null:'tophat'}
  else if(a==='craft'){craft(b.dataset.id)}
- else if(a==='buyship'){const id=b.dataset.id,sh=SHIPS[id];if(sh&&!S.ships.includes(id)&&S.money>=sh.price){S.money-=sh.price;S.ships.push(id);if(cargoCount()<=sh.cap&&S.moor===0&&!S.park){S.ship=id;S.hull=sh.hull}save();toast(ico('ship',2)+' '+sh.name,1400)}}
- else if(a==='useship'){const id=b.dataset.id,sh=SHIPS[id];if(sh&&S.ships.includes(id)&&cargoCount()<=sh.cap&&S.moor===0&&!S.park){S.ship=id;S.hull=sh.hull}}
+ else if(a==='buyship'&&FEATURE_DRIVABLE_AIRSHIPS){const id=b.dataset.id,sh=SHIPS[id];if(sh&&!S.ships.includes(id)&&S.money>=sh.price){S.money-=sh.price;S.ships.push(id);if(cargoCount()<=sh.cap&&S.moor===0&&!S.park){S.ship=id;S.hull=sh.hull}save();toast(ico('ship',2)+' '+sh.name,1400)}}
+ else if(a==='useship'&&FEATURE_DRIVABLE_AIRSHIPS){const id=b.dataset.id,sh=SHIPS[id];if(sh&&S.ships.includes(id)&&cargoCount()<=sh.cap&&S.moor===0&&!S.park){S.ship=id;S.hull=sh.hull}}
  else if(a==='buyhorse'){buyHorse(t)}
  else if(a==='buyl'){const id=b.dataset.id,W=WEAPONS[id];if(W&&W.lance&&!S.lances.includes(id)&&S.horse&&S.money>=W.price){S.money-=W.price;S.lances.push(id);S.lance=id}}
  else if(a==='usel'){if(S.lances.includes(b.dataset.id))S.lance=b.dataset.id}
@@ -697,14 +713,14 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  save();renderTown()};
 const MINI=$('mini').getContext('2d');
 function updHUD(){if(!S)return;$('hpfill').style.width=clamp(S.hp/maxHP()*100,0,100)+'%';$('hpt').textContent=Math.ceil(Math.max(0,S.hp));{const mt=pr(S.money),me=$('money');if(me.textContent!==mt){if(me.textContent&&me.dataset.w==S.w){me.classList.remove('bump');void me.offsetWidth;me.classList.add('bump')}me.dataset.w=S.w;me.textContent=mt}}
- $('cargo').textContent=cargoCount()+'/'+cap();const ch=S.w&&!S.park?'ship':carriedH();if($('icart').dataset.k!==ch){$('icart').src=ch==='ship'?ICO.ship.url:HAULURL[ch];$('icart').style.width=ch==='ship'?'16px':'';$('icart').dataset.k=ch}
+ $('cargo').textContent=cargoCount()+'/'+cap();const ch=FEATURE_DRIVABLE_AIRSHIPS&&S.w&&!S.park?'ship':carriedH();if($('icart').dataset.k!==ch){$('icart').src=ch==='ship'?ICO.ship.url:HAULURL[ch];$('icart').style.width=ch==='ship'?'16px':'';$('icart').dataset.k=ch}
  const fl=!!(WI&&P&&P.fly);$('tC').style.display=(!S.w&&S.hauler!=='backpack')?'flex':'none';$('tU').style.display=$('tD').style.display=fl?'flex':'none';{const k=fl?(P.fly==='ship'?'exit':'horseOff'):'arU';if($('tJ').dataset.k!==k){$('tJ').dataset.k=k;$('tJ').innerHTML=ico(k,2);$('tJ').setAttribute('aria-label',fl?(P.fly==='ship'?'Leave airship':'Dismount'):'Jump')}}$('tJ').classList.toggle('hi',fl&&canLeave());{const k=S.park?'cartP':'cartH';if($('tC').dataset.k!==k){$('tC').dataset.k=k;$('tC').innerHTML=ico(k,2)}}{const k=mounted()?'horseOn':'horseOff';if($('tM').dataset.k!==k){$('tM').dataset.k=k;$('tM').innerHTML=ico(k,2)}}$('tC').classList.toggle('hi',nearCartP());{const hw=heldW();if($('iwep').dataset.k!==hw){$('iwep').src=WEPURL[hw];$('iwep').dataset.k=hw}}$('tM').style.display=S.horse&&!fl?'flex':'none';$('tM').classList.toggle('hi',nearHorse()||mounted());{const k='p'+S.potions;if($('pots').dataset.k!==k){$('pots').dataset.k=k;$('pots').innerHTML=ico('potion')+S.potions}}
  const px0=DG?DG.d.x:(P?P.x:0);const b=biomeAt(px0);const bn=DG?skulls(DG.d.diff)+' Cave':BIOMES[b].name;if($('bname').dataset.k!==bn){$('bname').innerHTML=bn;$('bname').dataset.k=bn}
  const w=200;MINI.clearRect(0,0,w,20);for(let i=0;i<NB;i++){MINI.fillStyle=BIOMES[WB[i]].mm;MINI.fillRect(BOUNDS[i]/WORLD*w,6,(BOUNDS[i+1]-BOUNDS[i])/WORLD*w,8)}
  if(WI){for(const z of WX){MINI.fillStyle=z.k==='rain'?'#5a6a86':'#ffffff';MINI.fillRect(Math.round(z.x0/WORLD*w),6,Math.max(1,Math.round((z.x1-z.x0)/WORLD*w)),3)}
   ISLES.forEach((I,k)=>{const a=Math.round(I.x0/WORLD*w),L=Math.round((I.x1-I.x0)/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(a-1,8,L+2,7);MINI.fillStyle=k?'#ecdcc8':'#e0d2b4';MINI.fillRect(a,9,L,5);MINI.fillStyle=k?'#c8a8f0':'#5ee0c8';MINI.fillRect(a,9,L,2)});
-  for(let k=1;k<DOCKS.length;k++){const x=Math.round(DOCKS[k].x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-3,1,7,9);MINI.fillStyle='#7de0ff';MINI.fillRect(x-2,2,5,4);MINI.fillStyle='#8b5a2b';MINI.fillRect(x-2,7,5,2)}
-  {const x=Math.round((P&&P.fly==='ship'?P.x:dockShipX(S.moor))/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,14,5,5);MINI.fillStyle=SHIPS[S.ship].pal[0];MINI.fillRect(x-1,15,3,3)}}
+  for(let k=1;k<(FEATURE_DRIVABLE_AIRSHIPS?DOCKS.length:1);k++){const x=Math.round(DOCKS[k].x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-3,1,7,9);MINI.fillStyle='#7de0ff';MINI.fillRect(x-2,2,5,4);MINI.fillStyle='#8b5a2b';MINI.fillRect(x-2,7,5,2)}
+  if(FEATURE_DRIVABLE_AIRSHIPS){const x=Math.round((P&&P.fly==='ship'?P.x:dockShipX(S.moor))/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,14,5,5);MINI.fillStyle=SHIPS[S.ship].pal[0];MINI.fillRect(x-1,15,3,3)}}
  for(const t of WT){const x=Math.round(t.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,3,5,14);MINI.fillStyle=t.i===S.lastTown?'#ffd75e':'#f6ead0';MINI.fillRect(x-1,4,3,12)}
  for(const i of S.caves){const d=DUNGEONS[i];if(!d)continue;const x=Math.round(d.x/WORLD*w);MINI.fillStyle=dState(d)>0?'#5a4a44':'#1a0c0c';MINI.fillRect(x-1,8,3,4)}
  {const x=Math.round((WI?W2DOCK:SCRAPX)/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-3,1,7,9);MINI.fillStyle=WI||S.scrap.done?'#7de0ff':'#c8a060';MINI.fillRect(x-2,2,5,4);MINI.fillStyle='#8b5a2b';MINI.fillRect(x-2,7,5,2)}
@@ -1382,12 +1398,13 @@ function drawIsles(ox0,oy0){const B=BIOMES[5];const ox=Math.round(ox0*.5),oy=Mat
  for(let i=-s.hw;i<=s.hw;i++){const sx=Math.round(s.x+i-ox);if(sx<0||sx>=VW)continue;const wx=s.x+i,top=Math.round(base-4*Math.sin(wx/60)-oy),e=s.hw-Math.abs(i),th=Math.round(8+50*Math.sqrt(clamp(e/(s.hw*.8),0,1))+4*hash(Math.floor(wx/3)));
   X.fillStyle=B.dirt;X.fillRect(sx,top,1,th);X.fillStyle=B.dirt2;X.fillRect(sx,top+Math.round(th*.55),1,th-Math.round(th*.55));X.fillStyle='#a89878';X.fillRect(sx,top+th-2,1,2);X.fillStyle=B.top;X.fillRect(sx,top,1,2);X.fillStyle=B.top2;X.fillRect(sx,top+2,1,1)}
  const tx=Math.round(s.x-ox+s.hw*.3),ty=Math.round(base-4*Math.sin((s.x+s.hw*.3)/60)-oy);px(X,tx,ty-12,2,12,'#c8b090');px(X,tx-5,ty-18,12,7,'#7ee8d8');px(X,tx-3,ty-20,8,2,'#a8f4e8')}X.globalAlpha=1}
-function nearDock(){if(WI!==1||!P||DG||P.fly)return null;for(const d of DOCKS)if(Math.abs(P.x-d.x)<60)return d;return null}
+function liveDocks(){return FEATURE_DRIVABLE_AIRSHIPS?DOCKS:DOCKS.slice(0,1)}
+function nearDock(){if(WI!==1||!P||DG||P.fly)return null;for(const d of liveDocks())if(Math.abs(P.x-d.x)<60)return d;return null}
 function drawShipD(c,sx,y,lift,dir,sh){if(dir<0){c.save();c.translate(sx*2,0);c.scale(-1,1)}drawShip(c,sx,y,4,1,menuT,lift,sh.z,sh.pal);if(dir<0)c.restore()}
-function drawDock(ox,oy){for(let i=0;i<DOCKS.length;i++){const D=DOCKS[i],sd=D.side,x=Math.round(D.x-ox),y=Math.round(surfY(D.x)-oy);if(x<-160||x>VW+160)continue;
+function drawDock(ox,oy){for(let i=0;i<liveDocks().length;i++){const D=DOCKS[i],sd=D.side,x=Math.round(D.x-ox),y=Math.round(surfY(D.x)-oy);if(x<-160||x>VW+160)continue;
  const Q=(a,b,w,h,c)=>px(X,sd>0?x+a:x-a-w,y+b,w,h,c);
  Q(-26,-6,42,3,'#f4f0e6');Q(-26,-6,42,1,'#e8c050');for(const p0 of [-24,-8,12])Q(p0,-6,2,6,'#c8a040');Q(14,-26,2,20,'#c8a040');Q(12,-29,6,3,'#ffe08a');
- if(S.moor===i&&!(P&&P.fly==='ship')){const sh=SHIPS[S.ship],bob=Math.round(Math.sin(menuT*1.6)*2),sx=x+sd*52,lift=-30+bob;
+ if((FEATURE_DRIVABLE_AIRSHIPS?S.moor===i:i===0)&&!(P&&P.fly==='ship')){const sh=FEATURE_DRIVABLE_AIRSHIPS?SHIPS[S.ship]:SHIPS.small,bob=Math.round(Math.sin(menuT*1.6)*2),sx=x+sd*52,lift=-30+bob;
   const ax=x+sd*15,ay=y-24,bx=sx-sd*Math.round(34*sh.z),byy=y-24+lift+2;for(let k=0;k<=12;k++){const f=k/12;px(X,Math.round(ax+(bx-ax)*f),Math.round(ay+(byy-ay)*f+Math.sin(f*Math.PI)*4),1,1,'#5e3a1e')}
   drawShipD(X,sx,y,lift,sd,sh)}
  if(nearDock()===D&&MODE==='play'&&Math.sin(menuT*4)>0)px(X,x,y-34,1,2,'#ffd75e')}}
@@ -1395,16 +1412,12 @@ function plr(){return P}
 function canFly(){return WI===1&&mounted()&&!!S.horse.wings}
 function jumpHeld(){return !!(keys[' ']||keys.w||keys.arrowup||tkeys.j)}
 // pixel wings on the horse's back (World 2): folded when standing, flapping when running or flying
-function drawWings(P0,t,bob,run,idle){const pl=plr(),air=!idle&&pl&&!pl.onGround&&mounted();const fl=air?Math.sin(t*13):run>.05?Math.sin(t*(6+5*run)):null;
- const A='#ffffff',B='#e4ecf6',C='#a8bcd8',D='#7f94b4';
- // feathered wing from the shoulder (x 2,y -16) sweeping back; f picks the frame
- const wing=(o,k,ol)=>{const P=ol?(x,y,w,h)=>P0(x-1,y-1,w+2,h+2,'#4a5a7a'):P0;const a=k?B:A,b=k?C:B,e=k?D:C;
-  if(fl===null){P(-9+o,-18+bob-o,13,3,a);P(-13+o,-20+bob-o,5,3,a);P(-16+o,-22+bob-o,4,2,b);P(-9+o,-15+bob-o,12,1,e);P(-15+o,-19+bob-o,3,1,e);return}
-  if(fl>.35){P(-1+o,-19+bob-o,5,3,a);P(-4+o,-23+bob-o,5,4,a);P(-7+o,-27+bob-o,5,4,a);P(-10+o,-31+bob-o,5,4,b);P(-13+o,-34+bob-o,4,3,b);P(-15+o,-36+bob-o,3,2,e);
-   P(-5+o,-20+bob-o,4,1,e);P(-8+o,-24+bob-o,4,1,e);P(-11+o,-28+bob-o,4,1,e);P(-14+o,-31+bob-o,3,1,e)}
-  else if(fl>-.35){P(-2+o,-19+bob-o,6,3,a);P(-8+o,-20+bob-o,6,3,a);P(-14+o,-21+bob-o,6,3,b);P(-19+o,-22+bob-o,5,2,b);P(-22+o,-22+bob-o,3,1,e);
-   for(let q=-20;q<=-4;q+=4)P(q+o,-17+bob-o,2,1,e)}
-  else{P(-1+o,-18+bob-o,5,3,a);P(-5+o,-16+bob-o,5,3,a);P(-9+o,-13+bob-o,5,3,b);P(-12+o,-10+bob-o,4,3,b);P(-14+o,-8+bob-o,3,2,e);P(-7+o,-14+bob-o,3,1,e);P(-11+o,-11+bob-o,3,1,e)}};
+function horseFlap(idle){const pl=plr();if(idle||!pl||!mounted())return null;if(pl.fly==='horse')return .09;if(!pl.onGround)return .07;return null}
+function drawWings(P0,t,bob,run,idle){const A='#ffffff',B='#e4ecf6',C='#a8bcd8',D='#7f94b4';const dur=horseFlap(idle),gal=!idle&&run>.05&&dur===null;
+ const wing=(o,k,ol)=>{const P=ol?(x,y,w,h)=>P0(x-1,y-1,w+2,h+2,'#4a5a7a'):P0;const cols=k?[B,C,D]:[A,B,C];
+  if(dur===null&&!gal){P(-9+o,-18+bob-o,13,3,cols[0]);P(-13+o,-20+bob-o,5,3,cols[0]);P(-16+o,-22+bob-o,4,2,cols[1]);P(-9+o,-15+bob-o,12,1,cols[2]);P(-15+o,-19+bob-o,3,1,cols[2]);return}
+  const f=dur!==null?flapF(t,dur):[2,1,2,3][Math.floor(t*(6+5*run))%4],fr=wingFrame(k?(f+1)%6:f,k?16:19,4);
+  for(const r of fr)P(2+o+r[0],-17+bob-o+r[1],r[2],r[3],cols[r[4]])};
  wing(2,1,1);wing(2,1);wing(0,0,1);wing(0,0)}
 // each world keeps its own money and its own goods. s.ws[w] holds the world you're NOT in:
 // {x,lastTown,money, park (W1 cart), stash (W1 goods left at the airship without a cart), hold (W2 goods in the airship at the dock)}
@@ -1438,8 +1451,12 @@ function endCut(){if(MODE!=='cut')return;$('cut').classList.remove('on');if(S.ho
 $('cut').addEventListener('pointerdown',e=>{e.preventDefault();endCut()});
 // the Skyhaven dock: your airship, and the way back to World 1
 let DOCKP=false;
+// shelved-airships dock: the airship here only flies you back to World 1
+function renderDockHome(){const sh=SHIPS.small;$('spct').textContent='';const c=document.createElement('canvas');c.width=120;c.height=110;const g=c.getContext('2d');g.fillStyle='#bfe6f8';g.fillRect(0,0,120,110);g.fillStyle='#f4fbff';g.fillRect(0,96,120,14);drawShip(g,60,104,4,1,menuT,-4,sh.z,sh.pal);
+ $('sbody').innerHTML='<img id="sprev" src="'+c.toDataURL()+'"><div class="w2">Skyhaven<br><span class="small">'+ico('ship')+' '+ico('arL')+' World 1</span></div><button id="dGo" class="srow" style="justify-content:center">'+ico('arL')+' World 1 '+ico('ship')+'</button>';
+ $('dGo').onclick=()=>{closeScrap();travelTo(0)}}
 function openDock(){if(MODE!=='play')return;DOCKP=true;setMode('scrap');renderDock()}
-function renderDock(){const D=nearDock()||DOCKS[0],di=DOCKS.indexOf(D),sh=SHIPS[S.ship],here=S.moor===di;$('spct').textContent='';
+function renderDock(){if(!FEATURE_DRIVABLE_AIRSHIPS){renderDockHome();return}const D=nearDock()||DOCKS[0],di=DOCKS.indexOf(D),sh=SHIPS[S.ship],here=S.moor===di;$('spct').textContent='';
  const c=document.createElement('canvas');c.width=120;c.height=110;const g=c.getContext('2d');g.fillStyle='#bfe6f8';g.fillRect(0,0,120,110);g.fillStyle='#f4fbff';g.fillRect(0,96,120,14);
  if(here)drawShip(g,60,104,4,1,menuT,-4,sh.z,sh.pal);else{g.globalAlpha=.35;drawShip(g,60,104,4,1,menuT,-4,sh.z,sh.pal);g.globalAlpha=1}
  const hf=clamp(S.hull/sh.hull,0,1);
@@ -1451,20 +1468,20 @@ function renderDock(){const D=nearDock()||DOCKS[0],di=DOCKS.indexOf(D),sh=SHIPS[
 // ===== sky travel (phase 2) =====
 // winged horse: jump takes off into the low band; in the air tU/W = up a band, tD/S = down a band (low band over an island + down = land); tJ/R = leave ship / dismount
 // airship: board at the dock where it's moored; fly with the same controls; E near a dock moors it. Hits go to the hull; hull 0 = wreck
-function board(){const i=S.moor,D=DOCKS[i];if(!D||!P||P.fly||S.park)return false;if(mounted())dismount(P.x);if(S.horse)S.horse.x=-9999;
+function board(){if(!FEATURE_DRIVABLE_AIRSHIPS)return false;const i=S.moor,D=DOCKS[i];if(!D||!P||P.fly||S.park)return false;if(mounted())dismount(P.x);if(S.horse)S.horse.x=-9999;
  P.fly='ship';P.band=0;P.x=dockShipX(i);P.y=surfY(D.x)-54;P.vy=0;P.hv=0;P.kbx=0;P.dir=D.side;P.onGround=true;P.hinv=0;env.wT=0;$('prompt').style.display='none';toast(ico('ship',2)+' '+ico('arU'),800);save();return true}
 function moor(i){const D=DOCKS[i];S.moor=i;P.fly=null;P.x=D.x;P.y=surfY(D.x);P.vy=0;P.hv=0;P.kbx=0;P.onGround=true;P.lastSafe=D.x;P.dir=-D.side;
  if(S.horse){S.horse.on=false;S.horse.x=Math.round(D.x-D.side*26);S.horse.dir=-D.side}S.lastTown=D.town;if(!S.visited.includes(D.town))S.visited.push(D.town);save();return true}
 function shipHW(){return Math.round(36*SHIPS[S.ship].z)}
 function hullHit(dmg,sx){if((P.hinv||0)>0)return;shake(2);P.hinv=.5;P.shipHit=.15;S.hull=Math.max(0,S.hull-dmg);ftxt(P.x,P.y-56,'-'+Math.round(dmg),'#ffb060');part(P.x+(sx>P.x?14:-14),P.y-6,'#c8a060',8,90);if(S.hull<=0)shipwreck()}
 // hull 0: the airship limps back to the dock it left from and loses 30% of its hold (half of what you paid comes back, like a death)
-function shipwreck(){shake(3);const u=unitsOf(S.cargo),n=Math.ceil(u.length*WRECKLOSS),lost=[];for(let k=0;k<n;k++)lost.push(u.splice(Math.floor(rnd()*u.length),1)[0]);
+function shipwreck(){if(!FEATURE_DRIVABLE_AIRSHIPS)return;shake(3);const u=unitsOf(S.cargo),n=Math.ceil(u.length*WRECKLOSS),lost=[];for(let k=0;k<n;k++)lost.push(u.splice(Math.floor(rnd()*u.length),1)[0]);
  S.cargo=stacksOf(u);const rf=refundOf(lost);S.money+=rf;S.hull=Math.round(SHIPS[S.ship].hull*.4);S.stats.wrecks=(S.stats.wrecks||0)+1;ENEMIES=[];PROJ=[];moor(S.moor);
  env.wreck={n,rf};toast(ico('ship',2)+' '+ico('x')+(n?'<br>-'+n+' &nbsp;+'+pr(rf):''),2600);save()}
 function detachShip(){const u=unitsOf(S.cargo).sort((a,b)=>ITEMS[b.item].base-ITEMS[a.item].base);S.cargo=stacksOf(u.slice(0,PACK));S.park={x:dockShipX(S.moor),dir:DOCKS[S.moor].side,cargo:stacksOf(u.slice(PACK))}} // the backpack takes your 5 most valuable goods, the rest stays aboard
 function attachShip(){for(const c of S.park.cargo)addCargo(c.item,c.origin,c.qty,c.paid);S.park=null}
 // your airship's hold is yours while you're on its island (like a hitched cart); fly off on the horse and only the backpack comes along
-function w2Tick(dt){if(P.fly==='ship')return;const sh=SHIPS[S.ship];if(S.hull<sh.hull)S.hull=Math.min(sh.hull,S.hull+HULLFIX*dt);const isl=islAt(P.x),mi=DOCKS[S.moor].isl;
+function w2Tick(dt){if(!FEATURE_DRIVABLE_AIRSHIPS||P.fly==='ship')return;const sh=SHIPS[S.ship];if(S.hull<sh.hull)S.hull=Math.min(sh.hull,S.hull+HULLFIX*dt);const isl=islAt(P.x),mi=DOCKS[S.moor].isl;
  if(!S.park&&isl!==mi)detachShip();else if(S.park&&isl===mi)attachShip()}
 function startFly(){P.fly='horse';P.band=0;P.onGround=false;if(P.vy>-60)P.vy=-120;env.wT=0}
 function fallOut(){P.x=P.lastSafe;P.y=surfY(P.x);P.vy=0;P.onGround=true;S.hp-=10;ftxt(P.x,P.y-24,'-10','#ff6a6a');toast(ico('down',2),900);if(S.hp<=0)die()}
@@ -1493,7 +1510,7 @@ function updSky(dt){w2Tick(dt);if(env.leaveT>0)env.leaveT-=dt;const b=biomeAt(P.
 function shipDock(){for(let i=0;i<DOCKS.length;i++)if(Math.abs(P.x-dockShipX(i))<80)return i;return -1}
 function canLeave(){if(!P||!P.fly)return false;return P.fly==='ship'?shipDock()>=0:groundAt(P.x)!==null}
 // leave the airship / get off the winged horse from the big right button (or R / X)
-function leaveFly(){if(P.fly==='ship'){const i=shipDock();if(i>=0){moor(i);toast(ico('ship',2)+' '+ico('check'),900);return true}
+function leaveFly(){if(FEATURE_DRIVABLE_AIRSHIPS&&P.fly==='ship'){const i=shipDock();if(i>=0){moor(i);toast(ico('ship',2)+' '+ico('check'),900);return true}
   if(!S.horse||!S.horse.wings){toast(ico('park')+' Dock to disembark',1300);return false}
   if(!(env.leaveT>0)){env.leaveT=1.6;toast(ico('exit',2)+' Tap again: leap onto your horse<br><small>the airship flies back to '+TOWNS[DOCKS[S.moor].town].name+'</small>',1600);return false}
   env.leaveT=0;detachShip();S.horse.on=true;S.horse.wings=true;P.fly='horse';P.hv*=.5;P.y-=10;P.vy=-40;P.onGround=false;part(P.x,P.y-10,'#ffffff',10,80,50,.5);
@@ -1517,14 +1534,39 @@ function updAir(e,dt,d){const tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;e.age=(e.age
  else{const hop=Math.abs(Math.sin(e.t*2.6+e.seed));e.by+=clamp((ty+4-e.by)*.6,-22,22)*dt;e.by=Math.max(e.by,BANDY[1]-10);e.y=e.by-hop*16;e.onGround=hop<.15;
   const dx=tx-e.x;if(Math.abs(dx)<240){e.x+=Math.sign(dx)*d.spd*dt;e.dir=Math.sign(dx)||1}
   e.cd-=dt;if(e.cd<=0&&airTouch(e,d)){e.cd=1;airHit(e,d)}}}
-function drawAir(c,e,sx,sy,t){const dir=e.dir,fl=e.hitT>0,R=[];const P=(xo,yo,w,h,col)=>R.push([dir>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col]);
- if(e.type==='pegasus'){const W='#f6f6fc',S2='#c8cce0',M='#8ad0ff',M2='#5aa8e8';const f=e.state==='dive'?-1:Math.sin(t*10+e.seed);
-  if(f>.3){P(-3,-14,7,3,W);P(-6,-18,6,4,W);P(-9,-21,5,3,S2);P(-11,-23,3,2,S2)}else if(f>-.3){P(-4,-11,9,2,W);P(-10,-12,7,2,W);P(-14,-12,4,2,S2)}else{P(-3,-9,7,2,W);P(-6,-6,5,3,W);P(-8,-4,3,2,S2)}
-  P(-7,-9,13,5,W);P(-6,-5,11,1,S2);P(4,-13,3,5,W);P(5,-15,5,3,W);P(9,-14,2,2,'#e0d8ec');P(7,-14,1,1,'#e83a5a');P(3,-16,2,6,M);P(2,-12,1,3,M2);P(-10,-9,3,2,M);P(-11,-7,2,3,M2);
-  P(-6,-4,2,3,W);P(3,-4,2,3,W);P(-6,-1,2,1,'#c8a040');P(3,-1,2,1,'#c8a040')}
- else{const B='#a8d8ff',B2='#78b0e8';if(e.onGround||Math.abs(Math.sin(e.t*2.6+e.seed))<.5){P(-8,1,16,3,'#ffffff');P(-6,3,12,2,'#dce8f6')}
-  P(-6,-8,12,8,B);P(-5,-9,10,1,B);P(-6,-2,12,2,B2);P(-4,-7,3,2,'#ffffff');P(-2,-5,1,2,'#1a2a4a');P(2,-5,1,2,'#1a2a4a');P(-3,-6,2,1,'#1a2a4a');P(2,-6,2,1,'#1a2a4a')}
- for(const r of R)px(c,r[0]-1,r[1]-1,r[2]+2,r[3]+2,'#3a4a6a');for(const r of R)px(c,r[0],r[1],r[2],r[3],r[4])}
+// ===== wing flaps: 6-frame cycle (up, up-mid, glide, down-mid, down, recover) shared by pegasus, sky slime and the winged horse
+const FLAPA=[62,32,4,-28,-56,20],FLAPL=[.82,1,1,.95,.8,.66],FLAPBOB=[1,0,0,-1,-1,0],WINGC={};
+function flapF(t,dur){return ((Math.floor(t/dur)%6)+6)%6}
+// wing as pixel rects from the shoulder, leaning back (-x); k: 0 main, 1 trailing feathers, 2 tips
+function wingRects(deg,L,th){const key=deg+'|'+L+'|'+th;if(WINGC[key])return WINGC[key];const a=deg*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a),out=[],steep=Math.abs(deg)>40;
+ for(let k=0;k<=L;k++){const x=Math.round(-ca*k*.9-(steep?k*.25:0)),y=Math.round(-sa*k),T=Math.max(1,Math.round(th*(1-.55*k/L)));
+  const fe=k>L*.3&&k%2===0; // scalloped trailing feathers
+  if(steep){out.push([x-T+1,y,T,1,0]);out.push([x-T,y,1,1,1]);if(fe)out.push([x-T-1,y,1,1,2])}else{out.push([x,y,1,T,0]);out.push([x,y+T,1,1,1]);if(fe)out.push([x,y+T+1,1,1,2])}}
+ if(!steep)out.push([Math.round(-ca*L*.9)-1,Math.round(-sa*L),1,1,1]);return WINGC[key]=out}
+function wingFrame(f,L,th){return wingRects(FLAPA[f],Math.round(L*FLAPL[f]),th)}
+function drawAir(c,e,sx,sy,t){const dir=e.dir,fl=e.hitT>0;let R=[];const L1=R;let tilt=0,by=0;const P=(xo,yo,w,h,col)=>R.push([dir>0?sx+xo:sx-xo-w,sy+yo+by+Math.round((dir>0?xo:xo+w-1)*tilt),w,h,fl?'#ffffff':col]);
+ const tt=t+(e.seed||0)*3;
+ if(e.type==='pegasus'){const W='#f6f6fc',S2='#c8cce0',S3='#9aa4c4',M='#8ad0ff',M2='#5aa8e8';const dive=e.state==='dive';
+  const f=flapF(tt,e.state==='leave'?.05:.075),wing=(ox,oy,cols,fr)=>{for(const r of fr)P(ox+r[0],oy+r[1],r[2],r[3],cols[r[4]])};
+  if(dive){tilt=clamp((e.dvy||0)/Math.max(30,Math.abs(e.dvx||0)),-1,1)*.3;
+   wing(0,-10,[S2,S3,S3],wingRects(8,9,2));P(-13,-8,4,1,'rgba(255,255,255,.55)');P(-16,-5,5,1,'rgba(255,255,255,.4)')}
+  else{by=FLAPBOB[f];wing(1,-10,['#d4dcf0','#a8b4d4','#8a98c0'],wingFrame((f+1)%6,11,3))}
+  // body, neck, head, mane, tail
+  P(-7,-9,13,5,W);P(-6,-5,11,1,S2);P(4,-13,3,5,W);P(5,-15,5,3,W);P(9,-14,2,2,'#e0d8ec');P(7,-14,1,1,'#e83a5a');P(3,-16,2,6,M);P(2,-12,1,3,M2);
+  const tw=dive?0:Math.round(Math.sin(tt*6));P(-10,-9+tw,3,2,M);P(-11,-7+tw,2,3,M2);if(dive)P(-13,-9,3,1,M);
+  // legs: tucked back in a dive, paddling a little on the flap
+  if(dive){P(-8,-5,3,1,W);P(-10,-5,2,1,'#c8a040');P(2,-5,3,1,W);P(0,-5,2,1,'#c8a040')}
+  else{const lg=f<3?0:1;P(-6,-4,2,3-lg,W);P(3,-4,2,3-(1-lg),W);P(-6,-1-lg,2,1,'#c8a040');P(3,-2+lg,2,1,'#c8a040')}
+  // near wing over the body (own outline)
+  R=[];if(dive){wing(-1,-9,[W,S2,S3],wingRects(4,11,3))}else wing(-1,-9,['#ffffff','#c4d0ea','#94a4cc'],wingFrame(f,13,3))}
+ else{const B='#a8d8ff',B2='#78b0e8',WG='#ffffff',WG2='#c8dcf0';const f=flapF(tt,.06);
+  // squash on the downstroke, stretch on the upstroke
+  const bw=[10,11,12,13,14,12][f],bh=[10,9,8,8,7,8][f],x0=-Math.floor(bw/2),y0=-bh;
+  if(e.onGround){P(-8,1,16,3,'#ffffff');P(-6,3,12,2,'#dce8f6')}
+  for(const sd of [-1,1]){const fr=wingFrame(f,6,2);for(const r of fr){const wx=sd<0?x0+1+r[0]:-x0-2-r[0]-r[2]+1;P(wx,y0+3+r[1],r[2],r[3],r[4]?WG2:WG)}}
+  P(x0,y0+1,bw,bh-1,B);P(x0+1,y0,bw-2,1,B);P(x0,y0+bh-2,bw,2,B2);P(x0+2,y0+1,3,2,'#ffffff');
+  const ey=y0+Math.round(bh*.45);P(-2,ey,1,2,'#1a2a4a');P(2,ey,1,2,'#1a2a4a');P(-3,ey-1,2,1,'#1a2a4a');P(2,ey-1,2,1,'#1a2a4a')}
+ for(const L of (R===L1?[L1]:[L1,R])){for(const r of L)px(c,r[0]-1,r[1]-1,r[2]+2,r[3]+2,'#3a4a6a');for(const r of L)px(c,r[0],r[1],r[2],r[3],r[4])}}
 const CLOUDS=[];for(let x=1700,k=0;x<7100;k++){CLOUDS.push({x,y:-40-Math.round(hash(k*2.7)*220),w:16+Math.round(hash(k*5.3)*30)});x+=70+Math.round(hash(k*1.9)*90)}
 function drawClouds(ox,oy){for(const c of CLOUDS){const x=Math.round(c.x-ox),y=Math.round(c.y-oy);if(x<-50||x>VW+50||y<-20||y>VH+20)continue;const w=c.w;
  px(X,x-w/2,y-3,w,5,'#ffffff');px(X,x-w/2+3,y-6,w-8,3,'#ffffff');px(X,x-w/4,y-8,w/2,2,'#ffffff');px(X,x-w/2+2,y+2,w-4,1,'#dce8f6')}}
