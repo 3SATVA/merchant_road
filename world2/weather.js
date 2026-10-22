@@ -1,10 +1,12 @@
 'use strict';
 const CLOUDS=[];for(let x=1700,k=0;x<7100;k++){CLOUDS.push({x,y:-40-Math.round(hash(k*2.7)*220),w:16+Math.round(hash(k*5.3)*30)});x+=70+Math.round(hash(k*1.9)*90)}
-function drawClouds(ox,oy){for(const c of CLOUDS){const x=Math.round(c.x-ox),y=Math.round(c.y-oy);if(x<-50||x>VW+50||y<-20||y>VH+20)continue;const w=c.w;
+// clouds that would sit inside a sky island are skipped (c.isl)
+for(const c of CLOUDS)c.isl=SKYISLES.some(I=>c.x+c.w/2>I.x0-6&&c.x-c.w/2<I.x1+6&&c.y>-I.h-30&&c.y<-I.h+110);
+function drawClouds(ox,oy){drawSkyProps(ox,oy);for(const c of CLOUDS){const x=Math.round(c.x-ox),y=Math.round(c.y-oy);if(x<-50||x>VW+50||y<-20||y>VH+20||c.isl)continue;const w=c.w;
  px(X,x-w/2,y-3,w,5,'#ffffff');px(X,x-w/2+3,y-6,w-8,3,'#ffffff');px(X,x-w/4,y-8,w/2,2,'#ffffff');px(X,x-w/2+2,y+2,w-4,1,'#dce8f6')}}
 function drawCloudSea(ox,oy){for(let sx=0;sx<VW;sx+=2){const wx=sx+ox,y=Math.round(58+4*Math.sin(wx/37)+3*Math.sin(wx/13)-oy);if(y>=VH)continue;rb(0,'#e4f0fa',sx,y,2,2);rb(1,'#f6fbff',sx,y+2,2,VH-y)}rbFlush(X)}
 function wxTint(z,ox,a,wd,col,al){const l=z.x0-ox,len=z.x1-z.x0,f=Math.min(.45,90/len),gr=X.createLinearGradient(l,0,l+len,0);gr.addColorStop(0,'rgba('+col+',0)');gr.addColorStop(f,'rgba('+col+','+al+')');gr.addColorStop(1-f,'rgba('+col+','+al+')');gr.addColorStop(1,'rgba('+col+',0)');X.fillStyle=gr;X.fillRect(a,0,wd,VH)}
-function drawWeather(ox,oy){for(const z of WX){const a=Math.max(0,Math.round(z.x0-ox)),b=Math.min(VW,Math.round(z.x1-ox));if(b<=a)continue;const wd=b-a;
+function drawWeather(ox,oy){drawStorms(ox,oy);drawBolts(ox,oy);for(const z of WX){const a=Math.max(0,Math.round(z.x0-ox)),b=Math.min(VW,Math.round(z.x1-ox));if(b<=a)continue;const wd=b-a;
  if(z.k==='rain'){const cy=Math.round(-300-oy);wxTint(z,ox,a,wd,'60,80,112',.2);for(let sx=a;sx<b;sx+=2){const wx=sx+ox,e=Math.min(1,(wx-z.x0)/40,(z.x1-wx)/40),h=Math.round((26+10*Math.abs(Math.sin(wx/23))+6*Math.sin(wx/9))*e);const t0=Math.max(0,cy-30);if(cy+h<0)continue;rb(0,'#6a7a92',sx,t0,2,cy+h-t0);rb(1,'#8a98ae',sx,cy+h-3,2,3)}rbFlush(X);
   X.fillStyle='#c4d8f2';const y0=Math.max(0,cy+20),hh=VH-y0;if(hh>0){const n=Math.round(wd*hh/(3*VH))+4;for(let i=0;i<n;i++){const s=hash(i*3.7+z.x0);const x=a+(((s*977-menuT*30)%wd)+wd)%wd,y=y0+(hash(i*5.3)*hh+menuT*260*(1+s*.4))%hh;X.fillRect(Math.round(x),Math.round(y),1,4)}}}
  else{wxTint(z,ox,a,wd,'255,255,255',.12);const n=Math.round(wd/5);for(let i=0;i<n;i++){const s=hash(i*4.9+z.x0);const x=a+((s*911+Math.sin(menuT*2+i)*4)%wd+wd)%wd,y=VH-((hash(i*2.3)*VH+menuT*150*(1+s))%VH);X.fillStyle=i%3?'rgba(255,255,255,.75)':'#bfe6f8';X.fillRect(Math.round(x),Math.round(y),1,i%2?6:4)}}}

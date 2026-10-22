@@ -1,10 +1,10 @@
 'use strict';
-function spawnAir(dir){const mx=P.fly==='ship'?SKY.maxShip:SKY.max,air=ENEMIES.filter(e=>!e.dead&&ENEMY[e.type].air).length;if(air>=mx)return;const n=rnd()<SKY.pair?2:1;
+function spawnAir(dir){const mx=P.fly==='ship'?SKY.maxShip:SKY.max,air=ENEMIES.filter(e=>!e.dead&&ENEMY[e.type].air&&!ENEMY[e.type].isle).length;if(air>=mx)return;const n=rnd()<SKY.pair?2:1;
  for(let i=0;i<n&&air+i<mx;i++){const x=P.x+dir*(VW/2+24+i*30);if(x<ISLES[0].x1+40||x>ISLES[1].x0-40)continue;const t=pickType(6),e=spawnEnemy(t,x);e.dir=-dir;
   e.y=t==='skySlime'?BANDY[0]+6-rnd()*24:BANDY[1+Math.floor(rnd()*2)]-6;e.by=e.y;e.state='hover';e.cd=1.2+rnd();e.age=0;e.onGround=false}}
 function airTouch(e,d){if(P.fly==='ship'){const hw=shipHW();return Math.abs(e.x-P.x)<hw+d.w/2&&e.y>P.y-52&&e.y-d.h<P.y+14}const m=mounted();return Math.abs(e.x-P.x)<(m?10:6)+d.w/2&&e.y>P.y-(m?28:18)&&e.y-d.h<P.y+2}
 function airHit(e,d){if(P.fly==='ship')hullHit(d.hull,e.x);else hurtPlayer(d.dmg*SKY.dmg,e.x,false)}
-function updAir(e,dt,d){const tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;e.age=(e.age||0)+dt;e.x+=e.vx*dt;e.vx*=Math.pow(.05,dt);
+function updAir(e,dt,d){if(d.isle){updIsle(e,dt,d);return}const tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;e.age=(e.age||0)+dt;e.x+=e.vx*dt;e.vx*=Math.pow(.05,dt);
  if(e.gone==null&&biomeAt(P.x)!==6){e.gone=e.age;e.dir=e.x<P.x?-1:1}
  if(e.gone!=null){e.y-=70*dt;e.x+=e.dir*110*dt;if(e.age-e.gone>2.2){e.dead=1;part(e.x,e.y-d.h/2,'#ffffff',8,70,40,.5)}return}
  if(e.type==='pegasus'){
@@ -16,7 +16,7 @@ function updAir(e,dt,d){const tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;e.age=(e.age
  else{const hop=Math.abs(Math.sin(e.t*2.6+e.seed));e.by+=clamp((ty+4-e.by)*.6,-22,22)*dt;e.by=Math.max(e.by,BANDY[1]-10);e.y=e.by-hop*16;e.onGround=hop<.15;
   const dx=tx-e.x;if(Math.abs(dx)<240){e.x+=Math.sign(dx)*d.spd*dt;e.dir=Math.sign(dx)||1}
   e.cd-=dt;if(e.cd<=0&&airTouch(e,d)){e.cd=1;airHit(e,d)}else if(e.cd<=0&&cartTouch(e,d)){e.cd=1;cartHit(e)}}}
-function drawAir(c,e,sx,sy,t){const dir=e.dir,fl=e.hitT>0;let R=[];const L1=R;let tilt=0,by=0;const P=(xo,yo,w,h,col)=>R.push([dir>0?sx+xo:sx-xo-w,sy+yo+by+Math.round((dir>0?xo:xo+w-1)*tilt),w,h,fl?'#ffffff':col]);
+function drawAir(c,e,sx,sy,t){if(ENEMY[e.type].isle){drawIsleFoe(c,e,sx,sy,t);return}const dir=e.dir,fl=e.hitT>0;let R=[];const L1=R;let tilt=0,by=0;const P=(xo,yo,w,h,col)=>R.push([dir>0?sx+xo:sx-xo-w,sy+yo+by+Math.round((dir>0?xo:xo+w-1)*tilt),w,h,fl?'#ffffff':col]);
  const tt=t+(e.seed||0)*3;
  if(e.type==='pegasus'){const W='#f6f6fc',S2='#c8cce0',S3='#9aa4c4',M='#8ad0ff',M2='#5aa8e8';const dive=e.state==='dive';
   const f=flapF(tt,e.state==='leave'?.05:.075),wing=(ox,oy,cols,fr)=>{for(const r of fr)P(ox+r[0],oy+r[1],r[2],r[3],cols[r[4]])};

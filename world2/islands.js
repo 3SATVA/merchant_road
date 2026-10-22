@@ -1,6 +1,6 @@
 'use strict';
 const FARISLES=[{x:500,hw:120,dy:-40},{x:1500,hw:160,dy:-90},{x:2450,hw:200,dy:-60},{x:3150,hw:150,dy:40},{x:3800,hw:240,dy:-20},{x:4450,hw:170,dy:-80}]; // decorative for now (phase 2/3 islands)
-function isleTh(x){const I=ISLES[Math.max(0,islAt(x))],ed=Math.min(x-I.x0,I.x1-x);return Math.round(12+80*Math.sqrt(clamp(ed/420,0,1))+5*hash(Math.floor(x/3)))}
+function isleTh(x){const k=skyAt(x);if(k>=0)return skyTh(x,SKYISLES[k]);const I=ISLES[Math.max(0,islAt(x))],ed=Math.min(x-I.x0,I.x1-x);return Math.round(12+80*Math.sqrt(clamp(ed/420,0,1))+5*hash(Math.floor(x/3)))}
 function drawIsles(ox0,oy0){const B=BIOMES[5];const ox=Math.round(ox0*.5),oy=Math.round(oy0*.5)-30;X.globalAlpha=.32;for(const s of FARISLES){if(s.x+s.hw<ox-20||s.x-s.hw>ox+VW+20)continue;const base=-24+s.dy;
  for(let i=-s.hw;i<=s.hw;i++){const sx=Math.round(s.x+i-ox);if(sx<0||sx>=VW)continue;const wx=s.x+i,top=Math.round(base-4*Math.sin(wx/60)-oy),e=s.hw-Math.abs(i),th=Math.round(8+50*Math.sqrt(clamp(e/(s.hw*.8),0,1))+4*hash(Math.floor(wx/3)));
   X.fillStyle=B.dirt;X.fillRect(sx,top,1,th);X.fillStyle=B.dirt2;X.fillRect(sx,top+Math.round(th*.55),1,th-Math.round(th*.55));X.fillStyle='#a89878';X.fillRect(sx,top+th-2,1,2);X.fillStyle=B.top;X.fillRect(sx,top,1,2);X.fillStyle=B.top2;X.fillRect(sx,top+2,1,1)}

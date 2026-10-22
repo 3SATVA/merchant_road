@@ -24,8 +24,22 @@ const WX=[{x0:2500,x1:3150,k:'rain'},{x0:3450,x1:3700,k:'up'},{x0:4250,x1:4950,k
 // The World 1 scrap-pile airship build and the airship that carries you between worlds (and the cutscene) are NOT affected.
 const FEATURE_DRIVABLE_AIRSHIPS=false;
 const SHIPV=118,HFLY=.5,JET=1.2,HULLFIX=12,WRECKLOSS=.3; // airship base speed (x ship spd); winged horse = gallop x0.5 (~69px/s: slower than any airship, the ship is the way to travel); high band x1.2; hull repairs 12/s while moored; a wreck loses 30% of the hold
+// sky islands: small landable islands in the air wilds (no towns). Logic + art in world2/skyisles.js.
+// h = surface height (BANDY is -70/-140/-210), top 1 = Sunspire lilac grass, storm 1 = under a storm cloud (no flying under it),
+// rw = reward (chest / wool / crystal node) at the centre + rx, foes = spawned when you come near
+const SKYISLES=[
+ {x0:2250,x1:2480,h:100,top:0,rw:'wool',rx:34,foes:['bigSlime']},
+ {x0:3180,x1:3400,h:190,top:1,rw:'chest',rx:-24,foes:['unicorn']},
+ {x0:3800,x1:4200,h:125,top:0,storm:1,rw:'crystal',rx:70,foes:['bigSlime']},
+ {x0:4500,x1:4760,h:85,top:1,rw:'wool',rx:-36,foes:['unicorn']},
+ {x0:5620,x1:5980,h:160,top:1,storm:1,rw:'chest',rx:46,foes:['unicorn']}];
+const STORMIN=48; // the storm's no-fly core is the island minus this much at each end: land, cross, take off past the edge
+const SKYI={chestCd:600,nodeCd:360,chest:[35,60],wool:2}; // reward respawn [s of play time], chest coins, wool per pick
+const UNI={near:52,bolt:10,hull:9,tele:.5,spd:165,life:1.6,range:200,ang:.6,cd:1.9,cdR:.9}; // unicorn bolt: damage, hull, telegraph [s], px/s, life [s], aggro px, max aim [rad], cooldown + rnd
 function islAt(x){for(let i=0;i<ISLES.length;i++)if(x>ISLES[i].x0&&x<ISLES[i].x1)return i;return -1}
-function onIsle(x){return islAt(x)>=0}
+function skyAt(x){for(let i=0;i<SKYISLES.length;i++)if(x>SKYISLES[i].x0&&x<SKYISLES[i].x1)return i;return -1}
+function stormAt(x){const i=skyAt(x);if(i<0||!SKYISLES[i].storm)return false;const I=SKYISLES[i];return x>I.x0+STORMIN&&x<I.x1-STORMIN}
+function onIsle(x){return islAt(x)>=0||skyAt(x)>=0}
 function wxAt(x){for(const z of WX)if(x>z.x0&&x<z.x1)return z.k;return null}
 function dockShipX(i){const d=DOCKS[i];return d.x+d.side*52}
 reg(TOWNS,6,[
@@ -35,17 +49,21 @@ reg(BIOMES,5,[
  {name:'Sky Meadow',sky:['#78c4f0','#b4e2f8','#eaf8ff'],far:'#a8cce0',mid:'#f4fbff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#5ee0c8'},
  {name:'Air Wilds',sky:['#5aa4e0','#9ad2f4','#e2f4ff'],far:'#b0d4ec',mid:'#f0f8ff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#a8d8f4'},
  {name:'Sunspire Isle',sky:['#8aa8ec','#cfc4f2','#fbe6f2'],far:'#cabce6',mid:'#fbf4ff',top:'#c8a8f0',top2:'#9a7ad0',dirt:'#ecdcc8',dirt2:'#d4bea4',farS:'isles',midS:'cloudbank',mm:'#c8a8f0'}]);
-reg(BIOMEINFO,5,['Peaceful skies','Pegasi · sky slimes · storms','Peaceful skies']);
+reg(BIOMEINFO,5,['Peaceful skies','Pegasi · sky islands · storms','Peaceful skies']);
 // Skylands air wilds (hull = damage to an airship)
 Object.assign(ENEMY,{
  pegasus:{hp:55,dmg:11,hull:10,spd:190,w:18,h:14,coin:[6,12],air:1},
- skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1}});
+ skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1},
+ // sky-island foes: isle:1 routes them through updAir/drawAir to world2/skyisles.js (dmg = touch; the unicorn's bolt is UNI.bolt)
+ unicorn:{hp:70,dmg:7,hull:9,spd:34,w:16,h:20,coin:[10,18],air:1,isle:1,base:'witch'},
+ bigSlime:{hp:100,dmg:10,hull:10,spd:46,w:22,h:18,coin:[9,15],air:1,isle:1,base:'slime'},
+ isleSlime:{hp:24,dmg:7,hull:5,spd:50,w:10,h:8,coin:[2,4],air:1,isle:1,base:'slime'}});
 reg(SPAWNS,5,[[['slime',1]],[['pegasus',.55],['skySlime',.45]],[['slime',1]]]);
 // World 2 definition (see WORLDDEF in core/registry.js)
 WORLDDEF[1]={name:'Skylands',len:W2LEN,bounds:[0,ISLES[0].x1,ISLES[1].x0,W2LEN],wb:[5,6,7],xmin:ISL0+24,xmax:ISLES[1].x1-24,dungeons:[],
- rawH(x){return 22+8*Math.sin(x/170)+4*Math.sin(x/53)},
+ rawH(x){for(const I of SKYISLES)if(x>I.x0-6&&x<I.x1+6){const ed=clamp(Math.min(x-I.x0,I.x1-x)/36,0,1);return I.h+2.5*Math.sin(x/29+I.h)-6*(1-ed)*(1-ed)}return 22+8*Math.sin(x/170)+4*Math.sin(x/53)},
  flat:[],pits:null,
- decorOK(x){return onIsle(x-12)&&onIsle(x+12)&&DOCKS.every(d=>Math.abs(x-d.x)>80)},
+ decorOK(x){return islAt(x-12)>=0&&islAt(x+12)>=0&&DOCKS.every(d=>Math.abs(x-d.x)>80)},
  town:W2TOWN,money:W2START,arriveX:W2DOCK-34,horseOff:26, // first arrival: Skyhaven, W2START coins, by the dock
  // cart: World 2's hauler is the Winged Cart once bought (S.wcart); with drivable airships on, cargo rides in the ship instead
  cart(){return S.wcart&&!FEATURE_DRIVABLE_AIRSHIPS?'wingcart':'backpack'},parkIco:'wcartP',carry:'hold',autoHitch:0,

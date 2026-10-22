@@ -16,7 +16,7 @@ function shipwreck(){if(!FEATURE_DRIVABLE_AIRSHIPS)return;shake(3);const u=units
 function detachShip(){const u=unitsOf(S.cargo).sort((a,b)=>ITEMS[b.item].base-ITEMS[a.item].base);S.cargo=stacksOf(u.slice(0,PACK));S.park={x:dockShipX(S.moor),dir:DOCKS[S.moor].side,cargo:stacksOf(u.slice(PACK))}} // the backpack takes your 5 most valuable goods, the rest stays aboard
 function attachShip(){for(const c of S.park.cargo)addCargo(c.item,c.origin,c.qty,c.paid);S.park=null}
 // your airship's hold is yours while you're on its island (like a hitched cart); fly off on the horse and only the backpack comes along
-function w2Tick(dt){if(!FEATURE_DRIVABLE_AIRSHIPS||P.fly==='ship')return;const sh=SHIPS[S.ship];if(S.hull<sh.hull)S.hull=Math.min(sh.hull,S.hull+HULLFIX*dt);const isl=islAt(P.x),mi=DOCKS[S.moor].isl;
+function w2Tick(dt){skyTick(dt);if(!FEATURE_DRIVABLE_AIRSHIPS||P.fly==='ship')return;const sh=SHIPS[S.ship];if(S.hull<sh.hull)S.hull=Math.min(sh.hull,S.hull+HULLFIX*dt);const isl=islAt(P.x),mi=DOCKS[S.moor].isl;
  if(!S.park&&isl!==mi)detachShip();else if(S.park&&isl===mi)attachShip()}
 function drawSail(ox,oy){const sh=SHIPS[S.ship],sx=Math.round(P.x-ox),dy=Math.round(P.y-oy);drawShipD(X,sx,dy+25,-1,P.dir,sh);if(S.horse)drawHorse(X,sx-P.dir*16,dy,P.dir,menuT,0,1);
  const f=clamp(S.hull/sh.hull,0,1),top=dy-Math.round(24+32*(.8+.2*sh.z))-8;px(X,sx-13,top,26,4,'#000');px(X,sx-12,top+1,Math.max(1,Math.round(24*f)),2,f>.5?'#7de07a':f>.25?'#ffd75e':'#ff5a4a');if(P.shipHit>0)px(X,sx-12,top+1,24,2,'#ffffff')}

@@ -2,13 +2,13 @@
 // World 2 timers (weather-zone tick, leap/dismount confirm window); World 1 never touches them
 const W2ENV={wT:0,leaveT:0};
 function plr(){return P}
-function canFly(){return WI===1&&mounted()&&!!S.horse.wings}
+function canFly(){return WI===1&&mounted()&&!!S.horse.wings&&!stormAt(P.x)} // no flying under a sky-island storm cloud
 function startFly(){P.fly='horse';P.band=0;P.onGround=false;if(P.vy>-60)P.vy=-120;W2ENV.wT=0}
 function fallOut(){P.x=P.lastSafe;P.y=surfY(P.x);P.vy=0;P.onGround=true;S.hp-=10;ftxt(P.x,P.y-24,'-10','#ff6a6a');toast(ico('down',2),900);if(S.hp<=0)die()}
 function flyTarget(){let ty=BANDY[P.band];const g=groundAt(P.x);if(g!==null)ty=Math.min(ty,g-(P.fly==='ship'?40:24));return ty}
 function updSky(dt){w2Tick(dt);wcTick(dt);if(W2ENV.leaveT>0)W2ENV.leaveT-=dt;const b=biomeAt(P.x),sh=P.fly==='ship';
  if(b!==env.biome){biomeToast(b);env.biome=b}
- if(!sh&&!canFly()){P.fly=null;P.onGround=false;return}
+ if(!sh&&!canFly()){if(stormAt(P.x))stormDrop();P.fly=null;P.onGround=false;return}
  let mv=(inp.left()?-1:0)+(inp.right()?1:0);if(mv)P.dir=mv;
  const vmax=(sh?SHIPV*SHIPS[S.ship].spd:GALLOP*HFLY*spdMul()*(carriedH()==='wingcart'?HAULERS.wingcart.spd:1))*(P.band===2?JET:1);
  P.hv=(P.hv||0)+(mv*vmax-(P.hv||0))*Math.min(1,dt*(sh?1.3:2.4));if(!mv&&Math.abs(P.hv)<1)P.hv=0;P.ride=(P.ride||0)+Math.abs(P.hv)*dt;
@@ -21,7 +21,7 @@ function updSky(dt){w2Tick(dt);wcTick(dt);if(W2ENV.leaveT>0)W2ENV.leaveT-=dt;con
  if(sh){P.onGround=true;if(P.hinv>0)P.hinv-=dt;if(P.shipHit>0)P.shipHit-=dt}else P.onGround=false;
  // air foes live in the wilds
  if(b===6){env.spawnD+=Math.abs(dx);if(env.spawnD>env.next){env.spawnD=0;env.next=sh?SKY.gapShip[0]+rnd()*SKY.gapShip[1]:SKY.gapHorse[0]+rnd()*SKY.gapHorse[1];spawnAir(mv||P.dir)}}
- for(const e of ENEMIES)if(ENEMY[e.type].air&&Math.abs(e.x-P.x)>VW*1.3)e.dead=1;
+ for(const e of ENEMIES)if(ENEMY[e.type].air&&!ENEMY[e.type].isle&&Math.abs(e.x-P.x)>VW*1.3)e.dead=1;
  if(inp.leave()&&leaveFly())return;
  if(MODE!=='play'){showPrompt('');return}
  let h='';if(sh)for(let i=0;i<DOCKS.length;i++)if(Math.abs(P.x-dockShipX(i))<80){h=ico('park')+'<br>'+(isTouch?'Tap E':'[E]');if(inp.use()){moor(i);toast(ico('ship',2)+' '+ico('check'),900);h=''}break}
