@@ -1,5 +1,5 @@
 'use strict';
-const CLOUDS=[];for(let x=1700,k=0;x<7100;k++){CLOUDS.push({x,y:-40-Math.round(hash(k*2.7)*220),w:16+Math.round(hash(k*5.3)*30)});x+=70+Math.round(hash(k*1.9)*90)}
+const CLOUDS=[];for(let x=1700,k=0;x<9100;k++){CLOUDS.push({x,y:-40-Math.round(hash(k*2.7)*220),w:16+Math.round(hash(k*5.3)*30)});x+=70+Math.round(hash(k*1.9)*90)}
 // clouds that would sit inside a sky island are skipped (c.isl)
 for(const c of CLOUDS)c.isl=SKYISLES.some(I=>c.x+c.w/2>I.x0-6&&c.x-c.w/2<I.x1+6&&c.y>-I.h-30&&c.y<-I.h+110);
 function drawClouds(ox,oy){drawSkyProps(ox,oy);for(const c of CLOUDS){const x=Math.round(c.x-ox),y=Math.round(c.y-oy);if(x<-50||x>VW+50||y<-20||y>VH+20||c.isl)continue;const w=c.w;

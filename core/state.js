@@ -2,10 +2,11 @@
 const KEY='merchantRoad.v1';
 let S,P,ENEMIES=[],PROJ=[],PARTS=[],PICK=[],ROCKS=[],FTXT=[];
 let MODE='menu';
-function fresh(){return {wcart:false,money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,horse:null,lances:[],lance:null,scrap:{wood:0,apple:0,gold:0,done:false},w:0,ws:{},ships:['small'],ship:'small',w2seen:false,wal:1,moor:0,hull:60,v:2}}
+function fresh(){const s={wcart:false,money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,horse:null,lances:[],lance:null,scrap:{wood:0,apple:0,gold:0,done:false},w:0,ws:{},ships:['small'],ship:'small',w2seen:false,wal:1,moor:0,hull:60,v:2};for(const W of WORLDDEF)if(W.fresh)W.fresh(s);return s}
 function newPlayer(x){return {x,y:surfY(x),vy:0,kbx:0,dir:1,onGround:true,inv:0,cd:0,atk:0,walk:0,wheel:0,lastSafe:x,heat:0}}
 function save(){if(!S)return;S.x=Math.round(DG?DG.d.x:P.x);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo){const s=Object.assign(fresh(),d);
+  for(const W of WORLDDEF)if(W.migrate)W.migrate(s,d); // a world's own layout migrations (e.g. World 2 positions), before anything below checks them
   // migrate older saves (no carts parking / caves)
   if(!s.dng||typeof s.dng!=='object')s.dng={};if(!Array.isArray(s.caves))s.caves=[];
   if(!Array.isArray(s.gear))s.gear=[];s.gear=s.gear.filter(g=>GEAR[g]);if(!s.eq||typeof s.eq!=='object')s.eq={};
