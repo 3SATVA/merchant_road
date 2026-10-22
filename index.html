@@ -638,7 +638,9 @@ function resize(){BANDPOS=null;const de=document.documentElement,w=de.clientWidt
 addEventListener('resize',resize);resize();
 // ===== UI =====
 function toast(t,ms){const d=document.createElement('div');d.className='toast';d.innerHTML=t;$('toasts').appendChild(d);setTimeout(()=>d.remove(),ms||2200);while($('toasts').children.length>3)$('toasts').firstChild.remove()}
-function setMode(m){MODE=m;BANDPOS=null;$('prompt').style.display='none';['menu','pause','town','dead','inv','witch','scrap'].forEach(id=>$(id).classList.toggle('on',m===id));
+// the E / leave prompt: its HTML is only rewritten when the text changes (it used to be re-set, and re-scanned for emoji, every frame)
+let PROMPTH=null;function showPrompt(h){const e=$('prompt');if(h){if(h!==PROMPTH){PROMPTH=h;e.innerHTML=h}if(e.style.display!=='block')e.style.display='block'}else if(e.style.display!=='none')e.style.display='none'}
+function setMode(m){MODE=m;BANDPOS=null;showPrompt('');['menu','pause','town','dead','inv','witch','scrap'].forEach(id=>$(id).classList.toggle('on',m===id));
  const play=m!=='menu'&&m!=='cut';$('hud').style.display=play?'flex':'none';$('pbtn').style.display=m==='play'?'block':'none';$('ibtn').style.display=m==='play'?'block':'none';$('touch').classList.toggle('on',isTouch&&m==='play');for(const k in tkeys)tkeys[k]=0;
  if(m==='menu')$('bCont').style.display=load()?'block':'none'}
 $('bNew').onclick=()=>{if(load()&&!confirm('Start over? Your current save will be erased.'))return;S=fresh();startGame()};
@@ -744,6 +746,9 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  else if(a==='pot'){if(S.money>=INN.pot&&S.potions<INN.potMax){S.money-=INN.pot;S.potions++}}
  save();renderTown()};
 const MINI=$('mini').getContext('2d');
+// minimap markers: a 5px-wide outlined pin (towns, park, horse, witch, ship) and the dock/scrap-pile flag
+function mmPin(x,y,h,col){MINI.fillStyle='#000';MINI.fillRect(x-2,y,5,h);MINI.fillStyle=col;MINI.fillRect(x-1,y+1,3,h-2)}
+function mmDock(x,col){MINI.fillStyle='#000';MINI.fillRect(x-3,1,7,9);MINI.fillStyle=col;MINI.fillRect(x-2,2,5,4);MINI.fillStyle='#8b5a2b';MINI.fillRect(x-2,7,5,2)}
 function setTxt(id,v){const e=$(id);v=String(v);if(e.textContent!==v)e.textContent=v}
 function setDisp(id,v){const e=$(id);if(e.style.display!==v){e.style.display=v;if(id==='tU')BANDPOS=null}}
 function updHUD(){if(!S)return;{const w=clamp(S.hp/maxHP()*100,0,100)+'%',e=$('hpfill');if(e.dataset.w!==w){e.dataset.w=w;e.style.width=w}}setTxt('hpt',Math.ceil(Math.max(0,S.hp)));{const mt=pr(S.money),me=$('money');if(me.textContent!==mt){if(me.textContent&&me.dataset.w==S.w){me.classList.remove('bump');void me.offsetWidth;me.classList.add('bump')}me.dataset.w=S.w;me.textContent=mt}}
@@ -753,14 +758,14 @@ function updHUD(){if(!S)return;{const w=clamp(S.hp/maxHP()*100,0,100)+'%',e=$('h
  const w=200;MINI.clearRect(0,0,w,20);for(let i=0;i<NB;i++){MINI.fillStyle=BIOMES[WB[i]].mm;MINI.fillRect(BOUNDS[i]/WORLD*w,6,(BOUNDS[i+1]-BOUNDS[i])/WORLD*w,8)}
  if(WI){for(const z of WX){MINI.fillStyle=z.k==='rain'?'#5a6a86':'#ffffff';MINI.fillRect(Math.round(z.x0/WORLD*w),6,Math.max(1,Math.round((z.x1-z.x0)/WORLD*w)),3)}
   ISLES.forEach((I,k)=>{const a=Math.round(I.x0/WORLD*w),L=Math.round((I.x1-I.x0)/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(a-1,8,L+2,7);MINI.fillStyle=k?'#ecdcc8':'#e0d2b4';MINI.fillRect(a,9,L,5);MINI.fillStyle=k?'#c8a8f0':'#5ee0c8';MINI.fillRect(a,9,L,2)});
-  for(let k=1;k<(FEATURE_DRIVABLE_AIRSHIPS?DOCKS.length:1);k++){const x=Math.round(DOCKS[k].x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-3,1,7,9);MINI.fillStyle='#7de0ff';MINI.fillRect(x-2,2,5,4);MINI.fillStyle='#8b5a2b';MINI.fillRect(x-2,7,5,2)}
-  if(FEATURE_DRIVABLE_AIRSHIPS){const x=Math.round((P&&P.fly==='ship'?P.x:dockShipX(S.moor))/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,14,5,5);MINI.fillStyle=SHIPS[S.ship].pal[0];MINI.fillRect(x-1,15,3,3)}}
- for(const t of WT){const x=Math.round(t.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,3,5,14);MINI.fillStyle=t.i===S.lastTown?'#ffd75e':'#f6ead0';MINI.fillRect(x-1,4,3,12)}
+  for(let k=1;k<(FEATURE_DRIVABLE_AIRSHIPS?DOCKS.length:1);k++)mmDock(Math.round(DOCKS[k].x/WORLD*w),'#7de0ff');
+  if(FEATURE_DRIVABLE_AIRSHIPS)mmPin(Math.round((P&&P.fly==='ship'?P.x:dockShipX(S.moor))/WORLD*w),14,5,SHIPS[S.ship].pal[0])}
+ for(const t of WT)mmPin(Math.round(t.x/WORLD*w),3,14,t.i===S.lastTown?'#ffd75e':'#f6ead0');
  for(const i of S.caves){const d=DUNGEONS[i];if(!d)continue;const x=Math.round(d.x/WORLD*w);MINI.fillStyle=dState(d)>0?'#5a4a44':'#1a0c0c';MINI.fillRect(x-1,8,3,4)}
- {const x=Math.round((WI?W2DOCK:SCRAPX)/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-3,1,7,9);MINI.fillStyle=WI||S.scrap.done?'#7de0ff':'#c8a060';MINI.fillRect(x-2,2,5,4);MINI.fillStyle='#8b5a2b';MINI.fillRect(x-2,7,5,2)}
- if(!WI&&S.witch&&S.witch.seen){const x=Math.round(S.witch.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,0,5,7);MINI.fillStyle='#c060ff';MINI.fillRect(x-1,1,3,5)}
- if(S.park&&(!WI||!FEATURE_DRIVABLE_AIRSHIPS)){const x=Math.round(S.park.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,13,5,7);MINI.fillStyle='#ffa030';MINI.fillRect(x-1,14,3,5)}
- if(S.horse&&!S.horse.on){const x=Math.round(S.horse.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,13,5,7);MINI.fillStyle='#c8864a';MINI.fillRect(x-1,14,3,5)}
+ mmDock(Math.round((WI?W2DOCK:SCRAPX)/WORLD*w),WI||S.scrap.done?'#7de0ff':'#c8a060');
+ if(!WI&&S.witch&&S.witch.seen)mmPin(Math.round(S.witch.x/WORLD*w),0,7,'#c060ff');
+ if(S.park&&(!WI||!FEATURE_DRIVABLE_AIRSHIPS))mmPin(Math.round(S.park.x/WORLD*w),13,7,'#ffa030');
+ if(S.horse&&!S.horse.on)mmPin(Math.round(S.horse.x/WORLD*w),13,7,'#c8864a');
  if(P){const x=Math.round(px0/WORLD*w);MINI.fillStyle='#ff3030';MINI.fillRect(x-1,0,3,20)}}
 // ===== drops & inventory =====
 function nearestTown(x){let o=WT[0].i;for(const t of WT)if(Math.abs(t.x-x)<Math.abs(TOWNS[o].x-x))o=t.i;return o}
@@ -1072,7 +1077,7 @@ function updWorld(dt){if(WI){w2Tick(dt);wcTick(dt)}const H=HAULERS[carriedH()];c
  for(const d of DUNGEONS)if(Math.abs(d.x-P.x)<VW*.5&&!S.caves.includes(d.i))S.caves.push(d.i);
  if(!WI)witchTick();
  if(inp.cart())toggleCart();if(inp.horse())toggleHorse();
- if(MODE!=='play'){$('prompt').style.display='none';return}
+ if(MODE!=='play'){showPrompt('');return}
  const dn=dungAt(P.x,20),nearCart=nearCartP();let h='';
  if(town){h='<b class="gold">'+town.name+'</b><br>'+(isTouch?'Tap E':'Press E')+' to trade';if(S.lastTown!==town.i){S.lastTown=town.i;if(!S.visited.includes(town.i))S.visited.push(town.i);save()}if(inp.use())enterTown(town)}
  else if(dn){const l=dState(dn);h=l?skulls(dn.diff,1)+' ✓<br>⟳ '+Math.ceil(l/60)+'m':skulls(dn.diff)+'<br>'+(isTouch?'E':'[E]')+' Enter';if(inp.use()&&!l)enterDungeon(dn)}
@@ -1081,7 +1086,7 @@ function updWorld(dt){if(WI){w2Tick(dt);wcTick(dt)}const H=HAULERS[carriedH()];c
  else if(nearPile()){h=(S.scrap.done?'✈ <b class="gold">World 2</b>':'🛠 ✈ '+Math.floor(scrapFrac()*100)+'%')+'<br>'+(isTouch?'Tap E':'[E]');if(inp.use())openScrap()}
  if(nearCart)h+=(h?'<br>':'')+'🛒 '+(isTouch?'Tap 🛒':'[C]')+' Hitch';
  if(nearHorse())h+=(h?'<br>':'')+'🐴 '+(isTouch?'Tap 🐴':'[R]')+' Ride';
- if(h&&MODE==='play'){$('prompt').style.display='block';$('prompt').innerHTML=h}else $('prompt').style.display='none'}
+ showPrompt(MODE==='play'?h:'')}
 // ===== carts =====
 function unitsOf(a){const u=[];for(const s of a)for(let k=0;k<s.qty;k++)u.push({item:s.item,origin:s.origin,paid:s.paid});return u}
 function stacksOf(u){const out=[];for(const x of u){const s=out.find(s=>s.item===x.item&&s.origin===x.origin);if(s){s.paid=(s.paid*s.qty+x.paid)/(s.qty+1);s.qty++}else out.push({item:x.item,origin:x.origin,qty:1,paid:x.paid})}return out}
@@ -1127,7 +1132,7 @@ function enterDungeon(d){if(dState(d)>0||DG)return;fadeIn();if(S.horse&&S.horse.
  save();DG=genDungeon(d);ENEMIES=[];PROJ=[];PICK=[];PARTS=[];FTXT=[];ROCKS=[];
  P=newPlayer(0);P.x=-12;P.y=0;P.plat=DG.start;P.safe={x:-12,y:0,p:DG.start};P.inv=.6;
  for(const f of DG.foes){const e=spawnEnemy(f.type,f.x);e.plat=f.p;e.y=f.p.y-((ENEMY[f.type].base||f.type)==='witch'?30:0);e.dir=-1}
- camX=Math.max(DG.minX,P.x-VW/2);camY=P.y-VH*.6;$('prompt').style.display='none';toast(skulls(d.diff),1100)}
+ camX=Math.max(DG.minX,P.x-VW/2);camY=P.y-VH*.6;showPrompt('');toast(skulls(d.diff),1100)}
 function exitDungeon(){if(!DG)return;fadeIn();const d=DG.d;DG=null;ENEMIES=[];PROJ=[];PICK=[];PARTS=[];FTXT=[];ROCKS=[];
  P=newPlayer(d.x+6);P.inv=1.2;env.spawnD=0;camX=clamp(P.x-VW/2,0,WORLD-VW);camY=P.y-VH*.64;save()}
 function dungeonKO(){S.hp=Math.max(1,Math.round(maxHP()*.4));exitDungeon();toast('Knocked out<br><span class="small">dragged outside · nothing lost</span>',2400)}
@@ -1159,14 +1164,14 @@ function updDungeon(dt){const D=DG;D.t+=dt;
  // fall into the abyss / lava
  if(P.y>D.deathY){const dmg=D.b===3?22:12;S.hp-=dmg;ftxt(P.safe.x,P.safe.y-24,'-'+dmg+(D.b===3?' 🔥':''),'#ff7a6a');
   if(S.hp<=0){die();return}P.x=P.safe.x;P.y=P.safe.y;P.vy=0;P.kbx=0;P.onGround=true;P.plat=P.safe.p;P.inv=1;part(P.x,P.y-8,'#ffffff',8,60)}
- if(MODE!=='play'){$('prompt').style.display='none';return}
+ if(MODE!=='play'){showPrompt('');return}
  // prompts: start door, chest, exit door
  let h='';const k=isTouch?'E':'[E]';
- if(P.plat===D.start&&Math.abs(P.x-D.doorX)<18){h=k+' ⬅ Leave';if(inp.use()){$('prompt').style.display='none';exitDungeon();return}}
+ if(P.plat===D.start&&Math.abs(P.x-D.doorX)<18){h=k+' ⬅ Leave';if(inp.use()){showPrompt('');exitDungeon();return}}
  else if(P.plat===D.end&&!D.chest.open&&Math.abs(P.x-D.chest.x)<18){h=k+' 🎁 Open';if(inp.use())openChest()}
- else if(P.plat===D.end&&D.chest.open&&Math.abs(P.x-D.endX)<18){h=k+' ➜ Exit';if(inp.use()){$('prompt').style.display='none';exitDungeon();return}}
+ else if(P.plat===D.end&&D.chest.open&&Math.abs(P.x-D.endX)<18){h=k+' ➜ Exit';if(inp.use()){showPrompt('');exitDungeon();return}}
  if(inp.cart())toggleCart();if(inp.horse())toggleHorse();
- if(h&&MODE==='play'){$('prompt').style.display='block';$('prompt').innerHTML=h}else $('prompt').style.display='none'}
+ showPrompt(MODE==='play'?h:'')}
 function burnPit(pit){S.hp-=25;P.inv=.9;ftxt(P.x,P.y-24,'-25 🔥','#ff7a1a');part(P.x,pit.ly,'#ff7a1a',16,160);let lost=0;for(let i=0;i<2;i++)if(randomUnit())lost++;if(lost)ftxt(P.x,P.y-34,'-'+lost+' burned','#ffd75e');
  P.x=P.lastSafe;P.y=surfY(P.x);P.vy=0;P.onGround=true;P.kbx=0;if(S.hp<=0)die()}
 function updEnemy(e,dt){const d=ENEMY[e.type],base=d.base||e.type;
@@ -1522,7 +1527,7 @@ function renderDock(){if(!FEATURE_DRIVABLE_AIRSHIPS){renderDockHome();return}con
 // winged horse: jump takes off into the low band; in the air tU/W = up a band, tD/S = down a band (low band over an island + down = land); tJ/R = leave ship / dismount
 // airship: board at the dock where it's moored; fly with the same controls; E near a dock moors it. Hits go to the hull; hull 0 = wreck
 function board(){if(!FEATURE_DRIVABLE_AIRSHIPS)return false;const i=S.moor,D=DOCKS[i];if(!D||!P||P.fly||S.park)return false;if(mounted())dismount(P.x);if(S.horse)S.horse.x=-9999;
- P.fly='ship';P.band=0;P.x=dockShipX(i);P.y=surfY(D.x)-54;P.vy=0;P.hv=0;P.kbx=0;P.dir=D.side;P.onGround=true;P.hinv=0;env.wT=0;$('prompt').style.display='none';toast(ico('ship',2)+' '+ico('arU'),800);save();return true}
+ P.fly='ship';P.band=0;P.x=dockShipX(i);P.y=surfY(D.x)-54;P.vy=0;P.hv=0;P.kbx=0;P.dir=D.side;P.onGround=true;P.hinv=0;env.wT=0;showPrompt('');toast(ico('ship',2)+' '+ico('arU'),800);save();return true}
 function moor(i){const D=DOCKS[i];S.moor=i;P.fly=null;P.x=D.x;P.y=surfY(D.x);P.vy=0;P.hv=0;P.kbx=0;P.onGround=true;P.lastSafe=D.x;P.dir=-D.side;
  if(S.horse){S.horse.on=false;S.horse.x=Math.round(D.x-D.side*26);S.horse.dir=-D.side}S.lastTown=D.town;if(!S.visited.includes(D.town))S.visited.push(D.town);save();return true}
 function shipHW(){return Math.round(36*SHIPS[S.ship].z)}
@@ -1559,9 +1564,9 @@ function updSky(dt){w2Tick(dt);wcTick(dt);if(env.leaveT>0)env.leaveT-=dt;const b
  if(b===6){env.spawnD+=Math.abs(dx);if(env.spawnD>env.next){env.spawnD=0;env.next=sh?SKY.gapShip[0]+rnd()*SKY.gapShip[1]:SKY.gapHorse[0]+rnd()*SKY.gapHorse[1];spawnAir(mv||P.dir)}}
  for(const e of ENEMIES)if(ENEMY[e.type].air&&Math.abs(e.x-P.x)>VW*1.3)e.dead=1;
  if(inp.leave()&&leaveFly())return;
- if(MODE!=='play'){$('prompt').style.display='none';return}
+ if(MODE!=='play'){showPrompt('');return}
  let h='';if(sh)for(let i=0;i<DOCKS.length;i++)if(Math.abs(P.x-dockShipX(i))<80){h=ico('park')+'<br>'+(isTouch?'Tap E':'[E]');if(inp.use()){moor(i);toast(ico('ship',2)+' '+ico('check'),900);h=''}break}
- if(h){$('prompt').style.display='block';$('prompt').innerHTML=h}else $('prompt').style.display='none'}
+ showPrompt(h)}
 function shipDock(){for(let i=0;i<DOCKS.length;i++)if(Math.abs(P.x-dockShipX(i))<80)return i;return -1}
 function canLeave(){if(!P||!P.fly)return false;return P.fly==='ship'?shipDock()>=0:groundAt(P.x)!==null}
 // leave the airship / get off the winged horse from the big right button (or R / X)
