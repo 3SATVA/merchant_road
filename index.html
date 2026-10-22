@@ -53,7 +53,7 @@ img.big{width:72px;height:42px}
 .sws .tile{width:48px;min-height:48px;padding:2px}.sws .tile img{width:36px;height:36px}.slots .tile .l{color:#b49a88}
 .tile.ench::after{content:'';position:absolute;inset:2px;pointer-events:none;box-shadow:inset 0 0 0 1px var(--ec),inset 0 0 6px var(--ec);animation:shim 1.4s ease-in-out infinite}
 @keyframes shim{0%,100%{opacity:.25}50%{opacity:1}}.en{font-size:7px;display:block;margin-top:2px}.tile .en{margin:0}
-#cut{position:fixed;inset:0;z-index:40;display:none;cursor:pointer;touch-action:none}#cut.on{display:block}#cutT{position:absolute;left:0;right:0;top:15%;text-align:center;font-size:22px;color:#ffd75e;text-shadow:3px 3px 0 #000;letter-spacing:3px;animation:cutf 7.8s linear forwards}#cutS{position:absolute;right:14px;bottom:16px;opacity:.8}@keyframes cutf{0%{opacity:0}10%{opacity:1}75%{opacity:1}100%{opacity:0}}.needh{display:flex;justify-content:center;align-items:center;gap:4px;margin:0 0 6px}.shipi{width:52px;height:42px;image-rendering:pixelated;flex:none}
+#cut{position:fixed;inset:0;z-index:40;display:none;cursor:pointer;touch-action:none}#cut.on{display:block}#cutT{position:absolute;left:0;right:0;top:15%;text-align:center;font-size:22px;color:#ffd75e;text-shadow:3px 3px 0 #000;letter-spacing:3px;animation:cutf 7.8s linear forwards}#cutS{position:absolute;right:14px;bottom:16px;opacity:.8}@keyframes cutf{0%{opacity:0}10%{opacity:1}75%{opacity:1}100%{opacity:0}}.hbar{height:5px;width:64px;margin:5px auto 0;background:#3a2a20;border:1px solid #000}.hbar i{display:block;height:100%;background:#7de07a}.needh{display:flex;justify-content:center;align-items:center;gap:4px;margin:0 0 6px}.shipi{width:52px;height:42px;image-rendering:pixelated;flex:none}
 #spanel{width:min(440px,96vw)}#sprev{display:block;margin:0 auto 6px;image-rendering:pixelated;width:240px;height:200px;max-width:70vw;max-height:30vh;object-fit:contain}.srow{display:flex;align-items:center;gap:8px;width:100%;margin:6px 0;padding:9px 10px}.srow img{width:24px;height:24px;image-rendering:pixelated}.sbar{flex:1;height:12px;background:#1a1014;box-shadow:0 0 0 2px #000;position:relative}.sbar i{position:absolute;left:0;top:0;bottom:0;background:#7de07a}.sn{min-width:62px;text-align:right}.sh{min-width:34px;text-align:right;color:#2a6a1a}.srow:disabled{filter:grayscale(.7);opacity:.75}#sAll{width:100%;margin-top:4px;font-size:12px}.w2{text-align:center;font-size:14px;line-height:2;margin:6px 0 10px;color:#ffd75e}
 #witch .panel{width:min(880px,96vw)}.wwrap{display:flex;gap:12px;align-items:flex-start}.wl{flex:1;min-width:0}#wpor{flex:none;position:sticky;top:0;image-rendering:pixelated;height:min(512px,calc(92vh - 84px));width:auto;aspect-ratio:127/256;background:radial-gradient(ellipse at 50% 35%,#5a3a7a,#2b1d22 75%);box-shadow:0 0 0 2px #000,0 0 0 4px #7a5cc4}
 .wq{font-size:8px;line-height:1.8;color:#e8d8f8;margin:6px 0}.row.ench{box-shadow:0 0 0 2px #000,0 0 0 3px var(--ec)}.row.flash{animation:fl .8s 2}@keyframes fl{50%{background:#5a3a7a}}
@@ -126,7 +126,7 @@ img.big{width:72px;height:42px}
  <p><b>Barber.</b> Wake Ridge, Pinehollow and Emberfall have a Barber (striped pole): change skin, body and hair for free. Your Top Hat goes on your head; take it off to show your hair. One hat at a time: wearing a Witch Hat puts the Top Hat back in your bag.</p>
  <p><b>Witch.</b> Vex, a young witch with a knack for enchanting, parks her wagon (purple tarp) somewhere on the road and moves on every ~10 minutes. Get close and it shows on your map (purple). Press E at her wagon, tap a weapon or armor piece (or hold it briefly and drag) into the slot and press <b>Enchant</b> for <b>3 Magic Essence</b>: it replaces the item's enchants with 1–3 random ones, levels I–III. Reroll as often as you like. Weapons: Sharp, Critical, Knockback, Burning, Freezing, Venom, Leeching. Armor: Guarded, Swift, Hardy, Thorns, Regen, Leeching. <span style="color:#ff4a6a">Curses</span> (about 1 in 6) are high risk, high reward: Bloodthirst, Berserk, Volatile, Heavy, Greedy.</p>
  <p><b>Horses.</b> Bog Town, Pinehollow and Stonepeak have a <b>Stable</b> (horseshoe sign): a horse costs $1,500, no upkeep, and comes with a Wooden Lance. Press <b>R</b> (🐴) next to it to ride or get off. Riding is 1.5× faster and pulls your cart (a loaded cart slows it a bit). On horseback you fight only with your lance: tap attack to lower it, and the faster you gallop into a foe, the harder it hits. Hits never knock you off, but a rider is an easy target: you take 30% more damage and each hit knocks you out of your gallop. Golems don't budge: a charge or a golem punch shoves you back (BONK), so circle round and charge again. Goblins can't snatch goods while you gallop (right after a hit they can). Horses wait outside caves. Iron Lance at the Stable ($900); <b>Magma Lance</b> at the Forge (3 stone, 1 dried lava, 1 iron). Vex enchants lances too.</p>
- <p><b>Ashen Wastes.</b> Past Emberfall: no towns, just raiders (they steal!), cinder slimes, scrap golems and ash storms. At the far end, build an <b>airship</b> from the scrap heap: 150 Wood, 50 Apples, 50 Gold (press E; a cart parked there counts). Deposits are never lost. You need a horse to fly it to <b>World 2, the Skylands</b>: your horse grows wings there (tap jump in the air to flap), carts stay parked by the airship and each world has its own money (you start the Skylands with $100) and its own goods: World 1 goods wait in your wagon by the airship, sky goods wait in your airship's hold. Gear, materials, lances and your horse come with you. Skyhaven sells bigger airships; fly home from its dock.</p>
+ <p><b>Ashen Wastes.</b> Past Emberfall: no towns, just raiders (they steal!), cinder slimes, scrap golems and ash storms. At the far end, build an <b>airship</b> from the scrap heap: 150 Wood, 50 Apples, 50 Gold (press E; a cart parked there counts). Deposits are never lost. You need a horse to fly it to <b>World 2, the Skylands</b>: your horse grows wings there (tap jump in the air to flap), carts stay parked by the airship and each world has its own money (you start the Skylands with $100) and its own goods: World 1 goods wait in your wagon by the airship, sky goods wait in your airship's hold. Gear, materials, lances and your horse come with you. Skyhaven sells bigger airships; fly home from its dock.</p><p><b>Sky travel:</b> on the winged horse, jump takes off; in the air jump climbs and the down button drops a band (3 bands; high is fastest). The horse is fast but only carries your backpack. Board your airship at its dock to haul a full hold to <b>Sunspire</b>; pegasi and sky slimes hit its hull, and a broken hull limps back to the dock losing some cargo (half refunded). Rain pushes you down, updrafts lift you.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
  <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · R horse · I inventory · Q swap weapon · H potion · Esc pause.</p>
  <p><b>Fire</b> melts ice golems, <b>ice</b> cracks lava golems, <b>hammers</b> crush all golems.</p></div></div>
@@ -159,8 +159,10 @@ const ITEMS=[
  {id:'iron',name:'Iron',base:500,col:'#a8b0bc'},
  {id:'gold',name:'Gold',base:2000,col:'#ffd040'},
  // sky goods (World 2)
- {id:'cloudwool',name:'Cloud Wool',base:80,col:'#e8f4ff'},
- {id:'skyglass',name:'Sky Crystal',base:700,col:'#7de0ff'}];
+ {id:'cloudwool',name:'Cloud Wool',base:20,col:'#e8f4ff'},
+ {id:'skyglass',name:'Sky Crystal',base:260,col:'#7de0ff'},
+ {id:'sunfruit',name:'Sunfruit',base:14,col:'#ffb040'},
+ {id:'starsilk',name:'Star Silk',base:160,col:'#e8c8ff'}];
 const HAULERS={
  backpack:{name:'Backpack',cap:5,spd:1,jump:1,price:0},
  wheelbarrow:{name:'Wheelbarrow',cap:12,spd:.9,jump:.97,price:120},
@@ -170,7 +172,7 @@ const HORDER=['backpack','wheelbarrow','smallwagon','bigwagon'];
 const PACK=5; // backpack slots, always carried (part of every hauler's total)
 const COFF={wheelbarrow:11,smallwagon:-15,bigwagon:-23}; // cart centre relative to player
 const HITCHR={wheelbarrow:22,smallwagon:30,bigwagon:38}; // how close you must be to hitch
-function nearCartP(){return !!(S.park&&P&&!DG&&Math.abs(P.x-S.park.x)<HITCHR[S.hauler])}
+function nearCartP(){return !!(!WI&&S.park&&P&&!DG&&Math.abs(P.x-S.park.x)<HITCHR[S.hauler])}
 const WEAPONS={
  fists:{name:'Fists',dmg:5,range:13,cd:.35,price:0},
  dagger:{name:'Dagger',dmg:8,range:16,cd:.22,price:40},
@@ -198,8 +200,17 @@ const WORDER=['fists','dagger','sword','crossbow','leafstaff','firestaff','warha
 // World 2 = Skylands (biome 5+ ; phase 1: the floating starting island with Skyhaven + its airship dock)
 // setWorld(n) swaps these globals; biome and town indices are global across worlds so cargo origins/prices stay valid
 let WORLD=15000,BOUNDS=[0,3200,6400,9600,12000,15000],NB=5,WB=[0,1,2,3,4],XMIN=12,XMAX=15000-12,WI=0;
-const W2LEN=4800,ISL0=150,ISL1=1950,W2DOCK=1560,W2TOWN=6,FLYALT=100,W2START=100; // World 2 layout; W2START = World 2's opening balance
-function onIsle(x){return x>ISL0&&x<ISL1}
+const W2LEN=9000,ISL0=150,ISL1=1950,W2DOCK=1560,W2TOWN=6,FLYALT=100,W2START=100; // World 2 layout; W2START = World 2's opening balance
+// World 2 phase 2: two floating islands with the open-sky "air wilds" between them
+const ISLES=[{x0:150,x1:1950},{x0:6800,x1:8600}];
+const DOCKS=[{x:1560,side:1,isl:0,town:6},{x:6990,side:-1,isl:1,town:7}]; // side: which way the moored airship hangs off the pier
+const BANDY=[-70,-140,-210]; // altitude bands: low (near islands, sky slimes), mid (pegasi), high (pegasi + tailwind)
+const WX=[{x0:2500,x1:3150,k:'rain'},{x0:3450,x1:3700,k:'up'},{x0:4250,x1:4950,k:'rain'},{x0:5300,x1:5550,k:'up'},{x0:6000,x1:6450,k:'rain'}]; // rain pushes you down a band, updrafts lift you
+const SHIPV=118,HFLY=1.2,JET=1.2,HULLFIX=12,WRECKLOSS=.3; // airship base speed (x ship spd); winged horse = gallop x1.2; high band x1.2; hull repairs 12/s while moored; a wreck loses 30% of the hold
+function islAt(x){for(let i=0;i<ISLES.length;i++)if(x>ISLES[i].x0&&x<ISLES[i].x1)return i;return -1}
+function onIsle(x){return islAt(x)>=0}
+function wxAt(x){for(const z of WX)if(x>z.x0&&x<z.x1)return z.k;return null}
+function dockShipX(i){const d=DOCKS[i];return d.x+d.side*52}
 const SCRAPX=WORLD-170,NEED={wood:150,apple:50,gold:50},SCRAPI={wood:2,apple:0,gold:5},SCRAPK=['wood','apple','gold'];
 const TOWNS=[
  {name:'Wake Ridge',x:300,barber:1,sells:[0,1,2],weapons:['dagger'],haulers:['wheelbarrow']},
@@ -208,8 +219,9 @@ const TOWNS=[
  {name:'Pinehollow',x:5600,barber:1,stable:1,sells:[2,3,4],weapons:['warhammer','crossbow'],haulers:['smallwagon','bigwagon']},
  {name:'Stonepeak',x:8000,forge:1,stable:1,sells:[3,4,5],weapons:['frostspear','warhammer'],haulers:['bigwagon']},
  {name:'Emberfall',x:11000,barber:1,forge:1,sells:[3,4,5],weapons:['obsidian','leafstaff'],haulers:['bigwagon']},
- {name:'Skyhaven',x:1050,w:1,ships:1,sells:[6,7],weapons:[],haulers:[]}];
-TOWNS.forEach((t,i)=>{t.i=i;t.w=t.w||0;t.biome=t.w?5:biomeAt(t.x)});let WT=TOWNS.filter(t=>!t.w); // WT = towns of the current world
+ {name:'Skyhaven',x:1050,w:1,ships:1,sells:[6,7],weapons:[],haulers:[]},
+ {name:'Sunspire',x:7750,w:1,sells:[8,9],weapons:[],haulers:[]}];
+TOWNS.forEach((t,i)=>{t.i=i;t.w=t.w||0;t.biome=t.w?(t.x>ISLES[1].x0?7:5):biomeAt(t.x)});let WT=TOWNS.filter(t=>!t.w); // WT = towns of the current world
 const TOWNR=110, DUNIT=1500;
 const W1DUNG=[1050,2850,3600,4750,6750,7350,8900,10250,11650,13350].map((x,i)=>({i,x,b:biomeAt(x),diff:clamp(1+Math.floor(x/4000),1,3)}));let DUNGEONS=W1DUNG;
 const DRESPAWN=480; // seconds of play before a looted cave refills
@@ -220,8 +232,10 @@ const BIOMES=[
  {name:'Mountains',sky:['#4e6aa8','#8aa0cc','#c7d3ea'],far:'#8a8fb0',mid:'#5f6178',top:'#a0a6ae',top2:'#7b818c',dirt:'#5d5f6b',dirt2:'#474954',farS:'peaks',midS:'rocks',mm:'#8a8c98'},
  {name:'Volcano',sky:['#2a0e18','#6e2418','#d05a26'],far:'#4e2226',mid:'#2e1818',top:'#4c3636',top2:'#3a2626',dirt:'#2a1c1c',dirt2:'#1e1414',farS:'volcano',midS:'rocks',mm:'#a03a1a'},
  {name:'Ashen Wastes',sky:['#2e2a36','#6a5c60','#c2a084'],far:'#4e4650',mid:'#353034',top:'#a29a90',top2:'#7c746c',dirt:'#4a423e',dirt2:'#37302e',farS:'ruins',midS:'spires',mm:'#6e6660'},
- {name:'Sky Meadow',sky:['#78c4f0','#b4e2f8','#eaf8ff'],far:'#a8cce0',mid:'#f4fbff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#5ee0c8'}];
-const BIOMEINFO=['Slimes & goblins','Deep snow slows you · blizzards','Uphill is slow · rockfall!','Heat burns · jump lava pits','No towns · raiders · ash storms','Peaceful skies'];
+ {name:'Sky Meadow',sky:['#78c4f0','#b4e2f8','#eaf8ff'],far:'#a8cce0',mid:'#f4fbff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#5ee0c8'},
+ {name:'Air Wilds',sky:['#5aa4e0','#9ad2f4','#e2f4ff'],far:'#b0d4ec',mid:'#f0f8ff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#a8d8f4'},
+ {name:'Sunspire Isle',sky:['#8aa8ec','#cfc4f2','#fbe6f2'],far:'#cabce6',mid:'#fbf4ff',top:'#c8a8f0',top2:'#9a7ad0',dirt:'#ecdcc8',dirt2:'#d4bea4',farS:'isles',midS:'cloudbank',mm:'#c8a8f0'}];
+const BIOMEINFO=['Slimes & goblins','Deep snow slows you · blizzards','Uphill is slow · rockfall!','Heat burns · jump lava pits','No towns · raiders · ash storms','Peaceful skies','Pegasi · sky slimes · storms','Peaceful skies'];
 function biomeAt(x){for(let i=0;i<NB;i++)if(x<BOUNDS[i+1])return WB[i];return WB[NB-1]}
 const ENEMY={
  slime:{hp:14,dmg:6,spd:55,w:10,h:8,coin:[1,3]},
@@ -235,8 +249,11 @@ const ENEMY={
  // Ashen Wastes: tougher kin of the usual foes
  raider:{hp:38,dmg:11,spd:70,w:8,h:12,coin:[10,20],base:'goblin'},
  cinderSlime:{hp:32,dmg:10,spd:62,w:10,h:8,coin:[6,12],base:'slime'},
- scrapGolem:{hp:120,dmg:24,spd:28,w:16,h:26,coin:[45,80],base:'golem'}};
-const SPAWNS=[[['slime',.6],['goblin',.4]],[['iceGolem',.4],['goblinS',.6]],[['stoneGolem',.5],['witch',.5]],[['witchV',.45],['lavaGolem',.55]],[['raider',.5],['cinderSlime',.36],['scrapGolem',.14]],[['slime',1]]];
+ scrapGolem:{hp:120,dmg:24,spd:28,w:16,h:26,coin:[45,80],base:'golem'},
+ // Skylands air wilds (hull = damage to an airship)
+ pegasus:{hp:55,dmg:11,hull:10,spd:190,w:18,h:14,coin:[6,12],air:1},
+ skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1}};
+const SPAWNS=[[['slime',.6],['goblin',.4]],[['iceGolem',.4],['goblinS',.6]],[['stoneGolem',.5],['witch',.5]],[['witchV',.45],['lavaGolem',.55]],[['raider',.5],['cinderSlime',.36],['scrapGolem',.14]],[['slime',1]],[['pegasus',.55],['skySlime',.45]],[['slime',1]]];
 function wmult(w,type){const e=w.elem;
  if(e==='fire'){if(type==='iceGolem')return 2;if(type==='slime')return 1.5;if(type==='lavaGolem')return .4}
  if(e==='ice'){if(type==='lavaGolem')return 2;if(type==='iceGolem')return .5}
@@ -262,9 +279,9 @@ function pitAt(x){if(DG)return null;for(const p of PITS)if(x>p.x0&&x<p.x1)return
 function groundAt(x){if(WI===1&&!onIsle(x))return null;return pitAt(x)?null:surfY(x)}
 function inDrift(x){return biomeAt(x)===1&&!townAt(x,TOWNR+30)&&(Math.sin(x/97)+Math.sin(x/41+1))>1.15}
 function townAt(x,r){if(DG)return null;r=r||TOWNR;for(const t of WT)if(Math.abs(x-t.x)<r)return t;return null}
-let DECOR=[];function buildDecor(){DECOR=[];let x=40,k=0;while(x<WORLD-20){const b=biomeAt(x);if(!townAt(x,140)&&(WI?onIsle(x-12)&&onIsle(x+12)&&Math.abs(x-W2DOCK)>80:Math.abs(x-SCRAPX)>140)&&!DUNGEONS.some(q=>Math.abs(q.x-x)<46)&&!pitAt(x)&&!pitAt(x+8)&&!pitAt(x-8)){const r=hash(k*1.37);DECOR.push({x,b,r,k})}x+=30+Math.floor(hash(k*9.1)*70);k++}}buildDecor();
+let DECOR=[];function buildDecor(){DECOR=[];let x=40,k=0;while(x<WORLD-20){const b=biomeAt(x);if(!townAt(x,140)&&(WI?onIsle(x-12)&&onIsle(x+12)&&DOCKS.every(d=>Math.abs(x-d.x)>80):Math.abs(x-SCRAPX)>140)&&!DUNGEONS.some(q=>Math.abs(q.x-x)<46)&&!pitAt(x)&&!pitAt(x+8)&&!pitAt(x-8)){const r=hash(k*1.37);DECOR.push({x,b,r,k})}x+=30+Math.floor(hash(k*9.1)*70);k++}}buildDecor();
 function setWorld(n){WI=n?1:0;
- if(WI){WORLD=W2LEN;BOUNDS=[0,W2LEN];NB=1;WB=[5];XMIN=ISL0+24;XMAX=ISL1-24}
+ if(WI){WORLD=W2LEN;BOUNDS=[0,ISLES[0].x1,ISLES[1].x0,W2LEN];NB=3;WB=[5,6,7];XMIN=ISL0+24;XMAX=ISLES[1].x1-24}
  else{WORLD=15000;BOUNDS=[0,3200,6400,9600,12000,15000];NB=5;WB=[0,1,2,3,4];XMIN=12;XMAX=WORLD-12}
  WT=TOWNS.filter(t=>t.w===WI);DUNGEONS=WI?[]:W1DUNG;buildH();buildPits();buildDecor()}
 // ===== sprites / icons =====
@@ -277,8 +294,10 @@ const ICONS={
  iron:['........','........','..wwwww.','.siiiiis','siiiiiss','ssssssss','........','........'],
  gold:['........','........','..wwwww.','.yyyyyyo','yyyyyyoo','oooooooo','........','........'],
  cloudwool:['........','..uuu...','.uuuuuu.','uuuvuuuu','uuuuuuvu','.uuvuuu.','..uuuu..','........'],
- skyglass:['...x....','..qxq...','.qqxqq..','.qqqqqz.','qqqqqzz.','.qqqzz..','..qzz...','...z....']};
-const IPAL={u:'#f4fbff',v:'#b8cce4',q:'#7de0ff',z:'#3a9ac8',x:'#ffffff',h:'#5a3a7a',p:'#c060ff',a:'#5e5e5e',c:'#d0d0d0',g:'#3a8a2a',r:'#d83a3a',w:'#ffd0d0',d:'#9a2020',t:'#c8a060',b:'#8b5a2b',o:'#5a3818',l:'#d8b080',k:'#22222a',i:'#b8c0cc',s:'#707884',y:'#ffd040'};
+ skyglass:['...x....','..qxq...','.qqxqq..','.qqqqqz.','qqqqqzz.','.qqqzz..','..qzz...','...z....'],
+ sunfruit:['....g...','...gg...','..eeee..','.eexeee.','.eeeeef.','.eeeeff.','..efff..','........'],
+ starsilk:['........','.mmmmn..','mmxmmnn.','mmmmmnn.','.nmmmmn.','..nmmmmn','...nnmmn','....nnn.']};
+const IPAL={e:'#ffb040',f:'#d8781a',m:'#e8c8ff',n:'#a87ad8',u:'#f4fbff',v:'#b8cce4',q:'#7de0ff',z:'#3a9ac8',x:'#ffffff',h:'#5a3a7a',p:'#c060ff',a:'#5e5e5e',c:'#d0d0d0',g:'#3a8a2a',r:'#d83a3a',w:'#ffd0d0',d:'#9a2020',t:'#c8a060',b:'#8b5a2b',o:'#5a3818',l:'#d8b080',k:'#22222a',i:'#b8c0cc',s:'#707884',y:'#ffd040'};
 const ICONPAL2={iron:{w:'#eef2f8'},gold:{w:'#fff4b0',o:'#c08a10'}};
 function iconCanvas(id){const c=document.createElement('canvas');c.width=8;c.height=8;const g=c.getContext('2d');const pal=Object.assign({},IPAL,ICONPAL2[id]||{});ICONS[id].forEach((row,y)=>{for(let x=0;x<8;x++){const ch=row[x];if(ch&&ch!=='.'){g.fillStyle=pal[ch];g.fillRect(x,y,1,1)}}});return c}
 const ICONC={},ICONURL={};ITEMS.forEach(it=>{ICONC[it.id]=iconCanvas(it.id);ICONURL[it.id]=ICONC[it.id].toDataURL()});
@@ -408,7 +427,7 @@ function drawRider(c,sx,sy,d,t,fl,cols){const s=lanceSpeed();drawHorse(c,sx,sy,d
  if(s>.7&&Math.floor(t*20)%2)part(P.x-d*12,P.y-1,'#c8b898',1,30,0,.3)}
 const HORSEURL=(()=>{const c=document.createElement('canvas');c.width=34;c.height=28;const g=c.getContext('2d');drawHorse(g,16,27,1,0,0,0);return c.toDataURL()})();
 function golemPal(type){return type==='scrapGolem'?['#8a5a3a','#5a3a2a','#7de0ff','#b07a4a']:type==='iceGolem'?['#9cc8e8','#5f8fb8','#e8ffff','#c8e8ff']:type==='lavaGolem'?['#4a3030','#2a1a1a','#ffd040','#ff6a1a']:['#8a8a8a','#5e5e5e','#ffcc33','#a8a8a8']}
-function drawEnemy(c,e,sx,sy,t){
+function drawEnemy(c,e,sx,sy,t){if(ENEMY[e.type].air){drawAir(c,e,sx,sy,t);return}
  const dir=e.dir,fl=e.hitT>0;const P=(xo,yo,w,h,col)=>{px(c,dir>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col)};
  const base=ENEMY[e.type].base||e.type;
  if(base==='slime'){const sq=e.onGround?(Math.sin(t*6+e.seed)>.6?1:0):-1;const K=e.type==='cinderSlime';
@@ -478,7 +497,7 @@ for(const id of ['bHelpX','tLeave','invX','wX','sX']){$(id).innerHTML=ico('x');$
 const KEY='merchantRoad.v1';
 let S,P,ENEMIES=[],PROJ=[],PARTS=[],PICK=[],ROCKS=[],FTXT=[];
 let MODE='menu';
-function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,horse:null,lances:[],lance:null,scrap:{wood:0,apple:0,gold:0,done:false},w:0,ws:{},ships:['small'],ship:'small',w2seen:false,wal:1,v:2}}
+function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,horse:null,lances:[],lance:null,scrap:{wood:0,apple:0,gold:0,done:false},w:0,ws:{},ships:['small'],ship:'small',w2seen:false,wal:1,moor:0,hull:60,v:2}}
 function newPlayer(x){return {x,y:surfY(x),vy:0,kbx:0,dir:1,onGround:true,inv:0,cd:0,atk:0,walk:0,wheel:0,lastSafe:x,heat:0}}
 function save(){if(!S)return;S.x=Math.round(DG?DG.d.x:P.x);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo){const s=Object.assign(fresh(),d);
@@ -512,9 +531,9 @@ function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo)
    else{const w2=s.cargo.filter(c=>!isW1(c)).concat(s.park?s.park.cargo.filter(c=>!isW1(c)):[]);s.cargo=s.cargo.filter(isW1);if(s.park&&Array.isArray(s.park.cargo))s.park.cargo=s.park.cargo.filter(isW1);
     if(s.ws[1]||w2.length){const o=s.ws[1]||(s.ws[1]={x:W2DOCK-34,lastTown:W2TOWN});o.money=W2START;o.hold=(o.hold||[]).concat(w2)}}
    s.wal=1}
-  if(!Array.isArray(s.ships))s.ships=[];s.ships=s.ships.filter((v,i,a)=>SHIPS[v]&&a.indexOf(v)===i);if(!s.ships.includes('small'))s.ships.unshift('small');if(!s.ships.includes(s.ship))s.ship='small';s.w2seen=!!s.w2seen;
+  if(!Array.isArray(s.ships))s.ships=[];s.ships=s.ships.filter((v,i,a)=>SHIPS[v]&&a.indexOf(v)===i);if(!s.ships.includes('small'))s.ships.unshift('small');if(!s.ships.includes(s.ship))s.ship='small';s.w2seen=!!s.w2seen;s.moor=s.moor===1?1:0;{const mh=SHIPS[s.ship].hull;s.hull=isFinite(s.hull)?clamp(+s.hull,1,mh):mh}
   if(s.w===1&&!s.horse){leaveW(s,s.x);const o=enterW(s,0);s.x=isFinite(o.x)?o.x:SCRAPX-60}
-  if(s.w===1)s.park=null;if(!TOWNS[s.lastTown]||TOWNS[s.lastTown].w!==s.w)s.lastTown=s.w?W2TOWN:0;
+  if(s.w===1&&s.park){if(!Array.isArray(s.park.cargo))s.park=null;else s.park.cargo=cargoOK(s.park.cargo)}if(!TOWNS[s.lastTown]||TOWNS[s.lastTown].w!==s.w)s.lastTown=s.w?W2TOWN:0;
   /* airship scrap pile (new): deposits are permanent */
   {const sc=s.scrap;s.scrap={wood:0,apple:0,gold:0,done:false};if(sc&&typeof sc==='object'){for(const k of SCRAPK)s.scrap[k]=clamp(Math.floor(+sc[k]||0),0,NEED[k]);s.scrap.done=!!sc.done&&SCRAPK.every(k=>s.scrap[k]>=NEED[k])}}
   const wt=s.witch;if(!(wt&&isFinite(wt.x)&&isFinite(wt.t)))s.witch=null;else wt.seen=!!wt.seen;
@@ -531,7 +550,7 @@ const REFUND=.5; // on death, half of the purchase price of lost goods comes bac
 function cargoN(a){return a.reduce((t,s)=>t+s.qty,0)}
 function cargoCount(){return cargoN(S.cargo)}
 function carriedH(){return S.w||S.park||DG?'backpack':S.hauler}
-function cap(){return S.w?SHIPS[S.ship].cap:S.park?PACK:HAULERS[S.hauler].cap}
+function cap(){return S.w?(S.park?PACK:SHIPS[S.ship].cap):S.park?PACK:HAULERS[S.hauler].cap}
 function addCargo(item,origin,qty,paid){let s=S.cargo.find(s=>s.item===item&&s.origin===origin);if(s){s.paid=(s.paid*s.qty+paid*qty)/(s.qty+qty);s.qty+=qty}else S.cargo.push({item,origin,qty,paid})}
 function takeUnit(stackIdx,a){a=a||S.cargo;const s=a[stackIdx];s.qty--;const u={item:s.item,origin:s.origin,paid:s.paid};if(s.qty<=0)a.splice(stackIdx,1);return u}
 function randomUnit(a){a=a||S.cargo;const n=cargoN(a);if(!n)return null;let r=Math.floor(rnd()*n);for(let i=0;i<a.length;i++){if(r<a[i].qty)return takeUnit(i,a);r-=a[i].qty}return null}
@@ -552,7 +571,7 @@ function bindTouch(id,k){const el=$(id);el.addEventListener('touchstart',e=>e.pr
 const isTouch=('ontouchstart' in window)||matchMedia('(pointer:coarse)').matches;
 $('c').addEventListener('pointerdown',e=>{if(MODE==='play'&&e.pointerType==='mouse'&&e.button===0)pressed.click=1});
 const inp={left:()=>keys.a||keys.arrowleft||tkeys.l,right:()=>keys.d||keys.arrowright||tkeys.r,
- jump:()=>pressed[' ']||pressed.w||pressed.arrowup||pressed.tj,attack:()=>keys.j||pressed.j||pressed.click||tkeys.a||pressed.ta,use:()=>pressed.e||pressed.te,pot:()=>pressed.h||pressed.th,swap:()=>pressed.q||pressed.tq,cart:()=>pressed.c||pressed.tc,horse:()=>pressed.r||pressed.tm};
+ jump:()=>pressed[' ']||pressed.w||pressed.arrowup||pressed.tj,attack:()=>keys.j||pressed.j||pressed.click||tkeys.a||pressed.ta,use:()=>pressed.e||pressed.te,pot:()=>pressed.h||pressed.th,swap:()=>pressed.q||pressed.tq,cart:()=>pressed.c||pressed.tc,down:()=>pressed.s||pressed.arrowdown||pressed.tc,horse:()=>pressed.r||pressed.tm};
 // ===== canvas =====
 const C=$('c'),X=C.getContext('2d');let VW=400,VH=225,SC=0;
 const FXC=$('fx'),FX=FXC.getContext('2d');let DPR=1;
@@ -571,7 +590,7 @@ $('bCont').onclick=()=>{S=load()||fresh();startGame()};
 $('bHelp').onclick=$('bHelp2').onclick=()=>$('help').classList.add('on');$('bHelpX').onclick=()=>$('help').classList.remove('on');
 $('bRes').onclick=()=>setMode('play');$('bMenu').onclick=()=>{save();DG=null;ENEMIES=[];PROJ=[];setMode('menu')};$('pbtn').onclick=()=>setMode('pause');
 $('bRespawn').onclick=()=>{P=newPlayer(TOWNS[S.lastTown].x);S.hp=maxHP();save();setMode('play')};
-function startGame(){DG=null;setWorld(S.w);if(S.horse&&!S.horse.on)S.horse.x=clamp(S.horse.x,XMIN,XMAX);P=newPlayer(clamp(S.x,XMIN,XMAX));camX=clamp(P.x-VW/2,0,WORLD-VW);camY=P.y-VH*.64;ENEMIES=[];PROJ=[];PICK=[];ROCKS=[];FTXT=[];PARTS=[];env.biome=-1;env.spawnD=0;env.next=350;setMode('play');if(S.w===1&&!S.w2seen&&S.horse)startCut();save()}
+function startGame(){DG=null;setWorld(S.w);if(S.horse&&!S.horse.on)S.horse.x=clamp(S.horse.x,XMIN,XMAX);if(S.w===1){if(!onIsle(S.x))S.x=DOCKS[S.moor].x;if(S.horse&&!S.horse.on&&!onIsle(S.horse.x))S.horse.x=S.x-DOCKS[S.moor].side*26}P=newPlayer(clamp(S.x,XMIN,XMAX));camX=clamp(P.x-VW/2,0,WORLD-VW);camY=P.y-VH*.64;ENEMIES=[];PROJ=[];PICK=[];ROCKS=[];FTXT=[];PARTS=[];env.biome=-1;env.spawnD=0;env.next=350;setMode('play');if(S.w===1&&!S.w2seen&&S.horse)startCut();save()}
 let curTab='market',curTown=0;
 function enterTown(t){curTown=t.i;S.lastTown=t.i;if(!S.visited.includes(t.i))S.visited.push(t.i);curTab='market';setMode('town');renderTown();save()}
 function leaveTown(){setMode('play');save()}
@@ -601,7 +620,7 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   t.sells.forEach(i=>{const p=buyPrice(t.i,i);const pool=WT,pk=pool.indexOf(t);const far=pool.reduce((b,o)=>{const v=sellPrice(o.i,i,t.i);return v>b.v?{v,o}:b},{v:0});const nb=pool[pk+1]||pool[pk-1];const nv=nb?sellPrice(nb.i,i,t.i):0;
    const tr=p>ITEMS[i].base?'<span class="dn2">▲</span>':p<ITEMS[i].base?'<span class="up">▼</span>':'';
    const can=Math.min(c-n,Math.floor(S.money/p));
-   h+='<div class="row" data-b="'+i+'">'+iconImg(ICONURL[ITEMS[i].id])+'<span class="nm">'+ITEMS[i].name+' '+pr(p)+tr+(nb?'<span class="sub">'+nb.name+' '+pr(nv)+' · '+far.o.name+' '+pr(far.v)+'</span>':'')+'</span><button data-act="buy" data-i="'+i+'" data-n="1" '+(can<1?'disabled':'')+'>+1</button><button data-act="buy" data-i="'+i+'" data-n="999" '+(can<1?'disabled':'')+'>Max</button></div>'});
+   h+='<div class="row" data-b="'+i+'">'+iconImg(ICONURL[ITEMS[i].id])+'<span class="nm">'+ITEMS[i].name+' '+pr(p)+tr+(nb?'<span class="sub">'+nb.name+' '+pr(nv)+(far.o!==nb?' · '+far.o.name+' '+pr(far.v):'')+'</span>':'')+'</span><button data-act="buy" data-i="'+i+'" data-n="1" '+(can<1?'disabled':'')+'>+1</button><button data-act="buy" data-i="'+i+'" data-n="999" '+(can<1?'disabled':'')+'>Max</button></div>'});
  } else if(curTab==='haulers'){
   const row=id=>{const H=HAULERS[id];const own=S.haulers.includes(id),eq=S.hauler===id;
    const btn=eq?'<button disabled>'+(S.park?ico('park')+' Parked':'Using')+'</button>':own?'<button data-act="useh" data-id="'+id+'" '+(cargoCount()>H.cap||S.park?'disabled':'')+'>Use</button>':'<button data-act="buyh" data-id="'+id+'" '+(S.money<H.price?'disabled':'')+'>'+pr(H.price)+'</button>';
@@ -634,7 +653,7 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   h+='<div class="small" style="margin-top:6px">⚔ grows with speed · gallop in!</div>';
  } else if(curTab==='ships'&&t.ships){
   for(const id of SORDER){const sh=SHIPS[id],own=S.ships.includes(id),eq=S.ship===id;
-   const btn=eq?'<button disabled>'+ico('check')+'</button>':own?'<button data-act="useship" data-id="'+id+'" '+(cargoCount()>sh.cap?'disabled':'')+'>Use</button>':'<button data-act="buyship" data-id="'+id+'" '+(S.money<sh.price?'disabled':'')+'>'+pr(sh.price)+'</button>';
+   const btn=eq?'<button disabled>'+ico('check')+'</button>':own?'<button data-act="useship" data-id="'+id+'" '+(cargoCount()>sh.cap||S.moor!==0||S.park?'disabled':'')+'>Use</button>':'<button data-act="buyship" data-id="'+id+'" '+(S.money<sh.price?'disabled':'')+'>'+pr(sh.price)+'</button>';
    h+='<div class="row'+(eq?' on':'')+'"><img class="px shipi" src="'+SHIPURL[id]+'"><span class="nm">'+sh.name+'<span class="sub">'+ico('pack')+' '+sh.cap+' · '+ico('arR')+' ×'+sh.spd+' · Hull '+sh.hull+'</span></span>'+btn+'</div>'}
  } else if(curTab==='barber'&&t.barber){const L=S.look,noHat={head:null,chest:null,acc:null};
   const sw=(k,v,bg,on)=>'<button data-act="look" data-k="'+k+'" data-v="'+v+'" class="'+(on?'on':'')+'" style="background:'+bg+'"></button>';
@@ -657,8 +676,8 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  else if(a==='look'){const k=b.dataset.k;if(k in S.look)S.look[k]=+b.dataset.v;S.look=fixLook(S.look)}
  else if(a==='hat'){if(S.gear.includes('tophat'))S.eq.head=S.eq.head==='tophat'?null:'tophat'}
  else if(a==='craft'){craft(b.dataset.id)}
- else if(a==='buyship'){const id=b.dataset.id,sh=SHIPS[id];if(sh&&!S.ships.includes(id)&&S.money>=sh.price){S.money-=sh.price;S.ships.push(id);if(cargoCount()<=sh.cap)S.ship=id;save();toast(ico('ship',2)+' '+sh.name,1400)}}
- else if(a==='useship'){const id=b.dataset.id,sh=SHIPS[id];if(sh&&S.ships.includes(id)&&cargoCount()<=sh.cap)S.ship=id}
+ else if(a==='buyship'){const id=b.dataset.id,sh=SHIPS[id];if(sh&&!S.ships.includes(id)&&S.money>=sh.price){S.money-=sh.price;S.ships.push(id);if(cargoCount()<=sh.cap&&S.moor===0&&!S.park){S.ship=id;S.hull=sh.hull}save();toast(ico('ship',2)+' '+sh.name,1400)}}
+ else if(a==='useship'){const id=b.dataset.id,sh=SHIPS[id];if(sh&&S.ships.includes(id)&&cargoCount()<=sh.cap&&S.moor===0&&!S.park){S.ship=id;S.hull=sh.hull}}
  else if(a==='buyhorse'){buyHorse(t)}
  else if(a==='callhorse'){if(S.horse&&!S.horse.on&&S.money>=HORSECALL){S.money-=HORSECALL;S.horse.x=TOWNS[t].x+30;S.horse.dir=-1}}
  else if(a==='buyl'){const id=b.dataset.id,W=WEAPONS[id];if(W&&W.lance&&!S.lances.includes(id)&&S.horse&&S.money>=W.price){S.money-=W.price;S.lances.push(id);S.lance=id}}
@@ -668,16 +687,19 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  save();renderTown()};
 const MINI=$('mini').getContext('2d');
 function updHUD(){if(!S)return;$('hpfill').style.width=clamp(S.hp/maxHP()*100,0,100)+'%';$('hpt').textContent=Math.ceil(Math.max(0,S.hp));$('money').textContent=pr(S.money);
- $('cargo').textContent=cargoCount()+'/'+cap();const ch=S.w?'ship':carriedH();if($('icart').dataset.k!==ch){$('icart').src=ch==='ship'?ICO.ship.url:HAULURL[ch];$('icart').style.width=ch==='ship'?'16px':'';$('icart').dataset.k=ch}
- $('tC').style.display=S.hauler!=='backpack'&&!S.w?'flex':'none';{const k=S.park?'cartP':'cartH';if($('tC').dataset.k!==k){$('tC').dataset.k=k;$('tC').innerHTML=ico(k,2)}}{const k=mounted()?'horseOn':'horseOff';if($('tM').dataset.k!==k){$('tM').dataset.k=k;$('tM').innerHTML=ico(k,2)}}$('tC').classList.toggle('hi',nearCartP());{const hw=heldW();if($('iwep').dataset.k!==hw){$('iwep').src=WEPURL[hw];$('iwep').dataset.k=hw}}$('tM').style.display=S.horse?'flex':'none';$('tM').classList.toggle('hi',nearHorse()||mounted());{const k='p'+S.potions;if($('pots').dataset.k!==k){$('pots').dataset.k=k;$('pots').innerHTML=ico('potion')+S.potions}}
+ $('cargo').textContent=cargoCount()+'/'+cap();const ch=S.w&&!S.park?'ship':carriedH();if($('icart').dataset.k!==ch){$('icart').src=ch==='ship'?ICO.ship.url:HAULURL[ch];$('icart').style.width=ch==='ship'?'16px':'';$('icart').dataset.k=ch}
+ $('tC').style.display=(S.w?!!(P&&P.fly):S.hauler!=='backpack')?'flex':'none';{const k=S.w?'down':S.park?'cartP':'cartH';if($('tC').dataset.k!==k){$('tC').dataset.k=k;$('tC').innerHTML=ico(k,2)}}{const k=mounted()?'horseOn':'horseOff';if($('tM').dataset.k!==k){$('tM').dataset.k=k;$('tM').innerHTML=ico(k,2)}}$('tC').classList.toggle('hi',nearCartP());{const hw=heldW();if($('iwep').dataset.k!==hw){$('iwep').src=WEPURL[hw];$('iwep').dataset.k=hw}}$('tM').style.display=S.horse?'flex':'none';$('tM').classList.toggle('hi',nearHorse()||mounted());{const k='p'+S.potions;if($('pots').dataset.k!==k){$('pots').dataset.k=k;$('pots').innerHTML=ico('potion')+S.potions}}
  const px0=DG?DG.d.x:(P?P.x:0);const b=biomeAt(px0);const bn=DG?skulls(DG.d.diff)+' Cave':BIOMES[b].name;if($('bname').dataset.k!==bn){$('bname').innerHTML=bn;$('bname').dataset.k=bn}
  const w=200;MINI.clearRect(0,0,w,20);for(let i=0;i<NB;i++){MINI.fillStyle=BIOMES[WB[i]].mm;MINI.fillRect(BOUNDS[i]/WORLD*w,6,(BOUNDS[i+1]-BOUNDS[i])/WORLD*w,8)}
- if(WI){MINI.fillStyle='#000';MINI.fillRect(Math.round(ISL0/WORLD*w)-1,5,Math.round((ISL1-ISL0)/WORLD*w)+2,10);MINI.fillStyle='#e0d2b4';MINI.fillRect(Math.round(ISL0/WORLD*w),6,Math.round((ISL1-ISL0)/WORLD*w),8);MINI.fillStyle='#5ee0c8';MINI.fillRect(Math.round(ISL0/WORLD*w),6,Math.round((ISL1-ISL0)/WORLD*w),2)}
+ if(WI){for(const z of WX){MINI.fillStyle=z.k==='rain'?'#5a6a86':'#ffffff';MINI.fillRect(Math.round(z.x0/WORLD*w),6,Math.max(1,Math.round((z.x1-z.x0)/WORLD*w)),3)}
+  ISLES.forEach((I,k)=>{const a=Math.round(I.x0/WORLD*w),L=Math.round((I.x1-I.x0)/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(a-1,8,L+2,7);MINI.fillStyle=k?'#ecdcc8':'#e0d2b4';MINI.fillRect(a,9,L,5);MINI.fillStyle=k?'#c8a8f0':'#5ee0c8';MINI.fillRect(a,9,L,2)});
+  for(let k=1;k<DOCKS.length;k++){const x=Math.round(DOCKS[k].x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-3,1,7,9);MINI.fillStyle='#7de0ff';MINI.fillRect(x-2,2,5,4);MINI.fillStyle='#8b5a2b';MINI.fillRect(x-2,7,5,2)}
+  {const x=Math.round((P&&P.fly==='ship'?P.x:dockShipX(S.moor))/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,14,5,5);MINI.fillStyle=SHIPS[S.ship].pal[0];MINI.fillRect(x-1,15,3,3)}}
  for(const t of WT){const x=Math.round(t.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,3,5,14);MINI.fillStyle=t.i===S.lastTown?'#ffd75e':'#f6ead0';MINI.fillRect(x-1,4,3,12)}
  for(const i of S.caves){const d=DUNGEONS[i];if(!d)continue;const x=Math.round(d.x/WORLD*w);MINI.fillStyle=dState(d)>0?'#5a4a44':'#1a0c0c';MINI.fillRect(x-1,8,3,4)}
  {const x=Math.round((WI?W2DOCK:SCRAPX)/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-3,1,7,9);MINI.fillStyle=WI||S.scrap.done?'#7de0ff':'#c8a060';MINI.fillRect(x-2,2,5,4);MINI.fillStyle='#8b5a2b';MINI.fillRect(x-2,7,5,2)}
  if(!WI&&S.witch&&S.witch.seen){const x=Math.round(S.witch.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,0,5,7);MINI.fillStyle='#c060ff';MINI.fillRect(x-1,1,3,5)}
- if(S.park){const x=Math.round(S.park.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,13,5,7);MINI.fillStyle='#ffa030';MINI.fillRect(x-1,14,3,5)}
+ if(S.park&&!WI){const x=Math.round(S.park.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,13,5,7);MINI.fillStyle='#ffa030';MINI.fillRect(x-1,14,3,5)}
  if(S.horse&&!S.horse.on){const x=Math.round(S.horse.x/WORLD*w);MINI.fillStyle='#000';MINI.fillRect(x-2,13,5,7);MINI.fillStyle='#c8864a';MINI.fillRect(x-1,14,3,5)}
  if(P){const x=Math.round(px0/WORLD*w);MINI.fillStyle='#ff3030';MINI.fillRect(x-1,0,3,20)}}
 // ===== drops & inventory =====
@@ -885,7 +907,7 @@ function buyHorse(ti){if(S.horse||S.money<HORSEPRICE)return false;S.money-=HORSE
 function horseSpot(x){x=clamp(x,24,WORLD-24);if(PITS.some(p=>x>p.x0-16&&x<p.x1+16))x=P.lastSafe;return Math.round(x)}
 function mount(){if(!nearHorse())return false;S.horse.on=true;S.horse.x=null;P.hv=0;P.couch=0;P.x=clamp(P.x,12,WORLD-12);part(P.x,P.y-6,'#c8a060',8,60);toast('🐴 '+WEAPONS[S.lance].name,1000);save();return true}
 function dismount(at){if(!S.horse||!S.horse.on)return;S.horse.on=false;S.horse.x=horseSpot(at!=null?at:P.x);S.horse.dir=P.dir;P.hv=0;P.couch=0;P.ride=0;save()}
-function toggleHorse(){if(!S.horse){toast('🐴 Stables: Bog Town · Pinehollow · Stonepeak',1600);return}if(DG){toast('🐴 waits outside',900);return}
+function toggleHorse(){if(P&&P.fly)return;if(!S.horse){toast('🐴 Stables: Bog Town · Pinehollow · Stonepeak',1600);return}if(DG){toast('🐴 waits outside',900);return}
  if(S.horse.on){dismount(P.x+P.dir*4);P.x=clamp(P.x-P.dir*10,12,WORLD-12);toast('🐴 🅿',800);return}
  if(nearHorse())mount();else{const d=S.horse.x-P.x;toast('🐴 '+(d<0?'◀ ':'')+Math.round(Math.abs(d)/10)+'m'+(d>0?' ▶':''),1100)}}
 function lanceStrike(){const w=WEAPONS[S.lance];if(P.cd>0||P.couch>0)return;P.cd=w.cd;P.couch=.55;P.hits=[]}
@@ -924,7 +946,7 @@ function playerAttack(){if(mounted()&&S.lance){lanceStrike();return}const w=WEAP
  const x0=P.dir>0?P.x:P.x-w.range-4,x1=P.dir>0?P.x+w.range+4:P.x;
  for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(e.x+d.w/2>x0&&e.x-d.w/2<x1&&e.y-d.h<P.y+2&&e.y>P.y-24){hitEnemy(e,w.dmg,P.dir,w.elem);if(w.burn&&!e.dead&&e.type!=='lavaGolem')e.burn=2}}}
 function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min(maxHP(),S.hp+rg*dt)}
- if(DG)updDungeon(dt);else updWorld(dt);
+ if(DG)updDungeon(dt);else if(WI&&P.fly)updSky(dt);else updWorld(dt);
  // actions
  if(P.cd>0)P.cd-=dt;if(P.atk>0)P.atk=Math.max(0,P.atk-dt/.2);if(P.inv>0)P.inv-=dt;
  if(inp.attack())playerAttack();if(mounted())lanceTick(dt);else P.couch=0;
@@ -949,7 +971,7 @@ function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min
  for(const f of FTXT){f.life-=dt;f.y-=18*dt}FTXT=FTXT.filter(f=>f.life>0);
  env.saveT=(env.saveT||0)+dt;if(env.saveT>5){env.saveT=0;save()}
 }
-function updWorld(dt){const H=HAULERS[carriedH()];const b=biomeAt(P.x);const town=townAt(P.x);
+function updWorld(dt){if(WI)w2Tick(dt);const H=HAULERS[carriedH()];const b=biomeAt(P.x);const town=townAt(P.x);
  if(b!==env.biome){if(env.biome>=0||b>0)toast('<b>'+BIOMES[b].name+'</b><br>'+BIOMEINFO[b],2600);env.biome=b}
  // env
  let mul=H.spd;
@@ -968,9 +990,9 @@ function updWorld(dt){const H=HAULERS[carriedH()];const b=biomeAt(P.x);const tow
  const dx=P.x-ox;P.walk=mv&&P.onGround;P.wheel+=dx/4;
  const g=groundAt(P.x);
  if(P.onGround){if(g===null)P.onGround=false;else P.y=g}
- if(inp.jump()&&P.onGround){P.vy=-255*H.jump*(mounted()?.97:1);P.onGround=false}
- else if(inp.jump()&&canFly()){P.vy=-200;part(P.x-P.dir*6,P.y-16,'#ffffff',4,50,40,.5)} // winged horse: tap jump in the air to flap
- if(!P.onGround){const fly=canFly();P.vy+=(fly?400:720)*dt;if(fly&&jumpHeld()&&P.vy>40)P.vy=40;P.y+=P.vy*dt;if(fly){const top=surfY(P.x)-FLYALT;if(P.y<top){P.y=top;if(P.vy<0)P.vy=0}}if(g!==null&&P.y>=g&&(P.vy>=0||P.y>g+3)){P.y=g;P.vy=0;P.onGround=true}
+ if(inp.jump()&&canFly()){startFly();part(P.x-P.dir*6,P.y-16,'#ffffff',6,60,40,.5)} // winged horse: jump takes off into the low sky band
+ else if(inp.jump()&&P.onGround){P.vy=-255*H.jump*(mounted()?.97:1);P.onGround=false}
+ if(!P.onGround){P.vy+=720*dt;P.y+=P.vy*dt;if(WI&&!P.fly&&g===null&&canFly()&&P.vy>0)startFly();if(WI&&!P.fly&&P.y>60){fallOut();return}if(g!==null&&P.y>=g&&(P.vy>=0||P.y>g+3)){P.y=g;P.vy=0;P.onGround=true}
   const pit=pitAt(P.x);if(pit&&P.y>pit.ly){burnPit(pit)}}
  if(P.onGround&&g!==null&&!pitAt(P.x-6)&&!pitAt(P.x+6))P.lastSafe=P.x;
  // spawning
@@ -989,7 +1011,7 @@ function updWorld(dt){const H=HAULERS[carriedH()];const b=biomeAt(P.x);const tow
  if(town){h='<b class="gold">'+town.name+'</b><br>'+(isTouch?'Tap E':'Press E')+' to trade';if(S.lastTown!==town.i){S.lastTown=town.i;if(!S.visited.includes(town.i))S.visited.push(town.i);save()}if(inp.use())enterTown(town)}
  else if(dn){const l=dState(dn);h=l?skulls(dn.diff,1)+' ✓<br>⟳ '+Math.ceil(l/60)+'m':skulls(dn.diff)+'<br>'+(isTouch?'E':'[E]')+' Enter';if(inp.use()&&!l)enterDungeon(dn)}
  else if(nearWitch()){h='<b style="color:#c9b4ec">🔮 Vex</b><br>'+(isTouch?'Tap E':'Press E')+' to enchant';if(inp.use())openWitch()}
- else if(nearDock()){h=ico('ship')+' <b class="gold">World 1</b><br>'+(isTouch?'Tap E':'[E]');if(inp.use())openDock()}
+ else if(nearDock()){h=ico('ship')+'<br>'+(isTouch?'Tap E':'[E]');if(inp.use())openDock()}
  else if(nearPile()){h=(S.scrap.done?'✈ <b class="gold">World 2</b>':'🛠 ✈ '+Math.floor(scrapFrac()*100)+'%')+'<br>'+(isTouch?'Tap E':'[E]');if(inp.use())openScrap()}
  if(nearCart)h+=(h?'<br>':'')+'🛒 '+(isTouch?'Tap 🛒':'[C]')+' Hitch';
  if(nearHorse())h+=(h?'<br>':'')+'🐴 '+(isTouch?'Tap 🐴':'[R]')+' Ride';
@@ -1086,6 +1108,7 @@ function updEnemy(e,dt){const d=ENEMY[e.type],base=d.base||e.type;
  if(e.psn>0){e.psn-=dt;e.hp-=(e.psnD||4)*dt;if(rnd()<.3)PARTS.push({x:e.x+(rnd()-.5)*d.w,y:e.y-rnd()*d.h*.8,vx:0,vy:-14,col:rnd()<.5?'#6cd04a':'#3a8a2a',g:0,life:.45});if(e.hp<=0){killEnemy(e);return}}
  e.t+=dt;if(e.hitT>0)e.hitT-=dt;
  if(e.burn>0){e.burn-=dt;e.hp-=(e.burnD||6)*dt;if(rnd()<.35)PARTS.push({x:e.x+(rnd()-.5)*d.w,y:e.y-rnd()*d.h,vx:0,vy:-30,col:rnd()<.5?'#ff7a1a':'#ffd040',g:0,life:.3});if(e.hp<=0){killEnemy(e);return}}
+ if(d.air){updAir(e,dt,d);return}
  const dxp=P.x-e.x,adx=Math.abs(dxp);const town=townAt(e.x,TOWNR+10);
  if(DG){if(adx>VW*.62)return}else if(adx>VW*1.3){e.dead=1;return}
  const gY=x=>e.plat?e.plat.y:surfY(x);
@@ -1141,7 +1164,7 @@ function layer(bi,kind,f,baseY,col,cap,alpha){X.globalAlpha=alpha;const off=camX
 function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==='menu'?camX:camX;const mid=cx+VW/2;let b0=biomeAt(mid),b1=b0,t=0;
  for(let i=1;i<NB;i++){const d=mid-BOUNDS[i];if(Math.abs(d)<300){b0=WB[i-1];b1=WB[i];t=smooth((d+300)/600)}}
  skyBands(b0,b1,t);
- const hor=Math.round(VH*.64);
+ const hor=Math.round(VH*.64)+(WI?Math.round(clamp(-(camY+22+VH*.64)*.35,-40,140)):0);
  // sun/moon
  const bs=t>.5?b1:b0;if(bs===4){X.fillStyle='rgba(240,200,150,.25)';X.fillRect(VW-76,22,22,22);X.fillStyle='#e8c49a';X.fillRect(VW-72,26,14,14)}else if(!((b0===3)||(b1===3&&t>.5))){X.fillStyle=b0===1?'#f4f8ff':'#fff2b0';X.fillRect(VW-70,24,12,12)}else{X.fillStyle='#ff8a3a';X.fillRect(VW-70,30,10,10)}
  const bl=[[b0,1-(b1!==b0?t:0)],[b1,b1!==b0?t:0]];
@@ -1164,13 +1187,14 @@ function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==
   if(b===3&&n>.96){X.fillStyle='#ff6a1a';X.fillRect(sx,y+6,1,3)}
   if(b===4){if(n>.975){X.fillStyle='#ff7a2a';X.fillRect(sx,y+5,1,2)}else if(n<.03){X.fillStyle='#d8d0c0';X.fillRect(sx,y+10+Math.floor(n*300),1,1)}}
   if(inDrift(wx)){X.fillStyle='#ffffff';const hh=2+Math.round(2*Math.abs(Math.sin(wx/9)));X.fillRect(sx,y-hh,1,hh)}}
+ if(WI)drawCloudSea(ox,oy);
  // rocks warn
  for(const r of ROCKS){const gy=Math.round(surfY(r.x)-oy),sx=Math.round(r.x-ox);if(r.warn>0){const w=Math.round(10-r.warn*6);X.fillStyle=Math.floor(menuT*10)%2?'#ff3030':'#7a1010';X.fillRect(sx-w/2,gy-1,w,1)}else{px(X,sx-3,r.y-oy-6,6,6,'#7b7f88');px(X,sx-3,r.y-oy-6,6,1,'#a0a6ae');px(X,sx+1,r.y-oy-3,2,2,'#5d5f6b')}}
  if(S&&S.witch&&!WI&&MODE!=='menu')drawWitchCamp(ox,oy);
  if(!WI&&Math.abs(SCRAPX-mid)<VW/2+120)drawPile(ox,oy,dt);
- if(WI&&S)drawDock(ox,oy);
+ if(WI)drawClouds(ox,oy);if(WI&&S)drawDock(ox,oy);if(WI&&P&&P.fly==='ship'&&MODE!=='menu')drawSail(ox,oy);
  // parked cart
- if(S&&S.park&&MODE!=='menu')drawParked(ox,oy);
+ if(S&&S.park&&!WI&&MODE!=='menu')drawParked(ox,oy);
  if(S&&S.horse&&!S.horse.on&&MODE!=='menu'&&Math.abs(S.horse.x-ox-VW/2)<VW/2+40){const hx=Math.round(S.horse.x-ox),hy=Math.round(surfY(S.horse.x)-oy);drawHorse(X,hx,hy,S.horse.dir,menuT,0,1);if(nearHorse()&&MODE==='play'&&Math.sin(menuT*4)>0)px(X,hx,hy-27,1,2,'#ffd75e')}
  drawActors(ox,oy);
  // weather
@@ -1178,7 +1202,8 @@ function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==
  if(bm===1||(b1===1&&t>.3)){const heavy=env.bliz>0&&MODE==='play';const n=heavy?140:40;X.fillStyle='#ffffff';for(let i=0;i<n;i++){const s=hash(i*3.3);const x=((s*997+menuT*(heavy?-90:-12)*(1+s))%VW+VW)%VW,y=((hash(i*7.1)*VH+menuT*(heavy?60:22)*(1+s*.5))%VH);X.fillRect(Math.round(x),Math.round(y),1,1)}if(heavy){X.fillStyle='rgba(235,242,255,.32)';X.fillRect(0,0,VW,VH)}}
  if(bm===3){for(let i=0;i<24;i++){const s=hash(i*5.7);const x=(s*VW+Math.sin(menuT+i)*10+VW)%VW,y=VH-((hash(i*2.9)*VH+menuT*30*(1+s))%VH);X.fillStyle=i%3?'#ff7a1a':'#ffd040';X.fillRect(Math.round(x),Math.round(y),1,1)}X.fillStyle='rgba(255,80,20,.07)';X.fillRect(0,0,VW,VH)}
  if(bm===4||(b1===4&&t>.4)){const st=env.ash>0&&MODE==='play';const n=st?120:36;for(let i=0;i<n;i++){const s=hash(i*4.1);const x=((s*991+menuT*(st?-110:-14)*(1+s))%VW+VW)%VW,y=((hash(i*6.3)*VH+menuT*(st?40:12)*(1+s*.5))%VH);X.fillStyle=i%5?'#b8b0a8':'#ff9a4a';X.fillRect(Math.round(x),Math.round(y),1,1)}if(st){X.fillStyle='rgba(120,108,100,.34)';X.fillRect(0,0,VW,VH)}}
- if(S&&S.park&&MODE!=='menu')cartArrow(ox,oy);
+ if(S&&S.park&&!WI&&MODE!=='menu')cartArrow(ox,oy);
+ if(WI)drawWeather(ox,oy);
  drawFTXT(ox,oy);
 }
 function setAura(c,sx,sy,t){for(const id in SETS){if(!setOn(id))continue;const col=SETS[id].col;
@@ -1302,16 +1327,16 @@ const TOWNCACHE={};
 function drawTown(tw,ox,oy){let c=TOWNCACHE[tw.i];if(!c){c=document.createElement('canvas');c.width=240;c.height=70;const g=c.getContext('2d');buildTown(g,tw);TOWNCACHE[tw.i]=c}
  X.drawImage(c,Math.round(tw.x-120-ox),Math.round(surfY(tw.x)-68-oy))}
 function buildTown(g,tw){const b=tw.biome;const base=68;let seed=tw.i*17+3;const R=()=>{seed++;return hash(seed)};
- const wall=['#c89a62','#8a6a52','#8a8a90','#3a2a2a','#5a524e','#f4f0e6'][b],wall2=['#a87a48','#6a4e3a','#6a6a72','#2a1c1c','#3e3834','#d8d0c0'][b],roof=['#b83a2a','#5a4a8a','#4a5a6a','#5a1a1a','#3a3438','#e8c050'][b],roof2=['#8a2a1a','#3a2e6a','#34404c','#3a0e0e','#2a2428','#b8902a'][b];
+ const wall=['#c89a62','#8a6a52','#8a8a90','#3a2a2a','#5a524e','#f4f0e6','#f4f0e6','#ece2f8'][b],wall2=['#a87a48','#6a4e3a','#6a6a72','#2a1c1c','#3e3834','#d8d0c0','#d8d0c0','#cfc0e4'][b],roof=['#b83a2a','#5a4a8a','#4a5a6a','#5a1a1a','#3a3438','#e8c050','#e8c050','#5ec8d8'][b],roof2=['#8a2a1a','#3a2e6a','#34404c','#3a0e0e','#2a2428','#b8902a','#b8902a','#3a98b0'][b];
  const spots=[18,62,150,196];
  for(const x0 of spots){const w=26+Math.floor(R()*12),h=18+Math.floor(R()*12);const x=x0-w/2;
   px(g,x,base-h,w,h,wall);px(g,x,base-h,w,1,wall2);for(let yy=base-h+4;yy<base;yy+=4)px(g,x,yy,w,1,wall2);
   for(let i=0;i<=w/2+2;i++)px(g,x-2+i,base-h-i,w+4-2*i,1,i%3===0?roof2:roof);
   if(b===1)for(let i=0;i<=w/2+2;i+=1)px(g,x-2+i,base-h-i-1,1,1,'#ffffff'),px(g,x+w+1-i,base-h-i-1,1,1,'#ffffff');
   px(g,x+w/2-3,base-9,6,9,'#4a2a18');px(g,x+w/2+1,base-5,1,1,'#d8b040');
-  px(g,x+3,base-h+5,5,4,b===3?'#ff8a3a':'#ffe08a');px(g,x+w-8,base-h+5,5,4,b===3?'#ff8a3a':'#ffe08a');if(b===5){px(g,x-2,base-h,w+4,1,'#e8c050');px(g,x,base-2,w,2,'#e8c050');px(g,x+w/2-4,base-10,8,1,'#c8a040');px(g,x+2,base-h+4,7,6,'#e8c050');px(g,x+w-9,base-h+4,7,6,'#e8c050');px(g,x+3,base-h+5,5,4,'#bfe6f8');px(g,x+w-8,base-h+5,5,4,'#bfe6f8')}}
+  px(g,x+3,base-h+5,5,4,b===3?'#ff8a3a':'#ffe08a');px(g,x+w-8,base-h+5,5,4,b===3?'#ff8a3a':'#ffe08a');if(b===5||b===7){const T=b===7?'#a8f0ff':'#e8c050',T2=b===7?'#7ac8e8':'#c8a040',G=b===7?'#e8c8ff':'#bfe6f8';px(g,x-2,base-h,w+4,1,T);px(g,x,base-2,w,2,T);px(g,x+w/2-4,base-10,8,1,T2);px(g,x+2,base-h+4,7,6,T);px(g,x+w-9,base-h+4,7,6,T);px(g,x+3,base-h+5,5,4,G);px(g,x+w-8,base-h+5,5,4,G);if(b===7){px(g,x+w/2-1,base-h-14,2,5,'#a8f0ff');px(g,x+w/2,base-h-16,1,2,'#ffffff')}}}
  // market stall center
- const mx=106;px(g,mx,base-14,28,14,'#7a4a24');px(g,mx,base-14,28,2,'#9a6a34');for(let i=0;i<7;i++)px(g,mx-2+i*4,base-22,4,6,i%2?'#f4f0e0':['#c83a3a','#3a7ac8','#3aa060','#c83a6a','#c83a3a','#e8c050'][b]);
+ const mx=106;px(g,mx,base-14,28,14,'#7a4a24');px(g,mx,base-14,28,2,'#9a6a34');for(let i=0;i<7;i++)px(g,mx-2+i*4,base-22,4,6,i%2?'#f4f0e0':['#c83a3a','#3a7ac8','#3aa060','#c83a6a','#c83a3a','#e8c050','#e8c050','#9a6ad0'][b]);
  px(g,mx+3,base-17,3,3,'#d83a3a');px(g,mx+9,base-17,3,3,'#c8a060');px(g,mx+16,base-17,4,3,'#8b5a2b');px(g,mx+22,base-17,3,3,'#ffd040');
  // sign posts
  px(g,88,base-16,2,16,'#5a3818');px(g,82,base-20,14,7,'#a8743c');px(g,84,base-18,10,1,'#5a3818');px(g,84,base-16,8,1,'#5a3818');
@@ -1326,6 +1351,8 @@ function drawDecor(d,ox,oy){const x=Math.round(d.x-ox),y=Math.round(surfY(d.x)-o
  if(d.b===0){if(r<.45){const h=10+Math.floor(r*20);P(-1,-h,3,h,'#6e4526');P(-7,-h-10,15,10,'#3f8a3a');P(-5,-h-13,11,3,'#4fa048');P(-3,-h-8,3,2,'#6cc04a')}else if(r<.7){P(-4,-4,9,4,'#3f8a3a');P(-3,-5,7,1,'#4fa048')}else if(r<.85){P(0,-3,1,3,'#3a8a2a');P(-1,-4,3,1,r>.78?'#ffd040':'#e870a0')}else{P(-3,-3,6,3,'#8a8a90');P(-2,-4,4,1,'#a8a8b0')}}
  else if(d.b===1){if(r<.6){const h=14+Math.floor(r*24);P(0,-4,2,4,'#4a3020');for(let i=0;i<h;i++){const w=Math.floor((i/h)*8)+1;P(1-w,-4-h+i,w*2,1,i%4===0?'#e8f0f8':'#2f5a48')}}else if(r<.75){P(-3,-6,7,6,'#ffffff');P(-2,-10,5,4,'#ffffff');P(0,-9,1,1,'#000');P(1,-8,2,1,'#ff8a2a')}else{P(-4,-3,8,3,'#ffffff');P(-3,-4,6,1,'#e8f0f8')}}
  else if(d.b===2){if(r<.5){const w=6+Math.floor(r*14);P(-w/2,-w*.6,w,Math.round(w*.6),'#6a6c78');P(-w/2,-w*.6,w,1,'#9aa0a8');P(-w/2+2,-w*.3,2,1,'#4a4c58')}else if(r<.7){P(0,-12,2,12,'#5a4a3a');P(-3,-10,3,1,'#5a4a3a');P(2,-8,3,1,'#5a4a3a')}else{P(-1,-3,3,3,'#3a7a3a')}}
+ else if(d.b===7){if(r<.35){P(-2,-3,1,3,'#9a7ad0');P(0,-4,1,4,'#c8a8f0');P(2,-3,1,3,'#9a7ad0')}else if(r<.55){P(0,-5,1,5,'#9a7ad0');P(-1,-7,3,2,r<.45?'#ffd0a0':'#a8f0ff');P(0,-7,1,1,'#ffffff')}
+  else if(r<.72){P(-2,-7,3,7,'#a8f0ff');P(-1,-9,1,2,'#ffffff');P(1,-5,2,5,'#7ac8e8')}else if(r<.88){P(0,-12,2,12,'#d4bea4');P(-5,-17,12,6,'#e8c8ff');P(-3,-19,8,2,'#f4e4ff');P(-5,-12,12,1,'#c8a8f0')}else{P(0,-14,1,14,'#7ac8e8');P(-1,-16,3,2,'#a8f0ff');P(0,-17,1,1,'#ffffff')}}
  else if(d.b===5){if(r<.35){P(-2,-3,1,3,'#3ab8a8');P(0,-4,1,4,'#5ee0c8');P(2,-3,1,3,'#3ab8a8')}else if(r<.55){P(0,-5,1,5,'#3ab8a8');P(-1,-7,3,2,r<.45?'#ffc8ec':'#fff4b0');P(0,-7,1,1,'#ffffff')}
   else if(r<.72){P(-2,-6,3,6,'#f4fbff');P(-1,-8,1,2,'#ffffff');P(1,-4,2,4,'#c8dcf0')}else if(r<.88){P(0,-12,2,12,'#c8b090');P(-5,-17,12,6,'#7ee8d8');P(-3,-19,8,2,'#a8f4e8');P(-5,-12,12,1,'#5ec8b8')}else{P(0,-14,1,14,'#c8a040');P(-1,-16,3,2,'#ffe08a');P(0,-17,1,1,'#ffffff')}}
  else if(d.b===4){if(r<.3){const h=12+Math.floor(r*30);P(0,-h,2,h,'#2a2422');P(-4,-h+4,4,1,'#2a2422');P(-5,-h+2,1,2,'#2a2422');P(2,-h+7,4,1,'#2a2422');P(5,-h+5,1,2,'#2a2422')}
@@ -1335,19 +1362,21 @@ function drawDecor(d,ox,oy){const x=Math.round(d.x-ox),y=Math.round(surfY(d.x)-o
   else{P(-5,-3,10,3,'#5a3a2a');P(-3,-6,6,3,'#7a4a30');P(-1,-8,2,2,'#8a8f98');if(Math.sin(menuT*2+d.k)>.4)P(0,-11-Math.floor((menuT*6+d.k)%4),1,1,'#777')}}
  else{if(r<.4){P(0,-12,2,12,'#1a1010');P(-3,-9,3,1,'#1a1010');P(2,-7,3,1,'#1a1010')}else if(r<.75){const w=6+Math.floor(r*8);P(-w/2,-4,w,4,'#2a1c1c');P(-w/2+1,-2,2,1,'#ff6a1a')}else{P(-2,-2,4,2,'#3a2626');if(Math.sin(menuT*3+d.k)>.3)P(0,-6-Math.floor((menuT*8+d.k)%5),1,1,'#888')}}}
 // ===== World 2 (Skylands) =====
-const FARISLES=[{x:2450,hw:200,dy:-60},{x:3150,hw:150,dy:40},{x:3800,hw:240,dy:-20},{x:4450,hw:170,dy:-80}]; // decorative for now (phase 2/3 islands)
-function isleTh(x){const ed=Math.min(x-ISL0,ISL1-x);return Math.round(12+80*Math.sqrt(clamp(ed/420,0,1))+5*hash(Math.floor(x/3)))}
-function drawIsles(ox,oy){const B=BIOMES[5];for(const s of FARISLES){if(s.x+s.hw<ox-20||s.x-s.hw>ox+VW+20)continue;const base=-24+s.dy;
+const FARISLES=[{x:500,hw:120,dy:-40},{x:1500,hw:160,dy:-90},{x:2450,hw:200,dy:-60},{x:3150,hw:150,dy:40},{x:3800,hw:240,dy:-20},{x:4450,hw:170,dy:-80}]; // decorative for now (phase 2/3 islands)
+function isleTh(x){const I=ISLES[Math.max(0,islAt(x))],ed=Math.min(x-I.x0,I.x1-x);return Math.round(12+80*Math.sqrt(clamp(ed/420,0,1))+5*hash(Math.floor(x/3)))}
+function drawIsles(ox0,oy0){const B=BIOMES[5];const ox=Math.round(ox0*.5),oy=Math.round(oy0*.5)-30;X.globalAlpha=.32;for(const s of FARISLES){if(s.x+s.hw<ox-20||s.x-s.hw>ox+VW+20)continue;const base=-24+s.dy;
  for(let i=-s.hw;i<=s.hw;i++){const sx=Math.round(s.x+i-ox);if(sx<0||sx>=VW)continue;const wx=s.x+i,top=Math.round(base-4*Math.sin(wx/60)-oy),e=s.hw-Math.abs(i),th=Math.round(8+50*Math.sqrt(clamp(e/(s.hw*.8),0,1))+4*hash(Math.floor(wx/3)));
   X.fillStyle=B.dirt;X.fillRect(sx,top,1,th);X.fillStyle=B.dirt2;X.fillRect(sx,top+Math.round(th*.55),1,th-Math.round(th*.55));X.fillStyle='#a89878';X.fillRect(sx,top+th-2,1,2);X.fillStyle=B.top;X.fillRect(sx,top,1,2);X.fillStyle=B.top2;X.fillRect(sx,top+2,1,1)}
- const tx=Math.round(s.x-ox+s.hw*.3),ty=Math.round(base-4*Math.sin((s.x+s.hw*.3)/60)-oy);px(X,tx,ty-12,2,12,'#c8b090');px(X,tx-5,ty-18,12,7,'#7ee8d8');px(X,tx-3,ty-20,8,2,'#a8f4e8')}}
-function nearDock(){return !!(WI===1&&P&&!DG&&Math.abs(P.x-W2DOCK)<60)}
-function drawDock(ox,oy){const x=Math.round(W2DOCK-ox),y=Math.round(surfY(W2DOCK)-oy);if(x<-160||x>VW+160)return;
- px(X,x-26,y-6,42,3,'#f4f0e6');px(X,x-26,y-6,42,1,'#e8c050');for(const p0 of [-24,-8,12])px(X,x+p0,y-6,2,6,'#c8a040');px(X,x+14,y-26,2,20,'#c8a040');px(X,x+12,y-29,6,3,'#ffe08a');
- const sh=SHIPS[S.ship],bob=Math.round(Math.sin(menuT*1.6)*2),sx=x+52,lift=-30+bob;
- const ax=x+15,ay=y-24,bx=sx-Math.round(34*sh.z),byy=y-24+lift+2;for(let k=0;k<=12;k++){const f=k/12;px(X,Math.round(ax+(bx-ax)*f),Math.round(ay+(byy-ay)*f+Math.sin(f*Math.PI)*4),1,1,'#5e3a1e')}
- drawShip(X,sx,y,4,1,menuT,lift,sh.z,sh.pal);
- if(nearDock()&&MODE==='play'&&Math.sin(menuT*4)>0)px(X,x,y-34,1,2,'#ffd75e')}
+ const tx=Math.round(s.x-ox+s.hw*.3),ty=Math.round(base-4*Math.sin((s.x+s.hw*.3)/60)-oy);px(X,tx,ty-12,2,12,'#c8b090');px(X,tx-5,ty-18,12,7,'#7ee8d8');px(X,tx-3,ty-20,8,2,'#a8f4e8')}X.globalAlpha=1}
+function nearDock(){if(WI!==1||!P||DG||P.fly)return null;for(const d of DOCKS)if(Math.abs(P.x-d.x)<60)return d;return null}
+function drawShipD(c,sx,y,lift,dir,sh){if(dir<0){c.save();c.translate(sx*2,0);c.scale(-1,1)}drawShip(c,sx,y,4,1,menuT,lift,sh.z,sh.pal);if(dir<0)c.restore()}
+function drawDock(ox,oy){for(let i=0;i<DOCKS.length;i++){const D=DOCKS[i],sd=D.side,x=Math.round(D.x-ox),y=Math.round(surfY(D.x)-oy);if(x<-160||x>VW+160)continue;
+ const Q=(a,b,w,h,c)=>px(X,sd>0?x+a:x-a-w,y+b,w,h,c);
+ Q(-26,-6,42,3,'#f4f0e6');Q(-26,-6,42,1,'#e8c050');for(const p0 of [-24,-8,12])Q(p0,-6,2,6,'#c8a040');Q(14,-26,2,20,'#c8a040');Q(12,-29,6,3,'#ffe08a');
+ if(S.moor===i&&!(P&&P.fly==='ship')){const sh=SHIPS[S.ship],bob=Math.round(Math.sin(menuT*1.6)*2),sx=x+sd*52,lift=-30+bob;
+  const ax=x+sd*15,ay=y-24,bx=sx-sd*Math.round(34*sh.z),byy=y-24+lift+2;for(let k=0;k<=12;k++){const f=k/12;px(X,Math.round(ax+(bx-ax)*f),Math.round(ay+(byy-ay)*f+Math.sin(f*Math.PI)*4),1,1,'#5e3a1e')}
+  drawShipD(X,sx,y,lift,sd,sh)}
+ if(nearDock()===D&&MODE==='play'&&Math.sin(menuT*4)>0)px(X,x,y-34,1,2,'#ffd75e')}}
 function plr(){return P}
 function canFly(){return WI===1&&mounted()&&!!S.horse.wings}
 function jumpHeld(){return !!(keys[' ']||keys.w||keys.arrowup||tkeys.j)}
@@ -1367,10 +1396,10 @@ function drawWings(P0,t,bob,run,idle){const pl=plr(),air=!idle&&pl&&!pl.onGround
 // {x,lastTown,money, park (W1 cart), stash (W1 goods left at the airship without a cart), hold (W2 goods in the airship at the dock)}
 const cargoOK=a=>Array.isArray(a)?a.filter(c=>c&&ITEMS[c.item]&&TOWNS[c.origin]&&c.qty>0).map(c=>({item:c.item,origin:c.origin,qty:Math.floor(c.qty),paid:+c.paid||0})):[];
 function leaveW(s,x){const w=s.w,o={x:Math.round(x),lastTown:s.lastTown,money:s.money,park:null,stash:[],hold:[]};
- if(w===0){if(s.hauler!=='backpack'&&!s.park){o.park={x:SCRAPX-110,dir:-1,cargo:s.cargo}}else{o.park=s.park||null;o.stash=s.cargo}}else o.hold=s.cargo;
+ if(w===0){if(s.hauler!=='backpack'&&!s.park){o.park={x:SCRAPX-110,dir:-1,cargo:s.cargo}}else{o.park=s.park||null;o.stash=s.cargo}}else{o.hold=s.cargo;o.park=s.park||null}
  s.cargo=[];s.park=null;s.ws[w]=o}
 function enterW(s,n){const o=s.ws[n]||{};s.w=n;s.lastTown=o.lastTown!=null&&TOWNS[o.lastTown]&&TOWNS[o.lastTown].w===n?o.lastTown:(n?W2TOWN:5);
- s.money=isFinite(o.money)?o.money:(n?W2START:s.money);s.cargo=cargoOK(n?o.hold:o.stash);s.park=n?null:(o.park||null);delete s.ws[n];return o}
+ s.money=isFinite(o.money)?o.money:(n?W2START:s.money);s.cargo=cargoOK(n?o.hold:o.stash);s.park=o.park||null;delete s.ws[n];return o}
 // travel between worlds (needs a horse); carts stay parked at the World 1 airship, the airship hold carries your goods
 function travelTo(n){n=n?1:0;if(!S||!S.horse||S.w===n||DG)return false;$('toasts').innerHTML='';
  S.horse.on=false;
@@ -1395,10 +1424,90 @@ $('cut').addEventListener('pointerdown',e=>{e.preventDefault();endCut()});
 // the Skyhaven dock: your airship, and the way back to World 1
 let DOCKP=false;
 function openDock(){if(MODE!=='play')return;DOCKP=true;setMode('scrap');renderDock()}
-function renderDock(){const sh=SHIPS[S.ship];$('spct').textContent='';const c=document.createElement('canvas');c.width=120;c.height=110;const g=c.getContext('2d');g.fillStyle='#bfe6f8';g.fillRect(0,0,120,110);g.fillStyle='#f4fbff';g.fillRect(0,96,120,14);
- drawShip(g,60,104,4,1,menuT,-4,sh.z,sh.pal);
- $('sbody').innerHTML='<img id="sprev" src="'+c.toDataURL()+'"><div class="w2">'+sh.name+'<br><span class="small">'+ico('pack')+' '+cargoCount()+'/'+sh.cap+'</span></div><button id="dGo" class="srow" style="justify-content:center">'+ico('arL')+' World 1 '+ico('ship')+'</button>';
- $('dGo').onclick=()=>{closeScrap();travelTo(0)}}
+function renderDock(){const D=nearDock()||DOCKS[0],di=DOCKS.indexOf(D),sh=SHIPS[S.ship],here=S.moor===di;$('spct').textContent='';
+ const c=document.createElement('canvas');c.width=120;c.height=110;const g=c.getContext('2d');g.fillStyle='#bfe6f8';g.fillRect(0,0,120,110);g.fillStyle='#f4fbff';g.fillRect(0,96,120,14);
+ if(here)drawShip(g,60,104,4,1,menuT,-4,sh.z,sh.pal);else{g.globalAlpha=.35;drawShip(g,60,104,4,1,menuT,-4,sh.z,sh.pal);g.globalAlpha=1}
+ const hf=clamp(S.hull/sh.hull,0,1);
+ let h='<img id="sprev" src="'+c.toDataURL()+'"><div class="w2">'+(here?sh.name+'<br><span class="small">'+ico('pack')+' '+cargoCount()+'/'+sh.cap+'</span><div class="hbar"><i style="width:'+Math.round(hf*100)+'%"></i></div>':ico('ship')+' '+ico(D.side>0?'arR':'arL')+'<br><span class="small">'+TOWNS[DOCKS[S.moor].town].name+'</span>')+'</div>';
+ if(here)h+='<button id="dSail" class="srow" style="justify-content:center">'+ico('ship')+' '+ico('arU')+'</button>';
+ if(di===0)h+='<button id="dGo" class="srow" style="justify-content:center">'+ico('arL')+' World 1 '+ico('ship')+'</button>';
+ $('sbody').innerHTML=h;
+ if($('dSail'))$('dSail').onclick=()=>{closeScrap();board()};if($('dGo'))$('dGo').onclick=()=>{closeScrap();travelTo(0)}}
+// ===== sky travel (phase 2) =====
+// winged horse: jump takes off into the low band; in the air jump = up a band, down button = down a band (low band over an island + down = land)
+// airship: board at the dock where it's moored; fly with the same controls; E near a dock moors it. Hits go to the hull; hull 0 = wreck
+function board(){const i=S.moor,D=DOCKS[i];if(!D||!P||P.fly||S.park)return false;if(mounted())dismount(P.x);if(S.horse)S.horse.x=-9999;
+ P.fly='ship';P.band=0;P.x=dockShipX(i);P.y=surfY(D.x)-54;P.vy=0;P.hv=0;P.kbx=0;P.dir=D.side;P.onGround=true;P.hinv=0;env.wT=0;$('prompt').style.display='none';toast(ico('ship',2)+' '+ico('arU'),800);save();return true}
+function moor(i){const D=DOCKS[i];S.moor=i;P.fly=null;P.x=D.x;P.y=surfY(D.x);P.vy=0;P.hv=0;P.kbx=0;P.onGround=true;P.lastSafe=D.x;P.dir=-D.side;
+ if(S.horse){S.horse.on=false;S.horse.x=Math.round(D.x-D.side*26);S.horse.dir=-D.side}S.lastTown=D.town;if(!S.visited.includes(D.town))S.visited.push(D.town);save();return true}
+function shipHW(){return Math.round(36*SHIPS[S.ship].z)}
+function hullHit(dmg,sx){if((P.hinv||0)>0)return;P.hinv=.5;P.shipHit=.15;S.hull=Math.max(0,S.hull-dmg);ftxt(P.x,P.y-56,'-'+Math.round(dmg),'#ffb060');part(P.x+(sx>P.x?14:-14),P.y-6,'#c8a060',8,90);if(S.hull<=0)shipwreck()}
+// hull 0: the airship limps back to the dock it left from and loses 30% of its hold (half of what you paid comes back, like a death)
+function shipwreck(){const u=unitsOf(S.cargo),n=Math.ceil(u.length*WRECKLOSS),lost=[];for(let k=0;k<n;k++)lost.push(u.splice(Math.floor(rnd()*u.length),1)[0]);
+ S.cargo=stacksOf(u);const rf=refundOf(lost);S.money+=rf;S.hull=Math.round(SHIPS[S.ship].hull*.4);S.stats.wrecks=(S.stats.wrecks||0)+1;ENEMIES=[];PROJ=[];moor(S.moor);
+ env.wreck={n,rf};toast(ico('ship',2)+' '+ico('x')+(n?'<br>-'+n+' &nbsp;+'+pr(rf):''),2600);save()}
+function detachShip(){const u=unitsOf(S.cargo).sort((a,b)=>ITEMS[b.item].base-ITEMS[a.item].base);S.cargo=stacksOf(u.slice(0,PACK));S.park={x:dockShipX(S.moor),dir:DOCKS[S.moor].side,cargo:stacksOf(u.slice(PACK))}} // the backpack takes your 5 most valuable goods, the rest stays aboard
+function attachShip(){for(const c of S.park.cargo)addCargo(c.item,c.origin,c.qty,c.paid);S.park=null}
+// your airship's hold is yours while you're on its island (like a hitched cart); fly off on the horse and only the backpack comes along
+function w2Tick(dt){if(P.fly==='ship')return;const sh=SHIPS[S.ship];if(S.hull<sh.hull)S.hull=Math.min(sh.hull,S.hull+HULLFIX*dt);const isl=islAt(P.x),mi=DOCKS[S.moor].isl;
+ if(!S.park&&isl!==mi)detachShip();else if(S.park&&isl===mi)attachShip()}
+function startFly(){P.fly='horse';P.band=0;P.onGround=false;if(P.vy>-60)P.vy=-120;env.wT=0}
+function fallOut(){P.x=P.lastSafe;P.y=surfY(P.x);P.vy=0;P.onGround=true;S.hp-=10;ftxt(P.x,P.y-24,'-10','#ff6a6a');toast(ico('down',2),900);if(S.hp<=0)die()}
+function flyTarget(){let ty=BANDY[P.band];const g=groundAt(P.x);if(g!==null)ty=Math.min(ty,g-(P.fly==='ship'?40:24));return ty}
+function updSky(dt){w2Tick(dt);const b=biomeAt(P.x),sh=P.fly==='ship';
+ if(b!==env.biome){toast('<b>'+BIOMES[b].name+'</b><br>'+BIOMEINFO[b],2600);env.biome=b}
+ if(!sh&&!canFly()){P.fly=null;P.onGround=false;return}
+ let mv=(inp.left()?-1:0)+(inp.right()?1:0);if(mv)P.dir=mv;
+ const vmax=(sh?SHIPV*SHIPS[S.ship].spd:GALLOP*HFLY*spdMul())*(P.band===2?JET:1);
+ P.hv=(P.hv||0)+(mv*vmax-(P.hv||0))*Math.min(1,dt*(sh?1.3:2.4));if(!mv&&Math.abs(P.hv)<1)P.hv=0;P.ride=(P.ride||0)+Math.abs(P.hv)*dt;
+ const ox=P.x;P.x=clamp(P.x+(P.hv+P.kbx)*dt,XMIN,XMAX);P.kbx*=Math.pow(.004,dt);if(Math.abs(P.kbx)<2)P.kbx=0;const dx=P.x-ox;P.walk=false;
+ if(inp.jump()){if(P.band<2){P.band++;if(!sh)part(P.x-P.dir*6,P.y-16,'#ffffff',5,60,40,.5)}}
+ if(inp.down()){if(P.band>0)P.band--;else if(!sh&&groundAt(P.x)!==null){P.fly=null;P.vy=40;P.onGround=false;return}}
+ // weather
+ const w=wxAt(P.x);P.wx=w;if(w){env.wT=(env.wT||0)+dt;if(w==='rain'&&env.wT>1.5){env.wT=0;if(P.band>0)P.band--}else if(w==='up'&&env.wT>.9){env.wT=0;if(P.band<2)P.band++}}else env.wT=0;
+ const ty=flyTarget()+(w==='rain'?8:w==='up'?-8:0);P.vy+=((ty-P.y)*7-P.vy*4.2)*dt;P.y+=P.vy*dt;
+ if(sh){P.onGround=true;if(P.hinv>0)P.hinv-=dt;if(P.shipHit>0)P.shipHit-=dt}else P.onGround=false;
+ // air foes live in the wilds
+ if(b===6){env.spawnD+=Math.abs(dx);if(env.spawnD>env.next){env.spawnD=0;env.next=300+rnd()*160;spawnAir(mv||P.dir)}}
+ for(const e of ENEMIES)if(ENEMY[e.type].air&&Math.abs(e.x-P.x)>VW*1.3)e.dead=1;
+ if(inp.horse())toggleHorse();
+ if(MODE!=='play'){$('prompt').style.display='none';return}
+ let h='';if(sh)for(let i=0;i<DOCKS.length;i++)if(Math.abs(P.x-dockShipX(i))<80){h=ico('park')+'<br>'+(isTouch?'Tap E':'[E]');if(inp.use()){moor(i);toast(ico('ship',2)+' '+ico('check'),900);h=''}break}
+ if(h){$('prompt').style.display='block';$('prompt').innerHTML=h}else $('prompt').style.display='none'}
+function spawnAir(dir){const air=ENEMIES.filter(e=>!e.dead&&ENEMY[e.type].air).length;if(air>=3)return;const n=rnd()<.35?2:1;
+ for(let i=0;i<n&&air+i<3;i++){const x=P.x+dir*(VW/2+24+i*30);if(x<ISLES[0].x1+40||x>ISLES[1].x0-40)continue;const t=pickType(6),e=spawnEnemy(t,x);e.dir=-dir;
+  e.y=t==='skySlime'?BANDY[0]+6-rnd()*24:BANDY[1+Math.floor(rnd()*2)]-6;e.by=e.y;e.state='hover';e.cd=1.2+rnd();e.age=0;e.onGround=false}}
+function airTouch(e,d){if(P.fly==='ship'){const hw=shipHW();return Math.abs(e.x-P.x)<hw+d.w/2&&e.y>P.y-52&&e.y-d.h<P.y+14}const m=mounted();return Math.abs(e.x-P.x)<(m?10:6)+d.w/2&&e.y>P.y-(m?28:18)&&e.y-d.h<P.y+2}
+function airHit(e,d){if(P.fly==='ship')hullHit(d.hull,e.x);else hurtPlayer(d.dmg,e.x,false)}
+function updAir(e,dt,d){const tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;e.age=(e.age||0)+dt;e.x+=e.vx*dt;e.vx*=Math.pow(.05,dt);
+ if(e.type==='pegasus'){
+  if(e.age>16&&e.state!=='leave')e.state='leave';
+  if(e.state==='leave'){e.y-=60*dt;e.x+=e.dir*120*dt;if(e.age>22)e.dead=1;return}
+  if(e.state==='hover'){const hx=tx+(e.x<tx?-70:70),hy=ty-40+Math.sin(e.t*2+e.seed)*10;e.x+=clamp((hx-e.x)*1.6,-d.spd*.95,d.spd*.95)*dt;e.y+=clamp((hy-e.y)*1.6,-80,80)*dt;e.dir=tx>e.x?1:-1;
+   e.cd-=dt;if(e.cd<=0&&Math.abs(tx-e.x)<190){e.state='dive';e.hitDone=0;const a=Math.atan2(ty-e.y,tx-e.x);e.dvx=Math.cos(a)*d.spd;e.dvy=Math.sin(a)*d.spd;e.dT=0}}
+  else if(e.state==='dive'){e.dT+=dt;e.x+=e.dvx*dt;e.y+=e.dvy*dt;e.dir=e.dvx>0?1:-1;if(!e.hitDone&&airTouch(e,d)){e.hitDone=1;airHit(e,d)}if(e.dT>1.1){e.state='hover';e.cd=1.6+rnd()*1.2}}}
+ else{const hop=Math.abs(Math.sin(e.t*2.6+e.seed));e.by+=clamp((ty+4-e.by)*.6,-22,22)*dt;e.by=Math.max(e.by,BANDY[1]-10);e.y=e.by-hop*16;e.onGround=hop<.15;
+  const dx=tx-e.x;if(Math.abs(dx)<240){e.x+=Math.sign(dx)*d.spd*dt;e.dir=Math.sign(dx)||1}
+  e.cd-=dt;if(e.cd<=0&&airTouch(e,d)){e.cd=1;airHit(e,d)}}}
+function drawAir(c,e,sx,sy,t){const dir=e.dir,fl=e.hitT>0,R=[];const P=(xo,yo,w,h,col)=>R.push([dir>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col]);
+ if(e.type==='pegasus'){const W='#f6f6fc',S2='#c8cce0',M='#8ad0ff',M2='#5aa8e8';const f=e.state==='dive'?-1:Math.sin(t*10+e.seed);
+  if(f>.3){P(-3,-14,7,3,W);P(-6,-18,6,4,W);P(-9,-21,5,3,S2);P(-11,-23,3,2,S2)}else if(f>-.3){P(-4,-11,9,2,W);P(-10,-12,7,2,W);P(-14,-12,4,2,S2)}else{P(-3,-9,7,2,W);P(-6,-6,5,3,W);P(-8,-4,3,2,S2)}
+  P(-7,-9,13,5,W);P(-6,-5,11,1,S2);P(4,-13,3,5,W);P(5,-15,5,3,W);P(9,-14,2,2,'#e0d8ec');P(7,-14,1,1,'#e83a5a');P(3,-16,2,6,M);P(2,-12,1,3,M2);P(-10,-9,3,2,M);P(-11,-7,2,3,M2);
+  P(-6,-4,2,3,W);P(3,-4,2,3,W);P(-6,-1,2,1,'#c8a040');P(3,-1,2,1,'#c8a040')}
+ else{const B='#a8d8ff',B2='#78b0e8';if(e.onGround||Math.abs(Math.sin(e.t*2.6+e.seed))<.5){P(-8,1,16,3,'#ffffff');P(-6,3,12,2,'#dce8f6')}
+  P(-6,-8,12,8,B);P(-5,-9,10,1,B);P(-6,-2,12,2,B2);P(-4,-7,3,2,'#ffffff');P(-2,-5,1,2,'#1a2a4a');P(2,-5,1,2,'#1a2a4a');P(-3,-6,2,1,'#1a2a4a');P(2,-6,2,1,'#1a2a4a')}
+ for(const r of R)px(c,r[0]-1,r[1]-1,r[2]+2,r[3]+2,'#3a4a6a');for(const r of R)px(c,r[0],r[1],r[2],r[3],r[4])}
+const CLOUDS=[];for(let x=1700,k=0;x<7100;k++){CLOUDS.push({x,y:-40-Math.round(hash(k*2.7)*220),w:16+Math.round(hash(k*5.3)*30)});x+=70+Math.round(hash(k*1.9)*90)}
+function drawClouds(ox,oy){for(const c of CLOUDS){const x=Math.round(c.x-ox),y=Math.round(c.y-oy);if(x<-50||x>VW+50||y<-20||y>VH+20)continue;const w=c.w;
+ px(X,x-w/2,y-3,w,5,'#ffffff');px(X,x-w/2+3,y-6,w-8,3,'#ffffff');px(X,x-w/4,y-8,w/2,2,'#ffffff');px(X,x-w/2+2,y+2,w-4,1,'#dce8f6')}}
+function drawCloudSea(ox,oy){for(let sx=0;sx<VW;sx+=2){const wx=sx+ox,y=Math.round(58+4*Math.sin(wx/37)+3*Math.sin(wx/13)-oy);if(y>=VH)continue;X.fillStyle='#e4f0fa';X.fillRect(sx,y,2,2);X.fillStyle='#f6fbff';X.fillRect(sx,y+2,2,VH-y)}}
+function drawSail(ox,oy){const sh=SHIPS[S.ship],sx=Math.round(P.x-ox),dy=Math.round(P.y-oy);drawShipD(X,sx,dy+25,-1,P.dir,sh);if(S.horse)drawHorse(X,sx-P.dir*16,dy,P.dir,menuT,0,1);
+ const f=clamp(S.hull/sh.hull,0,1),top=dy-Math.round(24+32*(.8+.2*sh.z))-8;px(X,sx-13,top,26,4,'#000');px(X,sx-12,top+1,Math.max(1,Math.round(24*f)),2,f>.5?'#7de07a':f>.25?'#ffd75e':'#ff5a4a');if(P.shipHit>0)px(X,sx-12,top+1,24,2,'#ffffff')}
+function drawWeather(ox,oy){for(const z of WX){const a=Math.max(0,Math.round(z.x0-ox)),b=Math.min(VW,Math.round(z.x1-ox));if(b<=a)continue;const wd=b-a;
+ if(z.k==='rain'){const cy=Math.round(-300-oy);X.fillStyle='rgba(60,80,112,.2)';X.fillRect(a,0,wd,VH);for(let sx=a;sx<b;sx+=2){const wx=sx+ox,e=Math.min(1,(wx-z.x0)/40,(z.x1-wx)/40),h=Math.round((26+10*Math.abs(Math.sin(wx/23))+6*Math.sin(wx/9))*e);const t0=Math.max(0,cy-30);if(cy+h<0)continue;X.fillStyle='#6a7a92';X.fillRect(sx,t0,2,cy+h-t0);X.fillStyle='#8a98ae';X.fillRect(sx,cy+h-3,2,3)}
+  X.fillStyle='#c4d8f2';const y0=Math.max(0,cy+20),hh=VH-y0;if(hh>0){const n=Math.round(wd*hh/(3*VH))+4;for(let i=0;i<n;i++){const s=hash(i*3.7+z.x0);const x=a+(((s*977-menuT*30)%wd)+wd)%wd,y=y0+(hash(i*5.3)*hh+menuT*260*(1+s*.4))%hh;X.fillRect(Math.round(x),Math.round(y),1,4)}}}
+ else{X.fillStyle='rgba(255,255,255,.1)';X.fillRect(a,0,wd,VH);const n=Math.round(wd/5);for(let i=0;i<n;i++){const s=hash(i*4.9+z.x0);const x=a+((s*911+Math.sin(menuT*2+i)*4)%wd+wd)%wd,y=VH-((hash(i*2.3)*VH+menuT*150*(1+s))%VH);X.fillStyle=i%3?'rgba(255,255,255,.75)':'#bfe6f8';X.fillRect(Math.round(x),Math.round(y),1,i%2?6:4)}}}
+ if(P&&P.fly&&MODE==='play'){const y0=Math.round(VH*.42);for(let k=0;k<3;k++){const y=y0+(2-k)*10;px(X,3,y,7,8,'#000');px(X,4,y+1,5,6,k===P.band?'#ffd75e':'#4a5a70')}}}
 // ===== airship scrap pile =====
 function nearPile(){return !!(!WI&&S&&P&&!DG&&Math.abs(P.x-SCRAPX)<70)}
 function scrapFrac(){const s=S.scrap;return SCRAPK.reduce((t,k)=>t+Math.min(1,s[k]/NEED[k]),0)/3}
@@ -1467,11 +1576,11 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;menuT+=dt;
  if(MODE==='cut'){}
  else if(MODE==='menu'){camX=(camX+18*dt)%(WORLD-VW);camY=lerp(camY,surfY(camX+VW/2)-VH*.64,.05)}
  else if(P&&DG){const tx=clamp(P.x-VW/2+P.dir*28,DG.minX,Math.max(DG.minX,DG.maxX-VW));camX=lerp(camX,tx,Math.min(1,dt*5));camY=lerp(camY,P.y-VH*.6,Math.min(1,dt*4))}
- else if(P){const tx=clamp(P.x-VW/2+P.dir*28,0,WORLD-VW);camX=lerp(camX,tx,Math.min(1,dt*5));const ty=(P.onGround?P.y:Math.max(P.y,surfY(P.x)))-VH*.64;camY=lerp(camY,ty,Math.min(1,dt*4))}
+ else if(P){const tx=clamp(P.x-VW/2+P.dir*28,0,WORLD-VW);camX=lerp(camX,tx,Math.min(1,dt*5));const ty=(P.fly?P.y+VH*.1:P.onGround?P.y:Math.max(P.y,surfY(P.x)))-VH*.64;camY=lerp(camY,ty,Math.min(1,dt*4))}
  render(dt);if(MODE!=='menu'&&S)updHUD();requestAnimationFrame(frame)}
 setMode('menu');requestAnimationFrame(frame);
 addEventListener('beforeunload',()=>{if(MODE!=='menu')save()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&MODE==='play'){save();setMode('pause')}});
 // test hooks
-window.MR={get WI(){return WI},get WT(){return WT},get XMIN(){return XMIN},get XMAX(){return XMAX},travelTo,setWorld,leaveW,enterW,W2START,SHIPS,startCut,endCut,CUT,canFly,nearDock,openDock,W2DOCK,ISL0,ISL1,FLYALT,tdist,SCRAPX,NEED,SCRAPK,scrapFrac,scrapStage,deposit,depositKeys,haveOf,openScrap,closeScrap,nearPile,get BOUNDS(){return BOUNDS},get WORLD(){return WORLD},BIOMES,biomeAt,mount,dismount,toggleHorse,mounted,heldW,nearHorse,buyHorse,lanceStrike,lanceSpeed,HORSEPRICE,RIDE,GALLOP,LANCEMIN,LANCEMAX,enchantItem,enchCost,ENCH,rollEnchants,putSlot,get wSel(){return wSel},ev,encList,berserkMul,dmgTakenMul,openWitch,closeWitch,placeWitch,nearWitch,dmgMul,defTotal,spdMul,ench,hitEnemy,renderWitch,witchTick,setOn,maxHP,SETS,giveMat,craft,RECIPES,have,MATS,giveGear,dropLoot,killEnemy,openInv,closeInv,GEAR,set dropMul(v){DROPMUL=v},gearSum,spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},get PROJ(){return PROJ},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,get PITS(){return PITS},surfY,env,get DG(){return DG},get DUNGEONS(){return DUNGEONS},enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
+window.MR={get WI(){return WI},get WT(){return WT},get XMIN(){return XMIN},get XMAX(){return XMAX},travelTo,setWorld,leaveW,enterW,W2START,updSky,board,moor,shipwreck,hullHit,spawnAir,startFly,ISLES,DOCKS,WX,BANDY,wxAt,islAt,dockShipX,SHIPV,detachShip,attachShip,SHIPS,startCut,endCut,CUT,canFly,nearDock,openDock,W2DOCK,ISL0,ISL1,FLYALT,tdist,SCRAPX,NEED,SCRAPK,scrapFrac,scrapStage,deposit,depositKeys,haveOf,openScrap,closeScrap,nearPile,get BOUNDS(){return BOUNDS},get WORLD(){return WORLD},BIOMES,biomeAt,mount,dismount,toggleHorse,mounted,heldW,nearHorse,buyHorse,lanceStrike,lanceSpeed,HORSEPRICE,RIDE,GALLOP,LANCEMIN,LANCEMAX,enchantItem,enchCost,ENCH,rollEnchants,putSlot,get wSel(){return wSel},ev,encList,berserkMul,dmgTakenMul,openWitch,closeWitch,placeWitch,nearWitch,dmgMul,defTotal,spdMul,ench,hitEnemy,renderWitch,witchTick,setOn,maxHP,SETS,giveMat,craft,RECIPES,have,MATS,giveGear,dropLoot,killEnemy,openInv,closeInv,GEAR,set dropMul(v){DROPMUL=v},gearSum,spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},get PROJ(){return PROJ},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,get PITS(){return PITS},surfY,env,get DG(){return DG},get DUNGEONS(){return DUNGEONS},enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
 </script></body></html>
