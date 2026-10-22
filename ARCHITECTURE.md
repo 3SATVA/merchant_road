@@ -44,6 +44,11 @@ Save format, field names and the `merchantRoad.v1` key are unchanged. New fields
 - Drawing hooks: `drawClouds` calls `drawSkyProps` (grass, roots, crystals, rewards), `drawWeather` calls `drawStorms` and `drawBolts`. Plain clouds overlapping an island are skipped (`c.isl`).
 - To add an island: append to `SKYISLES` (keep it between town islands, at least ~150px from the WX zone edges looks best). Existing save `S.sky.r` keys are island indices, so append only.
 
+## World 2 winged horse on land (world2/data.js HLAND)
+- On any World 2 island (Skyhaven, Sunspire, sky islands) the mounted winged horse moves at `HLAND` (1/3) of on-foot walking: 92 -> ~30.7px/s (x spdMul, x hitched-cart drag), vs 138 riding in World 1 and 69 flying. The hook is one ternary in `updWorld` (core/play.js: `WI?HLAND:RIDE`); flying speed (world2/sky.js) is untouched.
+- Animation: `horsePlod()` (world2/sky.js) gates a slow heavy plod in `drawHorse` / `drawRider` (core/horse.js, `PLODF`, `plodBob`): slow leg cycle, body and head dip on each footfall, slow tail, wings folded. Everything is behind `WI===1`, so World 1 renders pixel-identically.
+- The horse stays where you dismount; the horse button summons it anywhere (including inside a storm); jump while mounted on the ground still takes off. One-time toast, flag `S.sky.ld`.
+
 ## World 2 difficulty (world2/data.js)
 - World 2 is tuned for a player arriving with end-game World 1 gear, not a fresh character. Foe base stats in `ENEMY` read like World 1 numbers; `W2T` (`hp` 4.5, `dmg` 4, `coin` 3) multiplies every sky foe's hp, dmg and coins once at load (pegasus, skySlime, unicorn, dreadUni, bigSlime, isleSlime), and `UNI.bolt` too. `SKY.dmg` (.85) scales flier contact hits on top of that. Turn one knob, not every stat.
 - `ENEMY.uni` marks the unicorn behaviour (telegraph, bolt). `burst` is how many bolts it fires per telegraph (`UNI.gap` s apart, same aim, short re-glow before each). `elite` uses the dark-gold palette. `gem` is the chance of dropping a Sky Crystal on death. `dreadUni` is the elite: 3-bolt burst, more hp, essence .7.
