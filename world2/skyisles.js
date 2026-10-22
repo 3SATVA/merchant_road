@@ -4,19 +4,21 @@
 // (ENEMY[..].isle, run from updAir/drawAir), unicorn bolts, storm clouds and the rewards.
 // Save: S.sky={r:{<island>:S.time the reward was taken},st:1 once the storm tip was shown}. Created on first use; old saves need nothing.
 const SKYST={ref:null,act:[],foes:[],full:[]},UB=[];
+DROPS.unicorn=[['essence',.3]];DROPS.dreadUni=[['essence',.7]]; // on top of the witch-family essence roll (DROPS lives in inventory/data.js, loaded after world2/data.js)
 function skyS(){if(!S.sky)S.sky={r:{},st:0};if(!S.sky.r)S.sky.r={};return S.sky}
 function rwX(i){const I=SKYISLES[i];return Math.round((I.x0+I.x1)/2+(I.rx||0))}
 function rwReady(i){const r=S.sky&&S.sky.r?S.sky.r[i]:null;return r==null||S.time-r>=(SKYISLES[i].rw==='chest'?SKYI.chestCd:SKYI.nodeCd)}
 function skyTh(x,I){const w=I.x1-I.x0,ed=Math.min(x-I.x0,I.x1-x);return Math.round(7+w*.2*Math.sqrt(clamp(ed/(w*.5),0,1))+4*hash(Math.floor(x/3)))}
 function isleFoe(t,i,x){const e=spawnEnemy(t,x);e.isl=i;e.y=surfY(x);e.dir=rnd()<.5?-1:1;e.st='idle';e.sT=.4+rnd()*.6;e.tx=x;e.cd=1+rnd();e.tcd=0;e.onGround=true;e.vy=0;e.hx=0;e.hop=.5+rnd()*.8;e.sq=0;SKYST.foes.push(e);return e}
 function isleDeath(e){const y=e.y-ENEMY[e.type].h/2;
- if(e.type==='unicorn'){part(e.x,y,'#ff7ad8',10,120,40,.5);part(e.x,y,'#3e2c52',8,90,80,.5)}
+ const d=ENEMY[e.type];if(d.gem&&rnd()<d.gem*DROPMUL)dropUnit({item:7,origin:6,paid:0},e.x,e.y-10); // Sky Crystal
+ if(d.uni){part(e.x,y,d.elite?'#ffd040':'#ff7ad8',10,120,40,.5);part(e.x,y,d.elite?'#1a1020':'#3e2c52',8,90,80,.5)}
  else{part(e.x,y,'#b8f8d8',8,110,200,.45);if(e.type==='bigSlime'&&SKYST.act[e.isl]){const I=SKYISLES[e.isl];for(const s of [-1,1]){const k=isleFoe('isleSlime',e.isl,clamp(e.x+s*8,I.x0+10,I.x1-10));k.onGround=false;k.y=e.y-6;k.vy=-170;k.hx=s*70;k.dir=s;k.hop=.5}}}}
 function stormDrop(){part(P.x,P.y-20,'#c4d8f2',8,80,120,.5);if(!skyS().st){S.sky.st=1;toast(ico('wing',2)+' '+ico('x',2)+'<br>Storm cloud: land and cross on foot<br><small>take off again past its edge</small>',3200)}}
 function takeRw(i){const I=SKYISLES[i],x=rwX(i),y=surfY(x);let h='';
  if(I.rw==='chest'){const c=SKYI.chest[0]+Math.floor(rnd()*(SKYI.chest[1]-SKYI.chest[0]+1));S.money+=c;ftxt(x,y-22,'+$'+c,'#ffd75e');h='<span class="gold">+'+pr(c)+'</span>';
-  if(cargoCount()<cap()){addCargo(9,7,1,0);h+=' '+iconImg(ICONURL.starsilk)+' +1'}part(x,y-8,'#ffe08a',12,110,120,.6)}
- else{const it=I.rw==='wool'?6:7,n=I.rw==='wool'?SKYI.wool:1,q=Math.min(n,cap()-cargoCount());
+  const q=Math.min(SKYI.silk,cap()-cargoCount());if(q>0){addCargo(9,7,q,0);h+=' '+iconImg(ICONURL.starsilk)+' +'+q}part(x,y-8,'#ffe08a',12,110,120,.6)}
+ else{const it=I.rw==='wool'?6:7,n=I.rw==='wool'?SKYI.wool:SKYI.crystal,q=Math.min(n,cap()-cargoCount());
   if(q<=0){if(!SKYST.full[i]){SKYST.full[i]=1;toast(ico('pack',2)+' '+ico('x',2),1200)}return}
   addCargo(it,6,q,0);h=iconImg(ICONURL[ITEMS[it].id])+' +'+q;ftxt(x,y-20,'+'+q,'#7de07a');part(x,y-8,I.rw==='wool'?'#ffffff':'#a8f0ff',10,90,100,.5)}
  skyS().r[i]=S.time;toast(h,1600);save()}
@@ -39,16 +41,17 @@ function skyTick(dt){if(WI!==1||DG||!P)return;
  for(let i=UB.length-1;i>=0;i--)if(UB[i].life<=0)UB.splice(i,1)}
 function uniFire(e){const dir=e.dir,hx=e.x+dir*17,hy=e.y-12;let a=Math.atan2(e.ay,Math.abs(e.ax)||1);if(Math.abs(e.ay)<16)a=0;a=clamp(a,-UNI.ang,UNI.ang);
  UB.push({x:hx,y:hy,vx:Math.cos(a)*UNI.spd*dir,vy:Math.sin(a)*UNI.spd,life:UNI.life,tr:[]});part(hx,hy,'#ff7ad8',6,70,0,.3);
+ if(--e.bn>0){e.st='charge';e.sT=e.tele=UNI.gap;return} // burst: same aim, short re-glow between bolts
  e.st='cool';e.sT=.35;e.cd=UNI.cd+rnd()*UNI.cdR;e.vx-=dir*30}
 function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const lo=I.x0+8,hi=I.x1-8;
  e.x=clamp(e.x+e.vx*dt,lo,hi);e.vx*=Math.pow(.02,dt);if(e.tcd>0)e.tcd-=dt;e.moving=false;
  const gy=surfY(e.x),dxp=P.x-e.x,adx=Math.abs(dxp),near=adx<240&&P.y>gy-150&&P.y<gy+40;
- if(e.type==='unicorn'){e.y=gy;
+ if(d.uni){e.y=gy;
   if(e.st==='walk'){if(Math.abs(e.tx-e.x)<3){e.st='idle';e.sT=.5+rnd()*.8}else{const s=Math.sign(e.tx-e.x);e.dir=s;e.x=clamp(e.x+s*d.spd*dt,lo,hi);e.moving=true}}
   else if(e.st==='idle'){e.sT-=dt;if(near)e.dir=Math.sign(dxp)||e.dir;if(near&&adx<UNI.near){e.st='walk';e.tx=clamp(e.x-(Math.sign(dxp)||1)*80,lo,hi)}else if(e.sT<=0){e.st='walk';e.tx=lo+rnd()*(hi-lo)}}
   else if(e.st==='charge'){e.sT-=dt;if(e.sT<=0)uniFire(e)}
   else if(e.st==='cool'){e.sT-=dt;if(e.sT<=0){e.st='idle';e.sT=.3+rnd()*.4}}
-  if(e.st==='walk'||e.st==='idle'){e.cd-=dt;if(near&&e.cd<=0&&adx>UNI.near&&adx<UNI.range){e.st='charge';e.sT=UNI.tele;e.dir=Math.sign(dxp)||1;e.ax=P.x-(e.x+e.dir*17);e.ay=(P.y-10)-(e.y-12)}}}
+  if(e.st==='walk'||e.st==='idle'){e.cd-=dt;if(near&&e.cd<=0&&adx>UNI.near&&adx<UNI.range){e.st='charge';e.sT=UNI.tele;e.bn=d.burst||1;e.tele=UNI.tele;e.dir=Math.sign(dxp)||1;e.ax=P.x-(e.x+e.dir*17);e.ay=(P.y-10)-(e.y-12)}}}
  else{const big=e.type==='bigSlime'; // big slime (and its split halves): hops at you, squashes on landing
   if(e.onGround){e.y=gy;if(e.sq>0)e.sq-=dt;e.hop-=dt;
    if(e.hop<=0){const s=near?(Math.sign(dxp)||1):(rnd()<.5?-1:1);e.dir=s;e.vy=big?(near?-230:-150):-170;e.hx=s*d.spd*(near?1:.5);e.onGround=false}}
@@ -61,13 +64,13 @@ function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const lo
 // ---- art ----
 function drawIsleFoe(c,e,sx,sy,t){const dir=e.dir||1,fl=e.hitT>0,R=[],G=[];const Q=(xo,yo,w,h,col)=>R.push([dir>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col]);
  const tt=t+(e.seed||0)*3;
- if(e.type==='unicorn'){const B='#3e2c52',B2='#2a1c3a',B3='#5a4672',M='#c0306a',M2='#ff5a8a',H='#e8e0ff',HV='#1a1020';const ch=e.st==='charge',f=e.moving?Math.floor(tt*9)%4:0;
+ const dd=ENEMY[e.type];if(dd.uni){const el=dd.elite,B=el?'#241a30':'#3e2c52',B2=el?'#140e1c':'#2a1c3a',B3=el?'#3a2c4a':'#5a4672',M=el?'#e0a020':'#c0306a',M2=el?'#ffe060':'#ff5a8a',H=el?'#fff0b0':'#e8e0ff',HV='#1a1020';const ch=e.st==='charge',f=e.moving?Math.floor(tt*9)%4:0;
   const by=f===1||f===3?-1:0,sp=f===0?1:f===2?-1:0,lift=f===1?[1,0,0,1]:f===3?[0,1,1,0]:[0,0,0,0];
   [-7,-4,3,6].forEach((lx,k)=>{const x=lx+(k%2?-sp:sp)*(e.moving?1:0),l=lift[k];Q(x,-6+by,2,5-l,k===1||k===2?B2:B);Q(x,-1-l+by*0,2,1,HV)});
   const tw=Math.round(Math.sin(tt*5));Q(-11,-12+by+tw,3,2,M);Q(-12,-10+by+tw,2,4,M);Q(-11,-7+by+tw,1,2,M2);
   Q(-8,-12+by,16,6,B);Q(-7,-13+by,14,1,B);Q(-7,-12+by,12,1,B3);Q(-7,-7+by,14,1,B2);
   if(ch){Q(6,-13+by,4,5,B);Q(8,-13+by,6,4,B);Q(13,-11+by,1,2,B3);Q(10,-12+by,1,1,'#ff3a5a');Q(4,-15+by,3,6,M);Q(2,-14+by,2,3,M2);
-   const p=1-clamp(e.sT/UNI.tele,0,1),hc=Math.sin(tt*30)>0?'#ffffff':'#ffb0ec';Q(14,-12+by,4,1,hc);Q(18,-12+by,1,1,'#ffffff');
+   const p=1-clamp(e.sT/(e.tele||UNI.tele),0,1),hc=Math.sin(tt*30)>0?'#ffffff':'#ffb0ec';Q(14,-12+by,4,1,hc);Q(18,-12+by,1,1,'#ffffff');
    const gx=dir>0?sx+18:sx-19,gr=1+Math.round(p*3);G.push([gx-gr,sy-12+by-gr,gr*2+1,gr*2+1,'rgba(255,90,216,'+(.25+p*.35)+')']);G.push([gx-1,sy-13+by,3,3,'rgba(255,255,255,'+(.5+p*.5)+')'])}
   else{Q(5,-16+by,4,5,B);Q(6,-19+by,6,4,B);Q(11,-17+by,2,2,B3);Q(8,-18+by,1,1,'#ff3a5a');Q(4,-19+by,3,8,M);Q(3,-16+by,1,4,M2);Q(5,-20+by,2,1,M2);
    Q(10,-20+by,1,1,H);Q(11,-21+by,1,1,H);Q(12,-22+by,1,1,'#ffb0ec')}}
