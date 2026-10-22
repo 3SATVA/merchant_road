@@ -14,7 +14,7 @@ function isleDeath(e){const y=e.y-ENEMY[e.type].h/2;
  const d=ENEMY[e.type];if(d.gem&&rnd()<d.gem*DROPMUL)dropUnit({item:7,origin:6,paid:0},e.x,e.y-10); // Sky Crystal
  if(d.uni){part(e.x,y,d.elite?'#ffd040':'#ff7ad8',10,120,40,.5);part(e.x,y,d.elite?'#1a1020':'#3e2c52',8,90,80,.5)}
  else{part(e.x,y,'#b8f8d8',8,110,200,.45);if(e.type==='bigSlime'&&SKYST.act[e.isl]){const I=SKYISLES[e.isl];for(const s of [-1,1]){const k=isleFoe('isleSlime',e.isl,clamp(e.x+s*8,e.z0||I.x0+10,e.z1||I.x1-10),e.z0,e.z1);k.onGround=false;k.y=e.y-6;k.vy=-170;k.hx=s*70;k.dir=s;k.hop=.5}}}}
-function stormDrop(){part(P.x,P.y-20,'#c4d8f2',8,80,120,.5);if(!skyS().st){S.sky.st=1;toast(ico('wing',2)+' '+ico('x',2)+'<br>Storm cloud: land and cross on foot<br><small>take off again past its edge</small>',3200)}}
+function stormDrop(){part(P.x,P.y-20,'#c4d8f2',8,80,120,.5);if(!skyS().st){S.sky.st=1;toast(ico('wing',2)+' '+ico('x',2)+'<br>Storm cloud: land and cross on foot<br><small>call your horse past its edge</small>',3200)}}
 function takeRw(i){const I=SKYISLES[i],x=rwX(i),y=surfY(x);let h='';
  if(I.rw==='chest'){const c=SKYI.chest[0]+Math.floor(rnd()*(SKYI.chest[1]-SKYI.chest[0]+1));S.money+=c;ftxt(x,y-22,'+$'+c,'#ffd75e');h='<span class="gold">+'+pr(c)+'</span>';
   const q=Math.min(SKYI.silk,cap()-cargoCount());if(q>0){addCargo(9,7,q,0);h+=' '+iconImg(ICONURL.starsilk)+' +'+q}part(x,y-8,'#ffe08a',12,110,120,.6)}
@@ -23,8 +23,8 @@ function takeRw(i){const I=SKYISLES[i],x=rwX(i),y=surfY(x);let h='';
   addCargo(it,6,q,0);h=iconImg(ICONURL[ITEMS[it].id])+' +'+q;ftxt(x,y-20,'+'+q,'#7de07a');part(x,y-8,I.rw==='wool'?'#ffffff':'#a8f0ff',10,90,100,.5)}
  skyS().r[i]=S.time;toast(h,1600);save()}
 function skyTick(dt){if(WI!==1||DG||!P)return;
- if(horsePlod()&&Math.abs(P.hv||0)>8&&!skyS().ld){S.sky.ld=1;toast(ico('wing',2)+' Your sky horse is slow on land<br><small>hop off and walk; whistle it back to fly</small>',2800)} // once per save
- if(SKYST.ref!==ENEMIES){SKYST.ref=ENEMIES;SKYST.act=[];SKYST.foes=[];UB.length=0} // ENEMIES was reset (death, menu, travel)
+ if(SKYST.ref!==ENEMIES){SKYST.ref=ENEMIES;W2ENV.pk=undefined;SKYST.act=[];SKYST.foes=[];UB.length=0} // ENEMIES was reset (death, menu, travel)
+ skyHorseTick(dt);
  for(let i=0;i<SKYISLES.length;i++){const I=SKYISLES[i],dd=P.x<I.x0?I.x0-P.x:P.x>I.x1?P.x-I.x1:0;
   if(!SKYST.act[i]&&dd<VW/2+70){SKYST.act[i]=1;const n=I.foes.length,a=I.x0+SKYI.safe,sw=(I.x1-SKYI.safe-a)/n; // each foe owns one slice of the island (SKYI.gap between slices, SKYI.safe landing room at each end)
    I.foes.forEach((t,k)=>isleFoe(t,i,Math.round(a+sw*(k+.5)),Math.round(a+sw*k+SKYI.gap/2),Math.round(a+sw*(k+1)-SKYI.gap/2)))}

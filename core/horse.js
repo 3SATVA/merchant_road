@@ -38,7 +38,7 @@ function buyHorse(ti){if(S.horse||S.money<HORSEPRICE)return false;S.money-=HORSE
 function horseSpot(x){x=clamp(x,Math.max(24,XMIN),Math.min(WORLD-24,XMAX));if(WI&&!onIsle(x))x=P.x;if(PITS.some(p=>x>p.x0-16&&x<p.x1+16))x=P.lastSafe;return Math.round(x)}
 function mount(){if(!nearHorse())return false;S.horse.on=true;S.horse.x=null;P.hv=0;P.couch=0;P.x=clamp(P.x,12,WORLD-12);part(P.x,P.y-6,'#c8a060',8,60);toast('🐴 '+WEAPONS[S.lance].name,1000);save();return true}
 function dismount(at){if(!S.horse||!S.horse.on)return;S.horse.on=false;S.horse.x=horseSpot(at!=null?at:P.x);S.horse.dir=P.dir;P.hv=0;P.couch=0;P.ride=0;save()}
-function toggleHorse(){if(P&&P.fly)return;if(!S.horse){toast('🐴 Stables: Bog Town · Pinehollow · Stonepeak',1600);return}if(DG){toast('No horses in caves',1100);return}
+function toggleHorse(){if(P&&P.fly)return;if(!S.horse){toast('🐴 Stables: Bog Town · Pinehollow · Stonepeak',1600);return}if(DG){toast('No horses in caves',1100);return}if(WI===1){skyHorseBtn();return} // World 2: the sky horse sparkles in under you (world2/sky.js)
  if(S.horse.on){dismount(P.x+P.dir*4);P.x=clamp(P.x-P.dir*10,XMIN,XMAX);toast('🐴 🅿',800);return}
  if(!nearHorse())summonHorse();mount()}
 // the horse button whistles your horse over from wherever it was left (a cave mouth, another island, the other end of the road) and you hop on
