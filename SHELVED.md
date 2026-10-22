@@ -38,3 +38,6 @@ The data is still there: `SHIPS`, `SORDER`, `SHIPURL`, `drawShip`, `drawShipD`, 
 - World 2 goods (active cargo, the parked ship hold, or `ws[1].hold` when you're in World 1) keep the 5 most valuable in the backpack. The rest is refunded at the price paid.
 - Medium and Large airships are refunded at their full shop price ($6,000 / $20,000) into the World 2 wallet.
 - A one-time toast tells the player how much was refunded.
+
+## Note (Winged Cart)
+World 2 `S.park` now holds the parked **Winged Cart** (`S.wcart`). If drivable airships are re-enabled, move the airship park to its own field (e.g. `S.shipPark`) instead of reusing `S.park`, and have `carriedH()` return the ship hold while sailing.
