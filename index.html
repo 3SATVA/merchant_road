@@ -292,6 +292,12 @@ function setWorld(n){WI=n?1:0;
  WT=TOWNS.filter(t=>t.w===WI);DUNGEONS=WI?[]:W1DUNG;buildH();buildPits();buildDecor()}
 // ===== sprites / icons =====
 function px(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),w,h)}
+// rect batcher: terrain, backdrops and the cloud sea are thousands of 1-2px columns. rb() queues them per pass and merges
+// side-by-side runs (same colour, top and height); rbFlush() draws pass by pass. Same pixels, a fraction of the fillRect calls.
+// Rules: rects within one pass must never overlap each other (one per column), and flush before anything else draws on top.
+const RB=[[],[],[],[],[],[],[],[]];let RBN=0;
+function rb(p,col,x,y,w,h){const a=RB[p],n=a.length;if(n&&a[n-5]===col&&a[n-3]===y&&a[n-1]===h&&a[n-4]+a[n-2]===x){a[n-2]+=w;return}a.push(col,x,y,w,h);if(p>=RBN)RBN=p+1}
+function rbFlush(g){let cur=null;for(let p=0;p<RBN;p++){const a=RB[p];for(let i=0;i<a.length;i+=5){if(a[i]!==cur){cur=a[i];g.fillStyle=cur}g.fillRect(a[i+1],a[i+2],a[i+3],a[i+4])}a.length=0}RBN=0}
 const ICONS={
  apple:['....g...','...g....','.rrrrrr.','rrwrrrrr','rwrrrrrr','rrrrrrrr','.rrrrrd.','..rddd..'],
  potato:['........','..tttt..','.ttdtttt','tttttdtt','ttdttttt','tttttdt.','.ttttt..','........'],
@@ -621,13 +627,14 @@ const inp={left:()=>keys.a||keys.arrowleft||tkeys.l,right:()=>keys.d||keys.arrow
 const C=$('c'),X=C.getContext('2d');let VW=400,VH=225,SC=0;
 const FXC=$('fx'),FX=FXC.getContext('2d');let DPR=1;
 let lastOri=null;
-function resize(){const de=document.documentElement,w=de.clientWidth||innerWidth,h=de.clientHeight||innerHeight;DPR=Math.min(2,devicePixelRatio||1);FXC.width=Math.round(w*DPR);FXC.height=Math.round(h*DPR);const ori=w>h?'L':'P';const s=Math.min(w/300,h/225);const ns=Math.max(1,Math.round(s*4)/4);
+let BANDPOS=null; // cached altitude-button rect for the band pips (see drawWeather)
+function resize(){BANDPOS=null;const de=document.documentElement,w=de.clientWidth||innerWidth,h=de.clientHeight||innerHeight;DPR=Math.min(2,devicePixelRatio||1);FXC.width=Math.round(w*DPR);FXC.height=Math.round(h*DPR);const ori=w>h?'L':'P';const s=Math.min(w/300,h/225);const ns=Math.max(1,Math.round(s*4)/4);
  // keep the pixel scale steady (no camera zoom jumps when the mobile browser toolbar shows/hides); only rescale on orientation change or big size change
  if(ori!==lastOri||Math.abs(ns-SC)/SC>.2||SC<1)SC=ns;lastOri=ori;VW=Math.ceil(w/SC);VH=Math.ceil(h/SC);C.width=VW;C.height=VH;X.imageSmoothingEnabled=false}
 addEventListener('resize',resize);resize();
 // ===== UI =====
 function toast(t,ms){const d=document.createElement('div');d.className='toast';d.innerHTML=t;$('toasts').appendChild(d);setTimeout(()=>d.remove(),ms||2200);while($('toasts').children.length>3)$('toasts').firstChild.remove()}
-function setMode(m){MODE=m;$('prompt').style.display='none';['menu','pause','town','dead','inv','witch','scrap'].forEach(id=>$(id).classList.toggle('on',m===id));
+function setMode(m){MODE=m;BANDPOS=null;$('prompt').style.display='none';['menu','pause','town','dead','inv','witch','scrap'].forEach(id=>$(id).classList.toggle('on',m===id));
  const play=m!=='menu'&&m!=='cut';$('hud').style.display=play?'flex':'none';$('pbtn').style.display=m==='play'?'block':'none';$('ibtn').style.display=m==='play'?'block':'none';$('touch').classList.toggle('on',isTouch&&m==='play');for(const k in tkeys)tkeys[k]=0;
  if(m==='menu')$('bCont').style.display=load()?'block':'none'}
 $('bNew').onclick=()=>{if(load()&&!confirm('Start over? Your current save will be erased.'))return;S=fresh();startGame()};
@@ -735,9 +742,11 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  else if(a==='pot'){if(S.money>=30&&S.potions<5){S.money-=30;S.potions++}}
  save();renderTown()};
 const MINI=$('mini').getContext('2d');
-function updHUD(){if(!S)return;$('hpfill').style.width=clamp(S.hp/maxHP()*100,0,100)+'%';$('hpt').textContent=Math.ceil(Math.max(0,S.hp));{const mt=pr(S.money),me=$('money');if(me.textContent!==mt){if(me.textContent&&me.dataset.w==S.w){me.classList.remove('bump');void me.offsetWidth;me.classList.add('bump')}me.dataset.w=S.w;me.textContent=mt}}
- $('cargo').textContent=cargoCount()+'/'+cap();const ch=FEATURE_DRIVABLE_AIRSHIPS&&S.w&&!S.park?'ship':carriedH();if($('icart').dataset.k!==ch){$('icart').src=ch==='ship'?ICO.ship.url:HAULURL[ch];$('icart').style.width=ch==='ship'?'16px':'';$('icart').dataset.k=ch}
- const fl=!!(WI&&P&&P.fly);$('tC').style.display=(curH()!=='backpack')?'flex':'none';$('tU').style.display=$('tD').style.display=fl?'flex':'none';{const k=fl?(P.fly==='ship'?'exit':'horseOff'):'arU';if($('tJ').dataset.k!==k){$('tJ').dataset.k=k;$('tJ').innerHTML=ico(k,2);$('tJ').setAttribute('aria-label',fl?(P.fly==='ship'?'Leave airship':'Dismount'):'Jump')}}$('tJ').classList.toggle('hi',fl&&canLeave());{const k=(S.w?'w':'')+(S.park?'cartP':'cartH');if($('tC').dataset.k!==k){$('tC').dataset.k=k;$('tC').innerHTML=ico(k,2)}}{const k=mounted()?'horseOn':'horseOff';if($('tM').dataset.k!==k){$('tM').dataset.k=k;$('tM').innerHTML=ico(k,2)}}$('tC').classList.toggle('hi',nearCartP());{const hw=heldW();if($('iwep').dataset.k!==hw){$('iwep').src=WEPURL[hw];$('iwep').dataset.k=hw}}$('tM').style.display=S.horse&&!fl?'flex':'none';$('tM').classList.toggle('hi',nearHorse()||mounted());{const k='p'+S.potions;if($('pots').dataset.k!==k){$('pots').dataset.k=k;$('pots').innerHTML=ico('potion')+S.potions}}
+function setTxt(id,v){const e=$(id);v=String(v);if(e.textContent!==v)e.textContent=v}
+function setDisp(id,v){const e=$(id);if(e.style.display!==v){e.style.display=v;if(id==='tU')BANDPOS=null}}
+function updHUD(){if(!S)return;{const w=clamp(S.hp/maxHP()*100,0,100)+'%',e=$('hpfill');if(e.dataset.w!==w){e.dataset.w=w;e.style.width=w}}setTxt('hpt',Math.ceil(Math.max(0,S.hp)));{const mt=pr(S.money),me=$('money');if(me.textContent!==mt){if(me.textContent&&me.dataset.w==S.w){me.classList.remove('bump');void me.offsetWidth;me.classList.add('bump')}me.dataset.w=S.w;me.textContent=mt}}
+ setTxt('cargo',cargoCount()+'/'+cap());const ch=FEATURE_DRIVABLE_AIRSHIPS&&S.w&&!S.park?'ship':carriedH();if($('icart').dataset.k!==ch){$('icart').src=ch==='ship'?ICO.ship.url:HAULURL[ch];$('icart').style.width=ch==='ship'?'16px':'';$('icart').dataset.k=ch}
+ const fl=!!(WI&&P&&P.fly);setDisp('tC',(curH()!=='backpack')?'flex':'none');setDisp('tU',fl?'flex':'none');setDisp('tD',fl?'flex':'none');{const k=fl?(P.fly==='ship'?'exit':'horseOff'):'arU';if($('tJ').dataset.k!==k){$('tJ').dataset.k=k;$('tJ').innerHTML=ico(k,2);$('tJ').setAttribute('aria-label',fl?(P.fly==='ship'?'Leave airship':'Dismount'):'Jump')}}$('tJ').classList.toggle('hi',fl&&canLeave());{const k=(S.w?'w':'')+(S.park?'cartP':'cartH');if($('tC').dataset.k!==k){$('tC').dataset.k=k;$('tC').innerHTML=ico(k,2)}}{const k=mounted()?'horseOn':'horseOff';if($('tM').dataset.k!==k){$('tM').dataset.k=k;$('tM').innerHTML=ico(k,2)}}$('tC').classList.toggle('hi',nearCartP());{const hw=heldW();if($('iwep').dataset.k!==hw){$('iwep').src=WEPURL[hw];$('iwep').dataset.k=hw}}setDisp('tM',S.horse&&!fl?'flex':'none');$('tM').classList.toggle('hi',nearHorse()||mounted());{const k='p'+S.potions;if($('pots').dataset.k!==k){$('pots').dataset.k=k;$('pots').innerHTML=ico('potion')+S.potions}}
  const px0=DG?DG.d.x:(P?P.x:0);const b=biomeAt(px0);const bn=DG?skulls(DG.d.diff)+' Cave':BIOMES[b].name;if($('bname').dataset.k!==bn){$('bname').innerHTML=bn;$('bname').dataset.k=bn}
  const w=200;MINI.clearRect(0,0,w,20);for(let i=0;i<NB;i++){MINI.fillStyle=BIOMES[WB[i]].mm;MINI.fillRect(BOUNDS[i]/WORLD*w,6,(BOUNDS[i+1]-BOUNDS[i])/WORLD*w,8)}
  if(WI){for(const z of WX){MINI.fillStyle=z.k==='rain'?'#5a6a86':'#ffffff';MINI.fillRect(Math.round(z.x0/WORLD*w),6,Math.max(1,Math.round((z.x1-z.x0)/WORLD*w)),3)}
@@ -1195,12 +1204,15 @@ function updEnemy(e,dt){const d=ENEMY[e.type],base=d.base||e.type;
 }
 // ===== render =====
 let camX=0,camY=-150,menuT=0;
-function skyBands(b0,b1,t){const n=8;for(let i=0;i<n;i++){const k=i/(n-1);const c0=k<.5?mixc(BIOMES[b0].sky[0],BIOMES[b0].sky[1],k*2):mixc(BIOMES[b0].sky[1],BIOMES[b0].sky[2],k*2-1);const c1=k<.5?mixc(BIOMES[b1].sky[0],BIOMES[b1].sky[1],k*2):mixc(BIOMES[b1].sky[1],BIOMES[b1].sky[2],k*2-1);
- const A=c0.match(/\d+/g).map(Number),B=c1.match(/\d+/g).map(Number);X.fillStyle='rgb('+A.map((v,j)=>Math.round(lerp(v,B[j],t))).join(',')+')';X.fillRect(0,Math.floor(i*VH*.7/n),VW,Math.ceil(VH*.7/n)+1)}
- X.fillStyle=mixc(BIOMES[b0].sky[2],BIOMES[b1].sky[2],t);X.fillRect(0,Math.floor(VH*.7)-1,VW,VH)}
+let SKYK='',SKYC=null; // last sky gradient (one entry: it only changes when the biome pair or blend changes)
+function skyBands(b0,b1,t){const n=8,key=b0+','+b1+','+t;if(key!==SKYK){SKYK=key;SKYC=skyCols(b0,b1,t,n)}for(let i=0;i<n;i++){X.fillStyle=SKYC[i];X.fillRect(0,Math.floor(i*VH*.7/n),VW,Math.ceil(VH*.7/n)+1)}
+ X.fillStyle=SKYC[n];X.fillRect(0,Math.floor(VH*.7)-1,VW,VH)}
+function skyCols(b0,b1,t,n){const out=[];for(let i=0;i<n;i++){const k=i/(n-1);const c0=k<.5?mixc(BIOMES[b0].sky[0],BIOMES[b0].sky[1],k*2):mixc(BIOMES[b0].sky[1],BIOMES[b0].sky[2],k*2-1);const c1=k<.5?mixc(BIOMES[b1].sky[0],BIOMES[b1].sky[1],k*2):mixc(BIOMES[b1].sky[1],BIOMES[b1].sky[2],k*2-1);
+ const A=c0.match(/\d+/g).map(Number),B=c1.match(/\d+/g).map(Number);out.push('rgb('+A.map((v,j)=>Math.round(lerp(v,B[j],t))).join(',')+')')}
+ out.push(mixc(BIOMES[b0].sky[2],BIOMES[b1].sky[2],t));return out}
 function layer(bi,kind,f,baseY,col,cap,alpha){X.globalAlpha=alpha;const off=camX*f;
  for(let sx=0;sx<VW;sx+=2){const wx=sx+off;let h;
-  if(kind==='isles'){const p=((wx%300)+300)%300;if(p<110){const q=1-Math.abs(p-55)/55,tp=Math.round(baseY-50-10*Math.sin(Math.floor(wx/300)*2.3)),th=Math.round(3+16*Math.sqrt(q));X.fillStyle=col;X.fillRect(sx,tp,2,th);X.fillStyle='#8ad0c4';X.fillRect(sx,tp,2,1)}continue}
+  if(kind==='isles'){const p=((wx%300)+300)%300;if(p<110){const q=1-Math.abs(p-55)/55,tp=Math.round(baseY-50-10*Math.sin(Math.floor(wx/300)*2.3)),th=Math.round(3+16*Math.sqrt(q));rb(0,col,sx,tp,2,th);rb(1,'#8ad0c4',sx,tp,2,1)}continue}
   if(kind==='hills')h=28+16*Math.sin(wx/130)+8*Math.sin(wx/47+1);
   else if(kind==='peaks'){const a=Math.abs(Math.sin(wx/70)),bb=Math.abs(Math.sin(wx/41+2));h=30+40*a*a+14*bb}
   else if(kind==='volcano'){const p=((wx%700)+700)%700;h=22+8*Math.sin(wx/60);const d=Math.abs(p-350);if(d<150)h=Math.max(h,90-d*.45);if(d<22)h=Math.min(h,78)}
@@ -1210,10 +1222,10 @@ function layer(bi,kind,f,baseY,col,cap,alpha){X.globalAlpha=alpha;const off=camX
   else if(kind==='spires'){const p=((wx%67)+67)%67;h=14+5*Math.abs(Math.sin(wx/23));if(p<8)h+=24-Math.abs(p-4)*5}
   else if(kind==='pines'){const p=((wx%14)+14)%14;h=18+(7-Math.abs(p-7))*2.2+6*Math.sin(wx/53)}
   else{h=20+10*Math.abs(Math.sin(wx/29))+5*Math.sin(wx/13)}
-  const y=Math.round(baseY-h);X.fillStyle=col;X.fillRect(sx,y,2,VH-y);
-  if(cap&&h>cap.h){X.fillStyle=cap.c;X.fillRect(sx,y,2,Math.min(4,Math.round((h-cap.h)/3)+1))}
-  if(kind==='volcano'){const p=((wx%700)+700)%700;if(Math.abs(p-350)<20){X.fillStyle='#ff6a1a';X.fillRect(sx,y,2,2)}}}
- X.globalAlpha=1}
+  const y=Math.round(baseY-h);rb(0,col,sx,y,2,VH-y);
+  if(cap&&h>cap.h)rb(1,cap.c,sx,y,2,Math.min(4,Math.round((h-cap.h)/3)+1));
+  if(kind==='volcano'){const p=((wx%700)+700)%700;if(Math.abs(p-350)<20)rb(2,'#ff6a1a',sx,y,2,2)}}
+ rbFlush(X);X.globalAlpha=1}
 function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==='menu'?camX:camX;const mid=cx+VW/2;let b0=biomeAt(mid),b1=b0,t=0;
  for(let i=1;i<NB;i++){const d=mid-BOUNDS[i];if(Math.abs(d)<300){b0=WB[i-1];b1=WB[i];t=smooth((d+300)/600)}}
  skyBands(b0,b1,t);
@@ -1232,14 +1244,15 @@ function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==
  for(const d of DECOR){if(d.x<camX-30||d.x>camX+VW+30)continue;drawDecor(d,ox,oy)}
  // ground
  for(let sx=0;sx<VW;sx++){const wx=sx+ox;const pit=pitAt(wx);const b=biomeAt(wx);const B=BIOMES[b];
-  if(WI){if(!onIsle(wx))continue;const y=Math.round(surfY(wx)-oy),th=isleTh(wx),n=hash(wx*.73);X.fillStyle=B.dirt;X.fillRect(sx,y,1,th);X.fillStyle=B.dirt2;X.fillRect(sx,y+Math.round(th*.55),1,th-Math.round(th*.55));X.fillStyle='#a89878';X.fillRect(sx,y+th-3,1,3);if(n<.06){X.fillStyle=B.dirt2;X.fillRect(sx,y+8+Math.floor(n*90),1,2)}X.fillStyle=B.top;X.fillRect(sx,y,1,2+(n>.7?1:0));X.fillStyle=B.top2;X.fillRect(sx,y+2+(n>.7?1:0),1,2);continue}
-  if(pit){const ly=Math.round(pit.ly-oy);const fl=Math.sin(wx/4+menuT*4)>.6;X.fillStyle='#1e1414';X.fillRect(sx,Math.round(surfY(pit.x0)-oy),1,ly-Math.round(surfY(pit.x0)-oy));const bub=Math.round(Math.sin(wx/3+menuT*3)*1);X.fillStyle=fl?'#ffd040':'#ff8a2a';X.fillRect(sx,ly+bub,1,2);X.fillStyle='#e8501a';X.fillRect(sx,ly+bub+2,1,6);X.fillStyle='#b8301a';X.fillRect(sx,ly+bub+8,1,VH);continue}
+  if(WI){if(!onIsle(wx))continue;const y=Math.round(surfY(wx)-oy),th=isleTh(wx),n=hash(wx*.73),t2=Math.round(th*.55);rb(0,B.dirt,sx,y,1,th);rb(1,B.dirt2,sx,y+t2,1,th-t2);rb(2,'#a89878',sx,y+th-3,1,3);if(n<.06)rb(3,B.dirt2,sx,y+8+Math.floor(n*90),1,2);rb(4,B.top,sx,y,1,2);rb(5,B.top2,sx,y+2,1,2);if(n>.7){rb(6,B.top,sx,y+2,1,1);rb(7,B.top2,sx,y+4,1,1)}continue}
+  if(pit){const ly=Math.round(pit.ly-oy),py=Math.round(surfY(pit.x0)-oy);const fl=Math.sin(wx/4+menuT*4)>.6;rb(0,'#1e1414',sx,py,1,ly-py);const bub=Math.round(Math.sin(wx/3+menuT*3)*1);rb(1,fl?'#ffd040':'#ff8a2a',sx,ly+bub,1,2);rb(2,'#e8501a',sx,ly+bub+2,1,6);rb(3,'#b8301a',sx,ly+bub+8,1,VH);continue}
   const y=Math.round(surfY(wx)-oy);if(y>=VH)continue;const n=hash(wx*.73);
-  X.fillStyle=B.dirt;X.fillRect(sx,y,1,VH-y);X.fillStyle=B.dirt2;X.fillRect(sx,y+26+((wx>>3)%3),1,VH);X.fillStyle=B.top;X.fillRect(sx,y,1,2+(n>.7?1:0));X.fillStyle=B.top2;X.fillRect(sx,y+2+(n>.7?1:0),1,2);
-  if(n<.08){X.fillStyle=B.dirt2;X.fillRect(sx,y+8+Math.floor(n*80),1,2)}
-  if(b===3&&n>.96){X.fillStyle='#ff6a1a';X.fillRect(sx,y+6,1,3)}
-  if(b===4){if(n>.975){X.fillStyle='#ff7a2a';X.fillRect(sx,y+5,1,2)}else if(n<.03){X.fillStyle='#d8d0c0';X.fillRect(sx,y+10+Math.floor(n*300),1,1)}}
-  if(inDrift(wx)){X.fillStyle='#ffffff';const hh=2+Math.round(2*Math.abs(Math.sin(wx/9)));X.fillRect(sx,y-hh,1,hh)}}
+  rb(0,B.dirt,sx,y,1,VH-y);rb(1,B.dirt2,sx,y+26+((wx>>3)%3),1,VH);rb(2,B.top,sx,y,1,2);rb(3,B.top2,sx,y+2,1,2);if(n>.7){rb(4,B.top,sx,y+2,1,1);rb(5,B.top2,sx,y+4,1,1)}/* thick grass tufts: drawn as 2+2 runs plus a 1px patch so long runs still merge */
+  if(n<.08)rb(4,B.dirt2,sx,y+8+Math.floor(n*80),1,2);
+  if(b===3&&n>.96)rb(4,'#ff6a1a',sx,y+6,1,3);
+  if(b===4){if(n>.975)rb(5,'#ff7a2a',sx,y+5,1,2);else if(n<.03)rb(5,'#d8d0c0',sx,y+10+Math.floor(n*300),1,1)}
+  if(inDrift(wx)){const hh=2+Math.round(2*Math.abs(Math.sin(wx/9)));rb(5,'#ffffff',sx,y-hh,1,hh)}}
+ rbFlush(X);
  if(WI)drawCloudSea(ox,oy);
  // rocks warn
  for(const r of ROCKS){const gy=Math.round(surfY(r.x)-oy),sx=Math.round(r.x-ox);if(r.warn>0){const w=Math.round(10-r.warn*6);X.fillStyle=Math.floor(menuT*10)%2?'#ff3030':'#7a1010';X.fillRect(sx-w/2,gy-1,w,1)}else{px(X,sx-3,r.y-oy-6,6,6,'#7b7f88');px(X,sx-3,r.y-oy-6,6,1,'#a0a6ae');px(X,sx+1,r.y-oy-3,2,2,'#5d5f6b')}}
@@ -1343,13 +1356,16 @@ function cartArrow(ox,oy){const sx=S.park.x-ox;if(sx>-8&&sx<VW+8)return;const L=
  for(let i=0;i<5;i++){const h=1+i*2;px(X,L?x+i:x-i,y-i-1,1,h+2,'#000');px(X,L?x+i:x-i,y-i,1,h,'#ffa030')}}
 const CAVEPAL=[['#7a6a5a','#5a4a3e','#9a8a78','#4f9a3a'],['#7a889e','#56647a','#a8b6ca','#f4f8ff'],['#6a6c78','#4a4c58','#9aa0a8','#a0a6ae'],['#3a2626','#241818','#5a3a3a','#e8642a'],['#5a524e','#3e3834','#7a726c','#a29a90']];
 const SKULL=['.###.','#####','#.#.#','#####','.#.#.'];
-function drawSkull(c,x,y,col){for(let j=0;j<5;j++)for(let i=0;i<5;i++)if(SKULL[j][i]==='#'){px(c,x+i+1,y+j+1,1,1,'#000');px(c,x+i,y+j,1,1,col)}}
+function drawSkull(c,x,y,col){if(c===X){let k=SKC[col];if(!k){k=SKC[col]=document.createElement('canvas');k.width=k.height=6;drawSkull(k.getContext('2d'),0,0,col)}X.drawImage(k,Math.round(x),Math.round(y));return}for(let j=0;j<5;j++)for(let i=0;i<5;i++)if(SKULL[j][i]==='#'){px(c,x+i+1,y+j+1,1,1,'#000');px(c,x+i,y+j,1,1,col)}}const SKC={}; // world skulls blit a cached 6x6 sprite
 const SKURL=[spriteURL(6,6,g=>drawSkull(g,0,0,'#f4f0e0')),spriteURL(6,6,g=>drawSkull(g,0,0,'#8a8070'))];
 function skulls(n,dim){let h='';for(let i=0;i<n;i++)h+='<img src="'+SKURL[dim?1:0]+'" style="width:12px;height:12px;image-rendering:pixelated;margin:0 1px;vertical-align:middle">';return h}
-function drawCave(d,ox,oy){const x=Math.round(d.x-ox),y=Math.round(surfY(d.x)-oy);const c=CAVEPAL[d.b];const cl=dState(d)>0;
+// cave mound + mouth never change, so each cave is painted once into a small canvas and blitted (pixel-identical)
+const CAVEC={};function caveBody(d){let cv=CAVEC[d.i];if(cv)return cv;cv=CAVEC[d.i]=document.createElement('canvas');cv.width=60;cv.height=48;const X=cv.getContext('2d'),x=29,y=40,c=CAVEPAL[d.b];
  for(let i=-28;i<=28;i++){const k=i/29;const h=Math.round(32*Math.sqrt(1-k*k)+3*Math.sin(i*1.7+d.i)+(hash(i+d.i*31)>.8?2:0));
   px(X,x+i,y-h,1,h+6,i>8?c[1]:c[0]);px(X,x+i,y-h,1,2,c[3]);if(hash(i*3.3+d.i)>.7)px(X,x+i,y-h+6+Math.floor(hash(i+7)*14),1,2,c[1]);if(hash(i*5.1+d.i)>.85)px(X,x+i,y-h+3,1,1,c[2])}
  for(let i=-11;i<=11;i++){const k=i/11.5;const h=Math.round(19*Math.sqrt(1-k*k));px(X,x+i,y-h,1,h,Math.abs(i)>=10?c[1]:'#0c0808');if(Math.abs(i)<9&&h>4)px(X,x+i,y-h+2,1,h-2,'#060404')}
+ return cv}
+function drawCave(d,ox,oy){const x=Math.round(d.x-ox),y=Math.round(surfY(d.x)-oy);const cl=dState(d)>0;X.drawImage(caveBody(d),x-29,y-40);
  if(cl){for(let j=0;j<3;j++){px(X,x-11,y-16+j*5,23,3,'#8a5a2b');px(X,x-11,y-14+j*5,23,1,'#4a2e1a')}px(X,x-1,y-17,2,15,'#5a3818')}
  else{for(const sd of [-16,16]){px(X,x+sd,y-14,1,9,'#5a3818');const f=Math.sin(menuT*14+sd)>0;px(X,x+sd-1,y-17,3,3,f?'#ff8a2a':'#ffd040');px(X,x+sd,y-18-(f?1:0),1,1,'#fff0a0')}
   if(Math.sin(menuT*1.3+d.i*2)>.55){px(X,x-3,y-9,1,1,'#ff3030');px(X,x+2,y-9,1,1,'#ff3030')}}
@@ -1357,15 +1373,16 @@ function drawCave(d,ox,oy){const x=Math.round(d.x-ox),y=Math.round(surfY(d.x)-oy
 function renderDungeon(){const D=DG,pal=DPAL[D.b],ox=Math.round(camX)+shk(),oy=Math.round(camY)+shk(),T=menuT;
  X.fillStyle=pal.bg;X.fillRect(0,0,VW,VH);
  // back wall: ceiling with stalactites and rubble silhouettes (parallax)
- for(let sx=0;sx<VW;sx+=2){const wx=sx+ox*.5;const hc=10+8*Math.abs(Math.sin(wx/23))+(hash(Math.floor(wx/6))>.82?10+Math.floor(hash(Math.floor(wx/6)+3)*14):0);X.fillStyle=pal.bg2;X.fillRect(sx,0,2,hc);
-  const hb=16+10*Math.abs(Math.sin(wx/31+1))+5*Math.sin(wx/11);X.fillStyle=pal.bg2;X.fillRect(sx,Math.round(VH-hb),2,VH);
-  if(hash(Math.floor(wx/4)*1.7)>.93){X.fillStyle=pal.rock2;X.fillRect(sx,Math.round(VH*.3+hash(Math.floor(wx/4))*VH*.4),2,2)}}
+ for(let sx=0;sx<VW;sx+=2){const wx=sx+ox*.5;const hc=10+8*Math.abs(Math.sin(wx/23))+(hash(Math.floor(wx/6))>.82?10+Math.floor(hash(Math.floor(wx/6)+3)*14):0);rb(0,pal.bg2,sx,0,2,hc);
+  const hb=16+10*Math.abs(Math.sin(wx/31+1))+5*Math.sin(wx/11);rb(1,pal.bg2,sx,Math.round(VH-hb),2,VH);
+  if(hash(Math.floor(wx/4)*1.7)>.93)rb(2,pal.rock2,sx,Math.round(VH*.3+hash(Math.floor(wx/4))*VH*.4),2,2)}
+ rbFlush(X);
  // torches glow
  for(const t of D.torches){const x=Math.round(t.x-ox),y=Math.round(t.y-oy);if(x<-40||x>VW+40)continue;const fl=Math.sin(T*12+t.x)>0;
   X.globalAlpha=.08;X.fillStyle=pal.glow;X.beginPath();X.arc(x,y,34+(fl?2:0),0,7);X.fill();X.globalAlpha=.1;X.beginPath();X.arc(x,y,18,0,7);X.fill();X.globalAlpha=1;
   px(X,x,y,2,8,'#5a3818');px(X,x-1,y-3,4,3,fl?'#ff8a2a':'#ffd040');px(X,x,y-4-(fl?1:0),2,1,'#fff0a0')}
  // abyss / lava
- const ay=Math.round(D.abyssY-oy);if(ay<VH){if(pal.lava){for(let sx=0;sx<VW;sx++){const wx=sx+ox;const b=Math.round(Math.sin(wx/7+T*3)*1.5);X.fillStyle=Math.sin(wx/4+T*4)>.6?'#ffd040':'#ff8a2a';X.fillRect(sx,ay+b,1,2);X.fillStyle='#e8501a';X.fillRect(sx,ay+b+2,1,6);X.fillStyle='#a8301a';X.fillRect(sx,ay+b+8,1,VH)}}
+ const ay=Math.round(D.abyssY-oy);if(ay<VH){if(pal.lava){for(let sx=0;sx<VW;sx++){const wx=sx+ox;const b=Math.round(Math.sin(wx/7+T*3)*1.5);rb(0,Math.sin(wx/4+T*4)>.6?'#ffd040':'#ff8a2a',sx,ay+b,1,2);rb(1,'#e8501a',sx,ay+b+2,1,6);rb(2,'#a8301a',sx,ay+b+8,1,VH)}rbFlush(X)}
   else{X.fillStyle=pal.deep;X.fillRect(0,ay,VW,VH-ay);for(let sx=-(ox%6+6)%6;sx<VW;sx+=6){px(X,sx,ay-3,3,3,pal.bg2);px(X,sx+1,ay-5,1,2,pal.bg2)}}}
  // platforms
  for(const p of D.plats){const x=Math.round(p.x0-ox),y=Math.round(p.y-oy),w=p.w;if(x>VW||x+w<0)continue;
@@ -1609,16 +1626,16 @@ function drawAir(c,e,sx,sy,t){const dir=e.dir,fl=e.hitT>0;let R=[];const L1=R;le
 const CLOUDS=[];for(let x=1700,k=0;x<7100;k++){CLOUDS.push({x,y:-40-Math.round(hash(k*2.7)*220),w:16+Math.round(hash(k*5.3)*30)});x+=70+Math.round(hash(k*1.9)*90)}
 function drawClouds(ox,oy){for(const c of CLOUDS){const x=Math.round(c.x-ox),y=Math.round(c.y-oy);if(x<-50||x>VW+50||y<-20||y>VH+20)continue;const w=c.w;
  px(X,x-w/2,y-3,w,5,'#ffffff');px(X,x-w/2+3,y-6,w-8,3,'#ffffff');px(X,x-w/4,y-8,w/2,2,'#ffffff');px(X,x-w/2+2,y+2,w-4,1,'#dce8f6')}}
-function drawCloudSea(ox,oy){for(let sx=0;sx<VW;sx+=2){const wx=sx+ox,y=Math.round(58+4*Math.sin(wx/37)+3*Math.sin(wx/13)-oy);if(y>=VH)continue;X.fillStyle='#e4f0fa';X.fillRect(sx,y,2,2);X.fillStyle='#f6fbff';X.fillRect(sx,y+2,2,VH-y)}}
+function drawCloudSea(ox,oy){for(let sx=0;sx<VW;sx+=2){const wx=sx+ox,y=Math.round(58+4*Math.sin(wx/37)+3*Math.sin(wx/13)-oy);if(y>=VH)continue;rb(0,'#e4f0fa',sx,y,2,2);rb(1,'#f6fbff',sx,y+2,2,VH-y)}rbFlush(X)}
 function drawSail(ox,oy){const sh=SHIPS[S.ship],sx=Math.round(P.x-ox),dy=Math.round(P.y-oy);drawShipD(X,sx,dy+25,-1,P.dir,sh);if(S.horse)drawHorse(X,sx-P.dir*16,dy,P.dir,menuT,0,1);
  const f=clamp(S.hull/sh.hull,0,1),top=dy-Math.round(24+32*(.8+.2*sh.z))-8;px(X,sx-13,top,26,4,'#000');px(X,sx-12,top+1,Math.max(1,Math.round(24*f)),2,f>.5?'#7de07a':f>.25?'#ffd75e':'#ff5a4a');if(P.shipHit>0)px(X,sx-12,top+1,24,2,'#ffffff')}
 function wxTint(z,ox,a,wd,col,al){const l=z.x0-ox,len=z.x1-z.x0,f=Math.min(.45,90/len),gr=X.createLinearGradient(l,0,l+len,0);gr.addColorStop(0,'rgba('+col+',0)');gr.addColorStop(f,'rgba('+col+','+al+')');gr.addColorStop(1-f,'rgba('+col+','+al+')');gr.addColorStop(1,'rgba('+col+',0)');X.fillStyle=gr;X.fillRect(a,0,wd,VH)}
 function disc(x,y,d){const r=Math.max(2,Math.round(d/4));X.fillRect(x+r,y,d-2*r,d);X.fillRect(x,y+r,d,d-2*r);X.fillRect(x+1,y+1,d-2,d-2)}
 function drawWeather(ox,oy){for(const z of WX){const a=Math.max(0,Math.round(z.x0-ox)),b=Math.min(VW,Math.round(z.x1-ox));if(b<=a)continue;const wd=b-a;
- if(z.k==='rain'){const cy=Math.round(-300-oy);wxTint(z,ox,a,wd,'60,80,112',.2);for(let sx=a;sx<b;sx+=2){const wx=sx+ox,e=Math.min(1,(wx-z.x0)/40,(z.x1-wx)/40),h=Math.round((26+10*Math.abs(Math.sin(wx/23))+6*Math.sin(wx/9))*e);const t0=Math.max(0,cy-30);if(cy+h<0)continue;X.fillStyle='#6a7a92';X.fillRect(sx,t0,2,cy+h-t0);X.fillStyle='#8a98ae';X.fillRect(sx,cy+h-3,2,3)}
+ if(z.k==='rain'){const cy=Math.round(-300-oy);wxTint(z,ox,a,wd,'60,80,112',.2);for(let sx=a;sx<b;sx+=2){const wx=sx+ox,e=Math.min(1,(wx-z.x0)/40,(z.x1-wx)/40),h=Math.round((26+10*Math.abs(Math.sin(wx/23))+6*Math.sin(wx/9))*e);const t0=Math.max(0,cy-30);if(cy+h<0)continue;rb(0,'#6a7a92',sx,t0,2,cy+h-t0);rb(1,'#8a98ae',sx,cy+h-3,2,3)}rbFlush(X);
   X.fillStyle='#c4d8f2';const y0=Math.max(0,cy+20),hh=VH-y0;if(hh>0){const n=Math.round(wd*hh/(3*VH))+4;for(let i=0;i<n;i++){const s=hash(i*3.7+z.x0);const x=a+(((s*977-menuT*30)%wd)+wd)%wd,y=y0+(hash(i*5.3)*hh+menuT*260*(1+s*.4))%hh;X.fillRect(Math.round(x),Math.round(y),1,4)}}}
  else{wxTint(z,ox,a,wd,'255,255,255',.12);const n=Math.round(wd/5);for(let i=0;i<n;i++){const s=hash(i*4.9+z.x0);const x=a+((s*911+Math.sin(menuT*2+i)*4)%wd+wd)%wd,y=VH-((hash(i*2.3)*VH+menuT*150*(1+s))%VH);X.fillStyle=i%3?'rgba(255,255,255,.75)':'#bfe6f8';X.fillRect(Math.round(x),Math.round(y),1,i%2?6:4)}}}
- if(P&&P.fly&&MODE==='play'){const bu=$('tU'),br=bu&&bu.offsetParent?bu.getBoundingClientRect():null,bd=br?$('tD').getBoundingClientRect():null;const bx=br?Math.round((br.right+5)/SC):3,y0=br?Math.round(((br.top+bd.bottom)/2)/SC)-14:Math.round(VH*.3);for(let k=0;k<3;k++){const y=y0+(2-k)*10;px(X,bx,y,7,8,'#000');px(X,bx+1,y+1,5,6,k===P.band?'#ffd75e':'#4a5a70')}}}
+ if(P&&P.fly&&MODE==='play'){if(!BANDPOS){const bu=$('tU'),br=bu&&bu.offsetParent?bu.getBoundingClientRect():null,bd=br?$('tD').getBoundingClientRect():null;BANDPOS=br?[br.right,br.top,bd.bottom]:[]}const br=BANDPOS.length?BANDPOS:null;const bx=br?Math.round((br[0]+5)/SC):3,y0=br?Math.round(((br[1]+br[2])/2)/SC)-14:Math.round(VH*.3);for(let k=0;k<3;k++){const y=y0+(2-k)*10;px(X,bx,y,7,8,'#000');px(X,bx+1,y+1,5,6,k===P.band?'#ffd75e':'#4a5a70')}}}
 // ===== airship scrap pile =====
 function nearPile(){return !!(!WI&&S&&P&&!DG&&Math.abs(P.x-SCRAPX)<70)}
 function scrapFrac(){const s=S.scrap;return SCRAPK.reduce((t,k)=>t+Math.min(1,s[k]/NEED[k]),0)/3}
