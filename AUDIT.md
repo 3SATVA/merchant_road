@@ -1,23 +1,17 @@
 # Code audit — Oct 21 2026 (baseline 59268d3)
 
-Single file `index.html` (kept single-file on purpose). Baseline 245,751 B / 1,697 lines (99.5 KB gzipped); after cleanup 234,306 B / 1,721 lines (89.6 KB gzipped). Lines went up slightly because of new helpers and comments; bytes went down.
+Audit done on the single file `index.html`, before the module split (see below). Baseline 245,751 B / 1,697 lines (99.5 KB gzipped); after cleanup 234,306 B / 1,721 lines (89.6 KB gzipped). Lines went up slightly because of new helpers and comments; bytes went down.
 
-## Structure map (after)
-| Section | Lines | ~KB |
-|---|---|---|
-| CSS | 10–97 | 13.6 |
-| HTML shell + help text | 99–142 | 9.8 |
-| utils, data tables (ITEMS, HAULERS, WEAPONS, SHIPS, TOWNS, BIOMES, ENEMY, SPAWNS) | 143–214 | 6 |
-| shelved airship flag + constants | 215–271 | 5.8 |
-| terrain, sprites, gear, looks, pixel icons (EMOG glyph table 4.3 KB) | 272–536 | 38 |
-| state + save/load/migrations | 537–595 | 7.6 |
-| economy, input, canvas | 596–638 | 5 |
-| UI (towns, HUD, minimap) | 639–767 | 21 |
-| crafting, witch & enchanting (portrait PNG) | 776–937 | 27 |
-| gameplay, horse & lances, carts, dungeons | 938–1211 | 32 |
-| render | 1212–1450 | 29 |
-| World 2, sky travel, wing flaps | 1451–1643 | 25 |
-| scrap pile, loop, test hooks | 1644–1721 | 11 |
+## Module split — Oct 22 2026
+The single file is now `index.html` (12 KB shell: markup and help text), `core/style.css`, and 46 classic scripts in `core/`, `inventory/`, `world1/`, `world2/`, `assets/`. See ARCHITECTURE.md for what lives where, the load order and how to add content. Code statements moved verbatim, and the total size is about the same (234 KB → 240 KB, 93 KB gzipped). Every step was gated on: an identical load-time global snapshot against the single-file build (f8edc95), no console errors or 404s, the full regression suite with 0 state and 0 pixel diffs, and a `file://` smoke test.
+1. 261ce8c: CSS, touch guard and script pulled out of index.html.
+2. 18f369b: data tables became append-only registries (`reg()` throws on out-of-order indices, since they are save data).
+3. 59a0e77: statements distributed into folders.
+4. 600bc7f: `WORLDDEF` per world. Every World 1/2 layout branch (`setWorld`, terrain formula, pits, decor, arrival) now reads the def.
+5. f432910: per-world timers. World 1 storms and rocks are in `W1ENV`, World 2 timers in `W2ENV`; the shared `env` keeps run timers only.
+6. c2afc75: each world owns its cart (`WORLDDEF.cart/leave/carry/autoHitch`). `S.park` stays the save field and is always the current world's parked cart.
+
+The original single-file section map (pre-split) is in git history (f8edc95).
 
 ## Findings
 - **Dead code:** very little. Only `jumpHeld()` and `HORSECALL` were unused (removed). `FLYALT`, `ISL1` and `enchCost` are only used by the `window.MR` test hooks (kept). The shelved airship code is behind `FEATURE_DRIVABLE_AIRSHIPS` (kept, restorable).
@@ -25,7 +19,7 @@ Single file `index.html` (kept single-file on purpose). Baseline 245,751 B / 1,6
 - **Magic numbers:** inn rest price, potion price/max/heal, air-wilds balance (damage %, max foes, pair chance, spawn gaps, pegasus re-dive), and the Winged Cart knock-loose rules were inline. They are now the `INN`, `SKY` and `WCART` tables. Many render-only numbers (sprite offsets, colours) stay inline on purpose: they are art, not tuning.
 - **Per-frame hotspots:** about 1,800–2,300 `fillRect` calls a frame, mostly 1–2 px terrain and backdrop columns, each with its own `fillStyle`. There were also 16 regex colour parses a frame for the sky, 2 `getBoundingClientRect` layout reads a frame while flying, and DOM text/style writes plus prompt `innerHTML` every frame (each one also re-ran the emoji MutationObserver). Five `.filter()` re-allocations a frame for enemies, particles, projectiles, pickups and text.
 - **Memory leaks:** none found. All listeners are registered once at top level, toasts are capped, and entity arrays are pruned. The new caches are bounded (one per cave, one per skull colour, one sky key).
-- **Fragile global state:** `setWorld()` swaps `WORLD/BOUNDS/NB/WB/XMIN/XMAX/WT/DUNGEONS` globals, and `S.w` (save) must always match `WI` (runtime). `S.park` means "the World 1 wagon" or "the Winged Cart", depending on the world (it was also the airship hold; see SHELVED.md). Some `env.*` timers (`spawnD`, `next`, `bT`) survive a world switch. These are the most likely source of future cross-world bugs and the main reason to split into world modules later.
+- **Fragile global state (fixed by the split, see above):** `setWorld()` swaps `WORLD/BOUNDS/NB/WB/XMIN/XMAX/WT/DUNGEONS` globals, and `S.w` (save) must always match `WI` (runtime). `S.park` means "the World 1 wagon" or "the Winged Cart", depending on the world (it was also the airship hold; see SHELVED.md). Some `env.*` timers (`spawnD`, `next`, `bT`) survive a world switch. These are the most likely source of future cross-world bugs and the main reason to split into world modules later.
 - **Naming:** a mix of one-letter globals (`S`, `P`, `X`, `FX`), abbreviations (`curH`/`carriedH`/`w2H`, `wal`, `shelf`, `moor`), and a storage key `merchantRoad.v1` that holds schema `v:2`. Left as is, because renaming the save fields would break saves.
 - **Save cruft:** `load()` stacks about 12 implicit migrations in order: v2 hat slot, ench object to list, `offers`, wallet split (`wal`), ships/moor/hull, airship shelving (`shelf`, `shelfRf`), Winged Cart park, and so on. They work and are covered by the legacy saves in the harness. Recommendation: before cloud saves, turn them into an ordered `MIGRATIONS` list keyed by an integer schema version.
 - **Embedded data:** there is one PNG (the witch portrait). Every other sprite is drawn in code at startup. The portrait was a 16 KB RGBA PNG with 79 colours. It is now an exact palette PNG of 6.1 KB, decoding to the same RGBA pixels.
@@ -43,6 +37,5 @@ Result (JS time per frame, desktop CPU, 390x844): plains 1.06 → 0.37 ms, snow 
 - The order and logic of `load()` migrations. Any change risks old saves loading differently.
 - Save field names and the localStorage key.
 - The shelved airship code (restorable by flag).
-- Splitting into world files (waiting for Michael).
-- Sprite drawing for the player, horse and wings. These are 100–200 rects per frame, but caching them needs a per-frame sprite atlas; worth doing during the module split.
+- Sprite drawing for the player, horse and wings. These are 100–200 rects per frame, but caching them needs a per-frame sprite atlas. Still not done: the split was kept to zero visible change.
 - Help text, emoji→pixel MutationObserver design, Google Fonts link (see readiness).

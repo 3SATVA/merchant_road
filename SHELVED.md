@@ -13,7 +13,7 @@ In World 2 (the Skylands), all of this is switched off:
 What still works: the World 1 scrap-pile airship build, the airship that carries you between World 1 and World 2 (with the first-arrival cutscene), and the Skyhaven dock's "World 1" button. In World 2 you cross the Air Wilds on the winged horse, which carries your backpack (5 goods).
 
 ## Where the code is
-All of it is still in `index.html`, untouched, behind one flag near the World 2 constants:
+All of it is still there, untouched, behind one flag in `world2/data.js`. The code is in `world2/airships.js`, `world2/dock.js`, `world2/islands.js` and the Airships tab in `core/town.js` (see ARCHITECTURE.md):
 
 ```js
 const FEATURE_DRIVABLE_AIRSHIPS=false;
@@ -40,4 +40,4 @@ The data is still there: `SHIPS`, `SORDER`, `SHIPURL`, `drawShip`, `drawShipD`, 
 - A one-time toast tells the player how much was refunded.
 
 ## Note (Winged Cart)
-World 2 `S.park` now holds the parked **Winged Cart** (`S.wcart`). If drivable airships are re-enabled, move the airship park to its own field (e.g. `S.shipPark`) instead of reusing `S.park`, and have `carriedH()` return the ship hold while sailing.
+World 2 `S.park` now holds the parked **Winged Cart** (`S.wcart`). Since the split, the cart a world owns comes from `WORLDDEF[1].cart()` in `world2/data.js` (it returns the backpack while the flag is on). If drivable airships are re-enabled, move the airship park to its own field (e.g. `S.shipPark`) instead of reusing `S.park`, and have `carriedH()` return the ship hold while sailing.
