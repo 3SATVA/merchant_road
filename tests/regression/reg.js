@@ -57,6 +57,21 @@ const SC=[
    await h.ev(()=>MR.unhitch());await h.step(10);await h.ev(()=>{MR.P.x=1560});await h.step(5);await h.ev(()=>MR.travelTo(0));await h.step(90);await h.shot('w1');await h.dig('w1');
    await h.ev(()=>{keys.a=1});await h.step(40);await h.ev(()=>{keys.a=0});await h.ev(()=>MR.unhitch());await h.step(10);await h.ev(()=>MR.travelTo(1));await h.step(90);await h.shot('w2');await h.dig()}],
  ['w2_to_w1',async h=>{await h.seed(W2({x:1560}));await h.step(10);await h.ev(()=>{try{MR.travelTo(0)}catch(e){}});await h.step(400);await h.ev(()=>{if(MR.mode==='cut')MR.endCut()});await h.step(60);await h.shot();await h.dig()}],
+ // sky islands (World 2)
+ ['isle_land',async h=>{await h.seed(W2({x:1900,hp:100,maxhp:100}));await h.step(10);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{tkeys.r=1});for(let k=0;k<40&&await h.ev(()=>MR.P.x<2290);k++)await h.step(10);await h.ev(()=>{tkeys.r=0});await h.step(30);await h.shot('over');
+   for(let k=0;k<3;k++){await h.ev(()=>{pressed.td=1});await h.step(20)}await h.step(40);await h.shot();await h.dig()}],
+ ['isle_unicorn',async h=>{await h.seed(W2({x:3195,hp:100,maxhp:100}));await h.step(5);for(let k=0;k<150&&!await h.ev(()=>MR.E.some(e=>e.type==='unicorn'&&e.st==='charge'));k++)await h.step(2);await h.step(20);await h.shot('tele');
+   for(let k=0;k<60&&!await h.ev(()=>UB.length);k++)await h.step(1);await h.step(7);await h.shot('bolt');await h.step(40);await h.dig('hit');
+   for(let k=0;k<200&&!await h.ev(()=>MR.E.some(e=>e.type==='unicorn'&&e.st==='charge'&&e.sT<.2));k++)await h.step(1);await h.ev(()=>{pressed.tj=1});await h.step(40);await h.shot('jump');await h.dig()}],
+ ['isle_slime',async h=>{await h.seed(W2({x:2300,hp:100,maxhp:100,horse:{on:false,x:2270,dir:1,wings:true}}));await h.step(5);
+   for(let k=0;k<60;k++){if(!await h.ev(()=>MR.E.some(e=>e.type==='bigSlime'&&!e.dead)))break;await h.ev(k=>{const e=MR.E.find(e=>e.type==='bigSlime'&&!e.dead);const d=e.x-MR.P.x;keys.d=d>14;keys.a=d<-14;keys.j=k%2===0;if(Math.abs(d)<=14)MR.P.dir=d>0?1:-1},k);await h.step(8);if(k===5)await h.shot('fight')}
+   await h.ev(()=>{for(const k in keys)keys[k]=0});await h.step(12);await h.shot('split');await h.dig()}],
+ ['isle_storm',async h=>{await h.seed(W2({x:3200,hp:100,maxhp:100}));await h.step(4);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{tkeys.r=1});
+   for(let k=0;k<140&&await h.ev(()=>!!MR.P.fly||MR.P.x<3850);k++)await h.step(5);await h.step(24);await h.shot('drop');await h.dig('drop');await h.ev(()=>{pressed.tj=1});await h.step(30);await h.ev(()=>MR.toggleHorse());await h.step(20);await h.ev(()=>MR.toggleHorse());await h.step(20);await h.dig('summon');
+   for(let k=0;k<120&&await h.ev(()=>MR.P.x<4165);k++)await h.step(5);await h.ev(()=>{pressed.tj=1});await h.step(40);await h.ev(()=>{tkeys.r=0});await h.step(10);await h.shot('out');await h.dig()}],
+ ['isle_save',async h=>{await h.seed(W2({x:5846,hp:100,maxhp:100,time:500}));await h.step(30);await h.shot('chest');await h.ev(()=>MR.save());const sv=await h.ev(()=>localStorage.getItem('merchantRoad.v1'));
+   await h.seed(sv);await h.step(30);await h.shot('reload');await h.dig()}],
+ ['isle_death',async h=>{await h.seed(W2({x:3200,hp:20,maxhp:100,cargo:[{item:6,origin:6,qty:4,paid:20}]}));for(let k=0;k<60&&await h.ev(()=>MR.mode==='play');k++)await h.step(10);await h.step(30);await h.shot();await h.dig()}],
 ];
 const LEGACY={ // synthetic older saves exercising stacked migrations
  v1_acc:{money:120,hp:80,maxhp:100,potions:1,hauler:'wheelbarrow',haulers:['backpack','wheelbarrow'],weapons:['fists','dagger'],weapon:'dagger',cargo:[{item:0,origin:0,qty:4},{item:1,origin:1,qty:2,paid:-3}],lastTown:1,x:1900,time:300,stats:{kills:1,profit:10,sold:2,deaths:1},visited:[0,1],park:{x:1700,dir:-1,cargo:[{item:2,origin:1,qty:3,paid:30}]},gear:['tophat'],eq:{acc:'tophat'},ench:{dagger:{k:'fire'}},offers:[1,2,3]},
