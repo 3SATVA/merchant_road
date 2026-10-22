@@ -126,7 +126,7 @@ img.big{width:72px;height:42px}
  <p><b>Barber.</b> Wake Ridge, Pinehollow and Emberfall have a Barber (striped pole): change skin, body and hair for free. Your Top Hat goes on your head; take it off to show your hair. One hat at a time: wearing a Witch Hat puts the Top Hat back in your bag.</p>
  <p><b>Witch.</b> Vex, a young witch with a knack for enchanting, parks her wagon (purple tarp) somewhere on the road and moves on every ~10 minutes. Get close and it shows on your map (purple). Press E at her wagon, tap a weapon or armor piece (or hold it briefly and drag) into the slot and press <b>Enchant</b> for <b>3 Magic Essence</b>: it replaces the item's enchants with 1–3 random ones, levels I–III. Reroll as often as you like. Weapons: Sharp, Critical, Knockback, Burning, Freezing, Venom, Leeching. Armor: Guarded, Swift, Hardy, Thorns, Regen, Leeching. <span style="color:#ff4a6a">Curses</span> (about 1 in 6) are high risk, high reward: Bloodthirst, Berserk, Volatile, Heavy, Greedy.</p>
  <p><b>Horses.</b> Bog Town, Pinehollow and Stonepeak have a <b>Stable</b> (horseshoe sign): a horse costs $1,500, no upkeep, and comes with a Wooden Lance. Press <b>R</b> (🐴) next to it to ride or get off. Riding is 1.5× faster and pulls your cart (a loaded cart slows it a bit). On horseback you fight only with your lance: tap attack to lower it, and the faster you gallop into a foe, the harder it hits. Hits never knock you off, but a rider is an easy target: you take 30% more damage and each hit knocks you out of your gallop. Golems don't budge: a charge or a golem punch shoves you back (BONK), so circle round and charge again. Goblins can't snatch goods while you gallop (right after a hit they can). Horses wait outside caves. Iron Lance at the Stable ($900); <b>Magma Lance</b> at the Forge (3 stone, 1 dried lava, 1 iron). Vex enchants lances too.</p>
- <p><b>Ashen Wastes.</b> Past Emberfall: no towns, just raiders (they steal!), cinder slimes, scrap golems and ash storms. At the far end, build an <b>airship</b> from the scrap heap: 150 Wood, 50 Apples, 50 Gold (press E; a cart parked there counts). Deposits are never lost. You need a horse to fly it to <b>World 2, the Skylands</b>: your horse grows wings there (tap jump in the air to flap), carts stay parked by the airship and your airship's hold carries your goods. Skyhaven sells bigger airships; fly home from its dock.</p>
+ <p><b>Ashen Wastes.</b> Past Emberfall: no towns, just raiders (they steal!), cinder slimes, scrap golems and ash storms. At the far end, build an <b>airship</b> from the scrap heap: 150 Wood, 50 Apples, 50 Gold (press E; a cart parked there counts). Deposits are never lost. You need a horse to fly it to <b>World 2, the Skylands</b>: your horse grows wings there (tap jump in the air to flap), carts stay parked by the airship and each world has its own money (you start the Skylands with $100) and its own goods: World 1 goods wait in your wagon by the airship, sky goods wait in your airship's hold. Gear, materials, lances and your horse come with you. Skyhaven sells bigger airships; fly home from its dock.</p>
  <p><b>Caves.</b> Rare caves line the road (skulls = difficulty, harder further east). Carts wait outside. Jump ledges and lifts, dodge spikes, beat the monsters and open the chest for materials. A fall puts you back on the last ledge; get knocked out and you're dragged outside, nothing lost. Looted caves refill after a while.</p>
  <p><b>Keys:</b> A/D or ←/→ move · Space/W jump · J or click attack · E enter town/cave · C cart · R horse · I inventory · Q swap weapon · H potion · Esc pause.</p>
  <p><b>Fire</b> melts ice golems, <b>ice</b> cracks lava golems, <b>hammers</b> crush all golems.</p></div></div>
@@ -198,7 +198,7 @@ const WORDER=['fists','dagger','sword','crossbow','leafstaff','firestaff','warha
 // World 2 = Skylands (biome 5+ ; phase 1: the floating starting island with Skyhaven + its airship dock)
 // setWorld(n) swaps these globals; biome and town indices are global across worlds so cargo origins/prices stay valid
 let WORLD=15000,BOUNDS=[0,3200,6400,9600,12000,15000],NB=5,WB=[0,1,2,3,4],XMIN=12,XMAX=15000-12,WI=0;
-const W2LEN=4800,ISL0=150,ISL1=1950,W2DOCK=1560,W2TOWN=6,XWD=4,FLYALT=100; // World 2 layout; XWD = price distance between worlds
+const W2LEN=4800,ISL0=150,ISL1=1950,W2DOCK=1560,W2TOWN=6,FLYALT=100,W2START=100; // World 2 layout; W2START = World 2's opening balance
 function onIsle(x){return x>ISL0&&x<ISL1}
 const SCRAPX=WORLD-170,NEED={wood:150,apple:50,gold:50},SCRAPI={wood:2,apple:0,gold:5},SCRAPK=['wood','apple','gold'];
 const TOWNS=[
@@ -478,7 +478,7 @@ for(const id of ['bHelpX','tLeave','invX','wX','sX']){$(id).innerHTML=ico('x');$
 const KEY='merchantRoad.v1';
 let S,P,ENEMIES=[],PROJ=[],PARTS=[],PICK=[],ROCKS=[],FTXT=[];
 let MODE='menu';
-function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,horse:null,lances:[],lance:null,scrap:{wood:0,apple:0,gold:0,done:false},w:0,ws:{},ships:['small'],ship:'small',w2seen:false,v:2}}
+function fresh(){return {money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,horse:null,lances:[],lance:null,scrap:{wood:0,apple:0,gold:0,done:false},w:0,ws:{},ships:['small'],ship:'small',w2seen:false,wal:1,v:2}}
 function newPlayer(x){return {x,y:surfY(x),vy:0,kbx:0,dir:1,onGround:true,inv:0,cd:0,atk:0,walk:0,wheel:0,lastSafe:x,heat:0}}
 function save(){if(!S)return;S.x=Math.round(DG?DG.d.x:P.x);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo){const s=Object.assign(fresh(),d);
@@ -500,9 +500,20 @@ function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo)
   delete s.offers; // old 3-offer table is gone
   /* World 2: s.w = current world, s.ws[w] = the other world's spot {x,lastTown,park}; a free Small Airship */
   s.w=s.w===1?1:0;if(!s.ws||typeof s.ws!=='object')s.ws={};
-  for(const k of [0,1]){const o=s.ws[k];if(!(o&&isFinite(o.x)&&TOWNS[o.lastTown]&&TOWNS[o.lastTown].w===k))delete s.ws[k];else if(o.park&&!(Array.isArray(o.park.cargo)&&isFinite(o.park.x)))o.park=null}
+  for(const k of [0,1]){const o=s.ws[k];if(!(o&&isFinite(o.x)&&TOWNS[o.lastTown]&&TOWNS[o.lastTown].w===k))delete s.ws[k];else{if(o.park&&!(Array.isArray(o.park.cargo)&&isFinite(o.park.x)))o.park=null;if(o.park)o.park.cargo=cargoOK(o.park.cargo);o.stash=cargoOK(o.stash);o.hold=cargoOK(o.hold);if(!isFinite(o.money))delete o.money;else o.money=Math.max(0,Math.round(o.money))}}
+  delete s.ws[s.w===1?1:0];
+  /* wallet migration (saves from before separate money): the shared balance becomes World 1's money, World 2 restarts at $100,
+     World 1 goods go back to the World 1 wagon/airship spot, World 2 goods go to the airship hold */
+  if(!d.wal){const isW1=c=>!(TOWNS[c.origin]&&TOWNS[c.origin].w===1);s.cargo=cargoOK(s.cargo);
+   if(s.w===1){const o=s.ws[0]||(s.ws[0]={x:SCRAPX-60,lastTown:5,park:null,stash:[],hold:[]});o.money=Math.max(0,Math.round(+s.money||0));
+    const g1=s.cargo.filter(isW1);s.cargo=s.cargo.filter(c=>!isW1(c));
+    if(g1.length){if(o.park)o.park.cargo=o.park.cargo.concat(g1);else if(s.hauler!=='backpack')o.park={x:SCRAPX-110,dir:-1,cargo:g1};else o.stash=(o.stash||[]).concat(g1)}
+    s.money=W2START}
+   else{const w2=s.cargo.filter(c=>!isW1(c)).concat(s.park?s.park.cargo.filter(c=>!isW1(c)):[]);s.cargo=s.cargo.filter(isW1);if(s.park&&Array.isArray(s.park.cargo))s.park.cargo=s.park.cargo.filter(isW1);
+    if(s.ws[1]||w2.length){const o=s.ws[1]||(s.ws[1]={x:W2DOCK-34,lastTown:W2TOWN});o.money=W2START;o.hold=(o.hold||[]).concat(w2)}}
+   s.wal=1}
   if(!Array.isArray(s.ships))s.ships=[];s.ships=s.ships.filter((v,i,a)=>SHIPS[v]&&a.indexOf(v)===i);if(!s.ships.includes('small'))s.ships.unshift('small');if(!s.ships.includes(s.ship))s.ship='small';s.w2seen=!!s.w2seen;
-  if(s.w===1&&!s.horse){const o=s.ws[0];s.w=0;s.x=o?o.x:SCRAPX-60;s.lastTown=o?o.lastTown:5;s.park=o?o.park:null;delete s.ws[0]}
+  if(s.w===1&&!s.horse){leaveW(s,s.x);const o=enterW(s,0);s.x=isFinite(o.x)?o.x:SCRAPX-60}
   if(s.w===1)s.park=null;if(!TOWNS[s.lastTown]||TOWNS[s.lastTown].w!==s.w)s.lastTown=s.w?W2TOWN:0;
   /* airship scrap pile (new): deposits are permanent */
   {const sc=s.scrap;s.scrap={wood:0,apple:0,gold:0,done:false};if(sc&&typeof sc==='object'){for(const k of SCRAPK)s.scrap[k]=clamp(Math.floor(+sc[k]||0),0,NEED[k]);s.scrap.done=!!sc.done&&SCRAPK.every(k=>s.scrap[k]>=NEED[k])}}
@@ -511,7 +522,8 @@ function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo)
   const fixPaid=a=>{if(Array.isArray(a))for(const c of a)if(c&&!(isFinite(c.paid)&&c.paid>=0))c.paid=ITEMS[c.item]?ITEMS[c.item].base:0};fixPaid(s.cargo);if(s.park)fixPaid(s.park.cargo);
   if(!HAULERS[s.hauler])s.hauler='backpack';return s}}catch(e){}return null}
 // ===== economy =====
-function tdist(a,b){if(TOWNS[a].w!==TOWNS[b].w)return XWD;return Math.abs(TOWNS[a].x-TOWNS[b].x)/DUNIT}
+function tdist(a,b){if(TOWNS[a].w!==TOWNS[b].w)return 0; // goods never cross worlds
+ return Math.abs(TOWNS[a].x-TOWNS[b].x)/DUNIT}
 function drift(seed,i,k){const T=S?S.time:0;return 1+k*(.7*Math.sin(T/90+seed*1.7+i*2.3)+.3*Math.sin(T/37+seed*3.1+i*.7))}
 function buyPrice(t,i){return Math.max(1,Math.round(ITEMS[i].base*drift(t,i,.04)))}
 function sellPrice(t,i,origin){const m=origin===t?.9:1+.2*tdist(t,origin);return Math.max(1,Math.round(ITEMS[i].base*m*drift(t+7,i,.05)))}
@@ -586,10 +598,10 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   if(!S.cargo.length)h+='<div class="row dim"><span class="nm">Empty</span></div>';
   S.cargo.forEach((s,si)=>{const p=sellPrice(t.i,s.item,s.origin),d=Math.round(p-s.paid);h+='<div class="row">'+iconImg(ICONURL[ITEMS[s.item].id])+'<span class="nm">'+ITEMS[s.item].name+' ×'+s.qty+'<span class="sub">from '+TOWNS[s.origin].name+'</span></span><span>'+pr(p)+' <span class="'+(d>=0?'up':'dn2')+'">'+(d>=0?'+':'')+d+'</span></span><button data-act="sell" data-i="'+si+'" data-n="1">Sell</button><button data-act="sell" data-i="'+si+'" data-n="999">All</button></div>'});
   h+='<div class="sec">BUY</div>';
-  t.sells.forEach(i=>{const p=buyPrice(t.i,i);const pool=WT.length>1?WT:TOWNS,pk=pool.indexOf(t);const far=pool.reduce((b,o)=>{const v=sellPrice(o.i,i,t.i);return v>b.v?{v,o}:b},{v:0});const nb=pool[pk+1]||pool[pk-1];const nv=sellPrice(nb.i,i,t.i);
+  t.sells.forEach(i=>{const p=buyPrice(t.i,i);const pool=WT,pk=pool.indexOf(t);const far=pool.reduce((b,o)=>{const v=sellPrice(o.i,i,t.i);return v>b.v?{v,o}:b},{v:0});const nb=pool[pk+1]||pool[pk-1];const nv=nb?sellPrice(nb.i,i,t.i):0;
    const tr=p>ITEMS[i].base?'<span class="dn2">▲</span>':p<ITEMS[i].base?'<span class="up">▼</span>':'';
    const can=Math.min(c-n,Math.floor(S.money/p));
-   h+='<div class="row" data-b="'+i+'">'+iconImg(ICONURL[ITEMS[i].id])+'<span class="nm">'+ITEMS[i].name+' '+pr(p)+tr+'<span class="sub">'+nb.name+' '+pr(nv)+' · '+far.o.name+' '+pr(far.v)+'</span></span><button data-act="buy" data-i="'+i+'" data-n="1" '+(can<1?'disabled':'')+'>+1</button><button data-act="buy" data-i="'+i+'" data-n="999" '+(can<1?'disabled':'')+'>Max</button></div>'});
+   h+='<div class="row" data-b="'+i+'">'+iconImg(ICONURL[ITEMS[i].id])+'<span class="nm">'+ITEMS[i].name+' '+pr(p)+tr+(nb?'<span class="sub">'+nb.name+' '+pr(nv)+' · '+far.o.name+' '+pr(far.v)+'</span>':'')+'</span><button data-act="buy" data-i="'+i+'" data-n="1" '+(can<1?'disabled':'')+'>+1</button><button data-act="buy" data-i="'+i+'" data-n="999" '+(can<1?'disabled':'')+'>Max</button></div>'});
  } else if(curTab==='haulers'){
   const row=id=>{const H=HAULERS[id];const own=S.haulers.includes(id),eq=S.hauler===id;
    const btn=eq?'<button disabled>'+(S.park?ico('park')+' Parked':'Using')+'</button>':own?'<button data-act="useh" data-id="'+id+'" '+(cargoCount()>H.cap||S.park?'disabled':'')+'>Use</button>':'<button data-act="buyh" data-id="'+id+'" '+(S.money<H.price?'disabled':'')+'>'+pr(H.price)+'</button>';
@@ -1351,12 +1363,18 @@ function drawWings(P0,t,bob,run,idle){const pl=plr(),air=!idle&&pl&&!pl.onGround
    for(let q=-20;q<=-4;q+=4)P(q+o,-17+bob-o,2,1,e)}
   else{P(-1+o,-18+bob-o,5,3,a);P(-5+o,-16+bob-o,5,3,a);P(-9+o,-13+bob-o,5,3,b);P(-12+o,-10+bob-o,4,3,b);P(-14+o,-8+bob-o,3,2,e);P(-7+o,-14+bob-o,3,1,e);P(-11+o,-11+bob-o,3,1,e)}};
  wing(2,1,1);wing(2,1);wing(0,0,1);wing(0,0)}
+// each world keeps its own money and its own goods. s.ws[w] holds the world you're NOT in:
+// {x,lastTown,money, park (W1 cart), stash (W1 goods left at the airship without a cart), hold (W2 goods in the airship at the dock)}
+const cargoOK=a=>Array.isArray(a)?a.filter(c=>c&&ITEMS[c.item]&&TOWNS[c.origin]&&c.qty>0).map(c=>({item:c.item,origin:c.origin,qty:Math.floor(c.qty),paid:+c.paid||0})):[];
+function leaveW(s,x){const w=s.w,o={x:Math.round(x),lastTown:s.lastTown,money:s.money,park:null,stash:[],hold:[]};
+ if(w===0){if(s.hauler!=='backpack'&&!s.park){o.park={x:SCRAPX-110,dir:-1,cargo:s.cargo}}else{o.park=s.park||null;o.stash=s.cargo}}else o.hold=s.cargo;
+ s.cargo=[];s.park=null;s.ws[w]=o}
+function enterW(s,n){const o=s.ws[n]||{};s.w=n;s.lastTown=o.lastTown!=null&&TOWNS[o.lastTown]&&TOWNS[o.lastTown].w===n?o.lastTown:(n?W2TOWN:5);
+ s.money=isFinite(o.money)?o.money:(n?W2START:s.money);s.cargo=cargoOK(n?o.hold:o.stash);s.park=n?null:(o.park||null);delete s.ws[n];return o}
 // travel between worlds (needs a horse); carts stay parked at the World 1 airship, the airship hold carries your goods
 function travelTo(n){n=n?1:0;if(!S||!S.horse||S.w===n||DG)return false;$('toasts').innerHTML='';
  S.horse.on=false;
- if(S.w===0&&S.hauler!=='backpack'&&!S.park){const u=unitsOf(S.cargo).sort((a,b)=>ITEMS[b.item].base-ITEMS[a.item].base),take=SHIPS[S.ship].cap;S.cargo=stacksOf(u.slice(0,take));S.park={x:SCRAPX-110,dir:-1,cargo:stacksOf(u.slice(take))}}
- S.ws[S.w]={x:Math.round(P.x),lastTown:S.lastTown,park:S.park||null};
- const o=S.ws[n];S.w=n;S.lastTown=o?o.lastTown:(n?W2TOWN:5);S.park=n?null:(o?o.park||null:null);S.x=n?W2DOCK-34:SCRAPX-60;
+ leaveW(S,P.x);enterW(S,n);S.x=n?W2DOCK-34:SCRAPX-60;
  setWorld(n);DG=null;P=newPlayer(S.x);P.dir=-1;ENEMIES=[];PROJ=[];PICK=[];ROCKS=[];FTXT=[];PARTS=[];env.biome=-1;env.spawnD=0;env.next=350;env.ash=0;env.bliz=0;env.lift=0;
  S.horse.x=Math.round(S.x-(n?26:30));S.horse.dir=1;
  if(!n&&S.park&&Math.abs(S.park.x-P.x)<120)hitch();
@@ -1455,5 +1473,5 @@ setMode('menu');requestAnimationFrame(frame);
 addEventListener('beforeunload',()=>{if(MODE!=='menu')save()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&MODE==='play'){save();setMode('pause')}});
 // test hooks
-window.MR={get WI(){return WI},get WT(){return WT},get XMIN(){return XMIN},get XMAX(){return XMAX},travelTo,setWorld,SHIPS,startCut,endCut,CUT,canFly,nearDock,openDock,W2DOCK,ISL0,ISL1,FLYALT,tdist,SCRAPX,NEED,SCRAPK,scrapFrac,scrapStage,deposit,depositKeys,haveOf,openScrap,closeScrap,nearPile,get BOUNDS(){return BOUNDS},get WORLD(){return WORLD},BIOMES,biomeAt,mount,dismount,toggleHorse,mounted,heldW,nearHorse,buyHorse,lanceStrike,lanceSpeed,HORSEPRICE,RIDE,GALLOP,LANCEMIN,LANCEMAX,enchantItem,enchCost,ENCH,rollEnchants,putSlot,get wSel(){return wSel},ev,encList,berserkMul,dmgTakenMul,openWitch,closeWitch,placeWitch,nearWitch,dmgMul,defTotal,spdMul,ench,hitEnemy,renderWitch,witchTick,setOn,maxHP,SETS,giveMat,craft,RECIPES,have,MATS,giveGear,dropLoot,killEnemy,openInv,closeInv,GEAR,set dropMul(v){DROPMUL=v},gearSum,spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},get PROJ(){return PROJ},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,get PITS(){return PITS},surfY,env,get DG(){return DG},get DUNGEONS(){return DUNGEONS},enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
+window.MR={get WI(){return WI},get WT(){return WT},get XMIN(){return XMIN},get XMAX(){return XMAX},travelTo,setWorld,leaveW,enterW,W2START,SHIPS,startCut,endCut,CUT,canFly,nearDock,openDock,W2DOCK,ISL0,ISL1,FLYALT,tdist,SCRAPX,NEED,SCRAPK,scrapFrac,scrapStage,deposit,depositKeys,haveOf,openScrap,closeScrap,nearPile,get BOUNDS(){return BOUNDS},get WORLD(){return WORLD},BIOMES,biomeAt,mount,dismount,toggleHorse,mounted,heldW,nearHorse,buyHorse,lanceStrike,lanceSpeed,HORSEPRICE,RIDE,GALLOP,LANCEMIN,LANCEMAX,enchantItem,enchCost,ENCH,rollEnchants,putSlot,get wSel(){return wSel},ev,encList,berserkMul,dmgTakenMul,openWitch,closeWitch,placeWitch,nearWitch,dmgMul,defTotal,spdMul,ench,hitEnemy,renderWitch,witchTick,setOn,maxHP,SETS,giveMat,craft,RECIPES,have,MATS,giveGear,dropLoot,killEnemy,openInv,closeInv,GEAR,set dropMul(v){DROPMUL=v},gearSum,spawnGroup,get S(){return S},get P(){return P},get E(){return ENEMIES},get PICK(){return PICK},get PROJ(){return PROJ},TOWNS,ITEMS,HAULERS,WEAPONS,buyPrice,sellPrice,buy,sell,cargoCount,spawnEnemy,biomeAt,hurtPlayer,die,enterTown,leaveTown,playerAttack,get mode(){return MODE},pitAt,get PITS(){return PITS},surfY,env,get DG(){return DG},get DUNGEONS(){return DUNGEONS},enterDungeon,exitDungeon,openChest,toggleCart,unhitch,hitch,cap,dState,save,load,updDungeon};
 </script></body></html>
