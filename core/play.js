@@ -75,8 +75,8 @@ function updWorld(dt){if(WI){w2Tick(dt);wcTick(dt)}const H=HAULERS[carriedH()];c
  if(b!==env.biome){if(env.biome>=0||b>0)biomeToast(b);env.biome=b}
  // env
  let mul=H.spd;
- // on horseback: 1.5x; a hitched cart drags a little (more when loaded), always faster than walking it
- if(mounted()){const c=cap(),fill=c?cargoCount()/c:0;mul=RIDE*(carriedH()==='backpack'?1:1-(1-H.spd)*(.3+.4*fill))}
+ // on horseback: 1.5x (World 2: the winged horse plods on land, HLAND); a hitched cart drags a little (more when loaded), always faster than walking it
+ if(mounted()){const c=cap(),fill=c?cargoCount()/c:0;mul=(WI?HLAND:RIDE)*(carriedH()==='backpack'?1:1-(1-H.spd)*(.3+.4*fill))}
  if(inDrift(P.x)&&P.onGround)mul*=.55;
  if(!WI)mul=w1Weather(dt,b,town,mul);
  let mv=(inp.left()?-1:0)+(inp.right()?1:0);if(mv)P.dir=mv;

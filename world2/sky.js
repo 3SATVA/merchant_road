@@ -2,6 +2,7 @@
 // World 2 timers (weather-zone tick, leap/dismount confirm window); World 1 never touches them
 const W2ENV={wT:0,leaveT:0};
 function plr(){return P}
+function horsePlod(){return WI===1&&mounted()&&!!P&&!P.fly&&P.onGround} // winged horse walking an island: slow plod, wings folded
 function canFly(){return WI===1&&mounted()&&!!S.horse.wings&&!stormAt(P.x)} // no flying under a sky-island storm cloud
 function startFly(){P.fly='horse';P.band=0;P.onGround=false;if(P.vy>-60)P.vy=-120;W2ENV.wT=0}
 function fallOut(){P.x=P.lastSafe;P.y=surfY(P.x);P.vy=0;P.onGround=true;S.hp-=10;ftxt(P.x,P.y-24,'-10','#ff6a6a');toast(ico('down',2),900);if(S.hp<=0)die()}

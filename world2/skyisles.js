@@ -23,6 +23,7 @@ function takeRw(i){const I=SKYISLES[i],x=rwX(i),y=surfY(x);let h='';
   addCargo(it,6,q,0);h=iconImg(ICONURL[ITEMS[it].id])+' +'+q;ftxt(x,y-20,'+'+q,'#7de07a');part(x,y-8,I.rw==='wool'?'#ffffff':'#a8f0ff',10,90,100,.5)}
  skyS().r[i]=S.time;toast(h,1600);save()}
 function skyTick(dt){if(WI!==1||DG||!P)return;
+ if(horsePlod()&&Math.abs(P.hv||0)>8&&!skyS().ld){S.sky.ld=1;toast(ico('wing',2)+' Your sky horse is slow on land<br><small>hop off and walk; whistle it back to fly</small>',2800)} // once per save
  if(SKYST.ref!==ENEMIES){SKYST.ref=ENEMIES;SKYST.act=[];SKYST.foes=[];UB.length=0} // ENEMIES was reset (death, menu, travel)
  for(let i=0;i<SKYISLES.length;i++){const I=SKYISLES[i],dd=P.x<I.x0?I.x0-P.x:P.x>I.x1?P.x-I.x1:0;
   if(!SKYST.act[i]&&dd<VW/2+70){SKYST.act[i]=1;const n=I.foes.length;I.foes.forEach((t,k)=>isleFoe(t,i,Math.round(I.x0+(I.x1-I.x0)*(k+1)/(n+1))))}

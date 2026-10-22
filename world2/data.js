@@ -23,6 +23,7 @@ const WX=[{x0:2500,x1:3150,k:'rain'},{x0:3450,x1:3700,k:'up'},{x0:4250,x1:4950,k
 // Shelved for now (see SHELVED.md): all the code and sprites stay below, intact; set this to true to bring them back.
 // The World 1 scrap-pile airship build and the airship that carries you between worlds (and the cutscene) are NOT affected.
 const FEATURE_DRIVABLE_AIRSHIPS=false;
+const HLAND=1/3; // winged horse on any island (Skyhaven, Sunspire, sky islands): 1/3 of on-foot walking (92 -> ~31px/s), hop off and walk; flying is unchanged
 const SHIPV=118,HFLY=.5,JET=1.2,HULLFIX=12,WRECKLOSS=.3; // airship base speed (x ship spd); winged horse = gallop x0.5 (~69px/s: slower than any airship, the ship is the way to travel); high band x1.2; hull repairs 12/s while moored; a wreck loses 30% of the hold
 // sky islands: small landable islands in the air wilds (no towns). Logic + art in world2/skyisles.js.
 // h = surface height (BANDY is -70/-140/-210), top 1 = Sunspire lilac grass, storm 1 = under a storm cloud (no flying under it),
