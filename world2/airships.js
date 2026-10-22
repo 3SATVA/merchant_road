@@ -4,7 +4,7 @@ if(!FEATURE_DRIVABLE_AIRSHIPS)$('helpSky').innerHTML='<b>Sky travel:</b> in the 
 // winged horse: jump takes off into the low band; in the air tU/W = up a band, tD/S = down a band (low band over an island + down = land); tJ/R = leave ship / dismount
 // airship: board at the dock where it's moored; fly with the same controls; E near a dock moors it. Hits go to the hull; hull 0 = wreck
 function board(){if(!FEATURE_DRIVABLE_AIRSHIPS)return false;const i=S.moor,D=DOCKS[i];if(!D||!P||P.fly||S.park)return false;if(mounted())dismount(P.x);if(S.horse)S.horse.x=-9999;
- P.fly='ship';P.band=0;P.x=dockShipX(i);P.y=surfY(D.x)-54;P.vy=0;P.hv=0;P.kbx=0;P.dir=D.side;P.onGround=true;P.hinv=0;env.wT=0;showPrompt('');toast(ico('ship',2)+' '+ico('arU'),800);save();return true}
+ P.fly='ship';P.band=0;P.x=dockShipX(i);P.y=surfY(D.x)-54;P.vy=0;P.hv=0;P.kbx=0;P.dir=D.side;P.onGround=true;P.hinv=0;W2ENV.wT=0;showPrompt('');toast(ico('ship',2)+' '+ico('arU'),800);save();return true}
 function moor(i){const D=DOCKS[i];S.moor=i;P.fly=null;P.x=D.x;P.y=surfY(D.x);P.vy=0;P.hv=0;P.kbx=0;P.onGround=true;P.lastSafe=D.x;P.dir=-D.side;
  if(S.horse){S.horse.on=false;S.horse.x=Math.round(D.x-D.side*26);S.horse.dir=-D.side}S.lastTown=D.town;if(!S.visited.includes(D.town))S.visited.push(D.town);save();return true}
 function shipHW(){return Math.round(36*SHIPS[S.ship].z)}

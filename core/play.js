@@ -1,5 +1,5 @@
 'use strict';
-const env={biome:-1,spawnD:0,next:350,bliz:0,blizT:25,rockT:3,lastX:0,ash:0,ashT:18,lift:0};
+const env={biome:-1,spawnD:0,next:350,lastX:0,lift:0}; // shared run timers; world-only timers live in W1ENV (world1/weather.js) and W2ENV (world2/sky.js)
 function spawnEnemy(type,x){const d=ENEMY[type];const e={type,x,y:surfY(x),vy:0,vx:0,hp:d.hp,max:d.hp,dir:-1,t:0,state:'walk',cd:1+rnd(),onGround:true,hitT:0,loot:[],flee:0,seed:rnd()*10,moving:false,cast:0,hop:rnd()};
  if((d.base||type)==='witch')e.y=surfY(x)-30;ENEMIES.push(e);return e}
 function isGolem(t){return (ENEMY[t].base||t)==='golem'}
@@ -78,11 +78,7 @@ function updWorld(dt){if(WI){w2Tick(dt);wcTick(dt)}const H=HAULERS[carriedH()];c
  // on horseback: 1.5x; a hitched cart drags a little (more when loaded), always faster than walking it
  if(mounted()){const c=cap(),fill=c?cargoCount()/c:0;mul=RIDE*(carriedH()==='backpack'?1:1-(1-H.spd)*(.3+.4*fill))}
  if(inDrift(P.x)&&P.onGround)mul*=.55;
- if(b===1&&!town){env.blizT-=dt;if(env.bliz<=0&&env.blizT<=0){env.bliz=8;env.blizT=22+rnd()*15;toast('❄ Blizzard!',1500)}}
- if(env.bliz>0){env.bliz-=dt;if(b!==1)env.bliz=0}
- if(env.bliz>0&&b===1)mul*=.72;
- if(b===4){env.ashT-=dt;if(env.ash<=0&&env.ashT<=0){env.ash=7;env.ashT=24+rnd()*16;toast('🌪 Ash storm!',1500)}}
- if(env.ash>0){env.ash-=dt;if(b!==4)env.ash=0;else mul*=.8}
+ if(!WI)mul=w1Weather(dt,b,town,mul);
  let mv=(inp.left()?-1:0)+(inp.right()?1:0);if(mv)P.dir=mv;
  if(b===2&&mv&&P.onGround){const s=(heightAt(P.x+3*mv)-heightAt(P.x-3*mv))/6;if(s>0)mul*=Math.max(.45,1-s*2.6);else mul*=Math.min(1.15,1-s*.8)}
  let vx=mv*92*mul*spdMul();if(mounted()){P.hv=(P.hv||0)+(vx-(P.hv||0))*Math.min(1,dt*(mv&&Math.sign(vx)===Math.sign(P.hv||vx)?2.2:5));if(Math.abs(P.hv)<1&&!mv)P.hv=0;vx=P.hv;P.ride=(P.ride||0)+Math.abs(vx)*dt}else P.hv=0;
@@ -98,7 +94,7 @@ function updWorld(dt){if(WI){w2Tick(dt);wcTick(dt)}const H=HAULERS[carriedH()];c
  // spawning
  if(!town&&!WI){env.spawnD+=Math.abs(dx);if(env.spawnD>env.next){env.spawnD=0;env.next=b===4?190+rnd()*170:300+rnd()*200-b*45;spawnGroup(mv||P.dir)}}
  // hazards
- if(b===2&&!town){env.rockT-=dt;if(env.rockT<=0){env.rockT=2.6+rnd()*3;const rx=P.x+vx*.9+(rnd()-.5)*70;if(!townAt(rx))ROCKS.push({x:rx,y:null,vy:0,warn:.9})}}
+ if(!WI)w1Rocks(dt,b,town,vx);
  if(b===3&&!town){P.heat+=dt;if(P.heat>2.5){P.heat=0;S.hp-=1;ftxt(P.x,P.y-24,'-1','#ff9a4a');if(S.hp<=0)die()}}
  for(const r of ROCKS){if(r.warn>0){r.warn-=dt;if(r.warn<=0)r.y=surfY(r.x)-150}else{r.vy+=520*dt;r.y+=r.vy*dt;const gy=surfY(r.x);if(r.y>=gy-3){r.dead=1;part(r.x,gy-2,'#8a8a8a',10,120);if(Math.abs(r.x-P.x)<10&&P.y>gy-30)hurtPlayer(14,r.x)}}}
  prune(ROCKS,r=>!r.dead);

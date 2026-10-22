@@ -7,7 +7,7 @@ function enterW(s,n){const o=s.ws[n]||{};s.w=n;s.lastTown=o.lastTown!=null&&TOWN
 function travelTo(n){n=n?1:0;if(!S||!S.horse||S.w===n||DG)return false;fadeIn();$('toasts').innerHTML='';
  S.horse.on=false;
  leaveW(S,P.x);enterW(S,n);S.x=WORLDDEF[n].arriveX;
- setWorld(n);DG=null;P=newPlayer(S.x);P.dir=-1;ENEMIES=[];PROJ=[];PICK=[];ROCKS=[];FTXT=[];PARTS=[];env.biome=-1;env.spawnD=0;env.next=350;env.ash=0;env.bliz=0;env.lift=0;
+ setWorld(n);DG=null;P=newPlayer(S.x);P.dir=-1;ENEMIES=[];PROJ=[];PICK=[];ROCKS=[];FTXT=[];PARTS=[];env.biome=-1;env.spawnD=0;env.next=350;W1ENV.ash=0;W1ENV.bliz=0;env.lift=0;
  S.horse.x=Math.round(S.x-WORLDDEF[n].horseOff);S.horse.dir=1;
  if(!n&&S.park&&Math.abs(S.park.x-P.x)<120)hitch();
  camX=clamp(P.x-VW/2,0,WORLD-VW);camY=P.y-VH*.64;setMode('play');

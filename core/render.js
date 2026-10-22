@@ -61,9 +61,9 @@ function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==
  drawActors(ox,oy);
  // weather
  const bm=biomeAt(mid);
- if(bm===1||(b1===1&&t>.3)){const heavy=env.bliz>0&&MODE==='play';const n=heavy?140:40;X.fillStyle='#ffffff';for(let i=0;i<n;i++){const s=hash(i*3.3);const x=((s*997+menuT*(heavy?-90:-12)*(1+s))%VW+VW)%VW,y=((hash(i*7.1)*VH+menuT*(heavy?60:22)*(1+s*.5))%VH);X.fillRect(Math.round(x),Math.round(y),1,1)}if(heavy){X.fillStyle='rgba(235,242,255,.32)';X.fillRect(0,0,VW,VH)}}
+ if(bm===1||(b1===1&&t>.3)){const heavy=W1ENV.bliz>0&&MODE==='play';const n=heavy?140:40;X.fillStyle='#ffffff';for(let i=0;i<n;i++){const s=hash(i*3.3);const x=((s*997+menuT*(heavy?-90:-12)*(1+s))%VW+VW)%VW,y=((hash(i*7.1)*VH+menuT*(heavy?60:22)*(1+s*.5))%VH);X.fillRect(Math.round(x),Math.round(y),1,1)}if(heavy){X.fillStyle='rgba(235,242,255,.32)';X.fillRect(0,0,VW,VH)}}
  if(bm===3){for(let i=0;i<24;i++){const s=hash(i*5.7);const x=(s*VW+Math.sin(menuT+i)*10+VW)%VW,y=VH-((hash(i*2.9)*VH+menuT*30*(1+s))%VH);X.fillStyle=i%3?'#ff7a1a':'#ffd040';X.fillRect(Math.round(x),Math.round(y),1,1)}X.fillStyle='rgba(255,80,20,.07)';X.fillRect(0,0,VW,VH)}
- if(bm===4||(b1===4&&t>.4)){const st=env.ash>0&&MODE==='play';const n=st?120:36;for(let i=0;i<n;i++){const s=hash(i*4.1);const x=((s*991+menuT*(st?-110:-14)*(1+s))%VW+VW)%VW,y=((hash(i*6.3)*VH+menuT*(st?40:12)*(1+s*.5))%VH);X.fillStyle=i%5?'#b8b0a8':'#ff9a4a';X.fillRect(Math.round(x),Math.round(y),1,1)}if(st){X.fillStyle='rgba(120,108,100,.34)';X.fillRect(0,0,VW,VH)}}
+ if(bm===4||(b1===4&&t>.4)){const st=W1ENV.ash>0&&MODE==='play';const n=st?120:36;for(let i=0;i<n;i++){const s=hash(i*4.1);const x=((s*991+menuT*(st?-110:-14)*(1+s))%VW+VW)%VW,y=((hash(i*6.3)*VH+menuT*(st?40:12)*(1+s*.5))%VH);X.fillStyle=i%5?'#b8b0a8':'#ff9a4a';X.fillRect(Math.round(x),Math.round(y),1,1)}if(st){X.fillStyle='rgba(120,108,100,.34)';X.fillRect(0,0,VW,VH)}}
  if(S&&S.park&&(!WI||!FEATURE_DRIVABLE_AIRSHIPS)&&MODE!=='menu')cartArrow(ox,oy);
  if(WI)drawWeather(ox,oy);
  drawFTXT(ox,oy);
