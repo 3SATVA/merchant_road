@@ -13,12 +13,12 @@ Static site, no build step. `index.html` is a thin shell (markup + help text) th
 | `core/` | engine and shared systems: `util` (math, RNG hash, rect batcher), `registry` (shared tables, `reg()`, `WORLDDEF`, current-world globals), `world` (terrain, pits, decor, `setWorld`), `wings`, `player`, `horse` (riding, lances, summon), `state` (save/load + migrations), `economy`, `cart` (hitch/park), `input`, `canvas`, `ui`, `town` (shop panels), `hud` (HUD, minimap), `play` (update loop, combat, spawning, `env` run timers), `render`, `scenery` (towns, decor), `worldswitch` (`leaveW`/`enterW`/`travelTo`), `loop`, `testhooks` (`window.MR`), plus `style.css` and `touchguard.js` |
 | `inventory/` | things that carry between worlds: `data` (weapons, gear, sets, materials, drops, inn), `inventory` (panel, equip, HP), `forge` (recipes), `enchant` (enchants, curses), `enchanter` (enchanter panel) |
 | `world1/` | the Road: `data` (goods, wagons, towns, biomes, enemies, spawn tables, caves, scrap pile, `WORLDDEF[0]`), `enemies` (ground foe AI + drawing), `caves`, `witch`, `wagon` (parked cart drawing), `scrap` (airship build), `weather` (blizzard, ash storm, falling rocks: `W1ENV`) |
-| `world2/` | Skylands: `data` (sky goods, Winged Cart, ships, islands, docks, towns, biomes, sky foes, flag, `WORLDDEF[1]`), `art` (Winged Cart sprite), `islands`, `sky` (flight, bands, `W2ENV`), `skyfoes`, `wingcart`, `weather` (rain/updraft zones), `cutscene`, `dock`, `airships` (shelved) |
+| `world2/` | Skylands: `data` (sky goods, Winged Cart, ships, islands, docks, towns, biomes, sky foes, flag, `WORLDDEF[1]`), `art` (Winged Cart sprite), `islands`, `sky` (flight, bands, `W2ENV`), `skyfoes`, `wingcart`, `weather` (rain/updraft zones), `cutscene`, `dock`, `airships` (shelved), `skyisles` (sky islands between Skyhaven and Sunspire: island foes, unicorn bolts, storm clouds, rewards) |
 | `assets/` | `icons` (gear/item pixel icons), `sprites` (weapon + hauler sprites), `ui-icons` (`ICO`, emoji-to-pixel glyphs), `portrait.js` (witch portrait data URI), `witch_portrait.png` (source of that portrait) |
 
 ## Load order (index.html)
 `core/touchguard` (head), then:
-core/util, core/registry, world1/data, world2/data, inventory/data, core/world, core/wings, world2/art, core/player, core/horse, assets/icons, assets/sprites, assets/ui-icons, assets/portrait, core/state, core/economy, core/cart, core/input, core/canvas, core/ui, core/town, core/hud, inventory/inventory, inventory/forge, inventory/enchant, inventory/enchanter, core/play, core/render, core/scenery, core/worldswitch, world1/enemies, world1/caves, world1/witch, world1/wagon, world1/scrap, world1/weather, world2/islands, world2/sky, world2/skyfoes, world2/wingcart, world2/weather, world2/cutscene, world2/dock, world2/airships, core/loop (boots the game), core/testhooks.
+core/util, core/registry, world1/data, world2/data, inventory/data, core/world, core/wings, world2/art, core/player, core/horse, assets/icons, assets/sprites, assets/ui-icons, assets/portrait, core/state, core/economy, core/cart, core/input, core/canvas, core/ui, core/town, core/hud, inventory/inventory, inventory/forge, inventory/enchant, inventory/enchanter, core/play, core/render, core/scenery, core/worldswitch, world1/enemies, world1/caves, world1/witch, world1/wagon, world1/scrap, world1/weather, world2/islands, world2/sky, world2/skyfoes, world2/wingcart, world2/weather, world2/cutscene, world2/dock, world2/airships, world2/skyisles, core/loop (boots the game), core/testhooks.
 
 The data files load first because terrain, town biomes and sprite sheets are built at load. Gameplay files only run when called, so their position among themselves doesn't matter. Keep `core/loop.js` near the end.
 
@@ -29,12 +29,20 @@ The data files load first because terrain, town biomes and sprite sheets are bui
 - BIOMES, BIOMEINFO, SPAWNS: World 1 0–4, World 2 5–7
 
 `ENEMY`, `HAULERS`, `COFF` and `HITCHR` are keyed objects (World 1 keys first, then World 2).
-Save format, field names and the `merchantRoad.v1` key are unchanged. Never rename save fields or reorder `load()` migrations.
+Save format, field names and the `merchantRoad.v1` key are unchanged. New fields are only ever added (and created lazily), e.g. `S.sky={r:{island:S.time taken},st:storm toast seen}` from the sky islands; a save without it loads as before. Never rename save fields or reorder `load()` migrations.
 
 ## Per-world state
 - `WORLDDEF[n]` (in `worldN/data.js`) holds everything that used to be an `if(WI)` branch: length, biome bands, X limits, caves, terrain formula `rawH`, extra flat ground, pit builder, decor rule, arrival town/money/position, and the world's **cart** (`cart()`, `leave()`, `carry`, `autoHitch`, `parkIco`). `setWorld(n)` copies it into the current-world globals (`WORLD`, `BOUNDS`, `NB`, `WB`, `XMIN`, `XMAX`, `WT`, `DUNGEONS`).
 - `S.park` is the parked cart of the **current** world only. On a world switch, `WORLDDEF[w].leave()` files it into `S.ws[w]` and `enterW` restores the other world's park. `curH()` asks the current world's def which cart it owns: the wagon in World 1, the Winged Cart in World 2.
 - Timers: `env` (core/play.js) holds run timers shared by both worlds (biome, spawn distance, autosave, lift). World 1 storms and rocks live in `W1ENV` and only tick in World 1. World 2 weather and leap timers live in `W2ENV`. `travelTo` clears a running World 1 storm, as before.
+
+## Sky islands (world2/skyisles.js)
+- `SKYISLES` in `world2/data.js` (`x0,x1,h` surface height, `top` 0 aqua / 1 lilac grass, `storm`, reward `rw` chest/wool/crystal at `rx` from the centre, `foes`). `UNI` holds the unicorn bolt numbers, `SKYI` the reward cooldowns and amounts, `STORMIN` how far inside the island the storm starts.
+- They are ordinary World 2 ground: `onIsle(x)` covers `ISLES` plus `skyAt(x)`, `WORLDDEF[1].rawH` gives them their height, and `isleTh` their thickness, so landing, walking, horse summon and `groundAt` need nothing new. `islAt` stays town islands only, so decor, docks, the Winged Cart park and `onIsleX` (save migrations, death respawn) ignore sky islands.
+- Foes with `isle:1` (`unicorn`, `bigSlime`, `isleSlime` = the big slime's halves) are `air:1` enemies, so `updAir`/`drawAir` route them to `updIsle`/`drawIsleFoe`. `skyTick` (called from `w2Tick`) spawns them when an island comes near and despawns them when it is far, and the flier cull and `spawnAir` count skip them. In flight their hits go through `airHit`/`cartHit` like other sky foes.
+- Storms: `stormAt(x)`; `canFly()` is false there, so `updSky` drops you onto the island (`stormDrop`, toast once) and you take off again past the cloud's edge.
+- Drawing hooks: `drawClouds` calls `drawSkyProps` (grass, roots, crystals, rewards), `drawWeather` calls `drawStorms` and `drawBolts`. Plain clouds overlapping an island are skipped (`c.isl`).
+- To add an island: append to `SKYISLES` (keep it between town islands, at least ~150px from the WX zone edges looks best). Existing save `S.sky.r` keys are island indices, so append only.
 
 ## How to add…
 **An enemy to World 2:** add it to `Object.assign(ENEMY,{...})` in `world2/data.js` (use `base:'slime'|'goblin'|'golem'|'witch'` to reuse a ground foe's AI and art, or `air:1` for a flier). Put it in the biome's row of `reg(SPAWNS,5,...)`. A new flier needs its look in `drawAir` (`world2/skyfoes.js`). Same pattern for World 1 in `world1/data.js` (`world1/enemies.js` for new art/AI).
@@ -49,4 +57,4 @@ Save format, field names and the `merchantRoad.v1` key are unchanged. Never rena
 All the code is in `world2/airships.js`, `world2/dock.js`, `world2/islands.js` (`drawShipD`, `liveDocks`) and `core/town.js` (Airships tab), plus `SHIPS`/`SORDER` in `world2/data.js`. Set `FEATURE_DRIVABLE_AIRSHIPS=true` in `world2/data.js`. Before you ship that, give the airship hold its own save field (e.g. `S.shipPark`), because `detachShip`/`attachShip` still use `S.park`, which World 2 now uses for the Winged Cart (see SHELVED.md).
 
 ## Testing
-`tests/regression/` (excluded from deploy): deterministic harness with 25 scenarios plus 25 saves × 3 viewports, pixel and state compare. See its README.
+`tests/regression/` (excluded from deploy): deterministic harness with its scenarios (including `isle_*` sky island ones) plus 25 saves × 3 viewports, pixel and state compare. See its README.
