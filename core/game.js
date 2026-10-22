@@ -10,29 +10,37 @@ const rnd=Math.random;
 let DG=null; // active dungeon run (null = on the road)
 function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 // ===== data =====
-const ITEMS=[
+// ===== registries =====
+// Worlds append their goods, haulers, towns, biomes, enemies and spawn tables here (world1/data.js, then world2/data.js).
+// ITEMS / TOWNS / BIOMES / SPAWNS indices are save data (cargo item + origin, lastTown, visited): append only, World 1 first;
+// reg() throws if a world registers out of order. Object tables keep insertion order: World 1 keys, then World 2.
+const ITEMS=[],TOWNS=[],BIOMES=[],BIOMEINFO=[],SPAWNS=[],ENEMY={},COFF={},HITCHR={}; // COFF: cart centre relative to player; HITCHR: how close you must be to hitch
+const HAULERS={backpack:{name:'Backpack',cap:5,spd:1,jump:1,price:0}};
+function reg(list,at,arr){if(list.length!==at)throw new Error('registry order: expected index '+at+', have '+list.length);list.push(...arr)}
+reg(ITEMS,0,[
  {id:'apple',name:'Apple',base:5,col:'#d83a3a'},
  {id:'potato',name:'Potato',base:10,col:'#c8a060'},
  {id:'wood',name:'Wood',base:30,col:'#8b5a2b'},
  {id:'coal',name:'Coal',base:100,col:'#2a2a30'},
  {id:'iron',name:'Iron',base:500,col:'#a8b0bc'},
- {id:'gold',name:'Gold',base:2000,col:'#ffd040'},
- // sky goods (World 2)
+ {id:'gold',name:'Gold',base:2000,col:'#ffd040'}]);
+// sky goods (World 2)
+reg(ITEMS,6,[
  {id:'cloudwool',name:'Cloud Wool',base:20,col:'#e8f4ff'},
  {id:'skyglass',name:'Sky Crystal',base:260,col:'#7de0ff'},
  {id:'sunfruit',name:'Sunfruit',base:14,col:'#ffb040'},
- {id:'starsilk',name:'Star Silk',base:160,col:'#e8c8ff'}];
-const HAULERS={
- backpack:{name:'Backpack',cap:5,spd:1,jump:1,price:0},
+ {id:'starsilk',name:'Star Silk',base:160,col:'#e8c8ff'}]);
+Object.assign(HAULERS,{
  wheelbarrow:{name:'Wheelbarrow',cap:12,spd:.9,jump:.97,price:120},
  smallwagon:{name:'Small Wagon',cap:25,spd:.78,jump:.93,price:800},
- bigwagon:{name:'Big Wagon',cap:50,spd:.66,jump:.9,price:4500},
- wingcart:{name:'Winged Cart',cap:20,spd:.9,jump:.95,price:400,w:1}}; // World 2 only (Skyhaven), hitches to the winged horse
+ bigwagon:{name:'Big Wagon',cap:50,spd:.66,jump:.9,price:4500}});
+HAULERS.wingcart={name:'Winged Cart',cap:20,spd:.9,jump:.95,price:400,w:1}; // World 2 only (Skyhaven), hitches to the winged horse
 const HORDER=['backpack','wheelbarrow','smallwagon','bigwagon'];
 const FLAPA=[62,32,4,-28,-56,20],FLAPL=[.82,1,1,.95,.8,.66],FLAPBOB=[1,0,0,-1,-1,0],WINGC={}; // wing flap cycle (see wingRects)
 const PACK=5; // backpack slots, always carried (part of every hauler's total)
-const COFF={wheelbarrow:11,smallwagon:-15,bigwagon:-23,wingcart:-18}; // cart centre relative to player
-const HITCHR={wheelbarrow:22,smallwagon:30,bigwagon:38,wingcart:32}; // how close you must be to hitch
+Object.assign(COFF,{wheelbarrow:11,smallwagon:-15,bigwagon:-23});
+Object.assign(HITCHR,{wheelbarrow:22,smallwagon:30,bigwagon:38});
+COFF.wingcart=-18;HITCHR.wingcart=32;
 function nearCartP(){return !!((!WI||!FEATURE_DRIVABLE_AIRSHIPS)&&S.park&&P&&!DG&&Math.abs(P.x-S.park.x)<HITCHR[curH()]||0)}
 const WEAPONS={
  fists:{name:'Fists',dmg:5,range:13,cd:.35,price:0},
@@ -81,32 +89,35 @@ function onIsle(x){return islAt(x)>=0}
 function wxAt(x){for(const z of WX)if(x>z.x0&&x<z.x1)return z.k;return null}
 function dockShipX(i){const d=DOCKS[i];return d.x+d.side*52}
 const SCRAPX=WORLD-170,NEED={wood:150,apple:50,gold:50},SCRAPI={wood:2,apple:0,gold:5},SCRAPK=['wood','apple','gold'];
-const TOWNS=[
+reg(TOWNS,0,[
  {name:'Wake Ridge',x:300,barber:1,sells:[0,1,2],weapons:['dagger'],haulers:['wheelbarrow']},
  {name:'Bog Town',x:1800,stable:1,sells:[0,1,2],weapons:['sword','crossbow'],haulers:['wheelbarrow','smallwagon']},
  {name:'Frostholm',x:4000,forge:1,sells:[1,2,3],weapons:['leafstaff','sword'],haulers:['smallwagon']},
  {name:'Pinehollow',x:5600,barber:1,stable:1,sells:[2,3,4],weapons:['warhammer','crossbow'],haulers:['smallwagon','bigwagon']},
  {name:'Stonepeak',x:8000,forge:1,stable:1,sells:[3,4,5],weapons:['frostspear','warhammer'],haulers:['bigwagon']},
- {name:'Emberfall',x:11000,barber:1,forge:1,sells:[3,4,5],weapons:['obsidian','leafstaff'],haulers:['bigwagon']},
+ {name:'Emberfall',x:11000,barber:1,forge:1,sells:[3,4,5],weapons:['obsidian','leafstaff'],haulers:['bigwagon']}]);
+reg(TOWNS,6,[
  {name:'Skyhaven',x:1050,w:1,ships:1,sells:[6,7],weapons:[],haulers:[]},
- {name:'Sunspire',x:7750,w:1,sells:[8,9],weapons:[],haulers:[]}];
+ {name:'Sunspire',x:7750,w:1,sells:[8,9],weapons:[],haulers:[]}]);
 TOWNS.forEach((t,i)=>{t.i=i;t.w=t.w||0;t.biome=t.w?(t.x>ISLES[1].x0?7:5):biomeAt(t.x)});let WT=TOWNS.filter(t=>!t.w); // WT = towns of the current world
 const TOWNR=110, DUNIT=1500;
 const W1DUNG=[1050,2850,3600,4750,6750,7350,8900,10250,11650,13350].map((x,i)=>({i,x,b:biomeAt(x),diff:clamp(1+Math.floor(x/4000),1,3)}));let DUNGEONS=W1DUNG;
 const DRESPAWN=480; // seconds of play before a looted cave refills
 function dungAt(x,r){if(DG)return null;r=r||18;for(const d of DUNGEONS)if(Math.abs(x-d.x)<r)return d;return null}
-const BIOMES=[
+reg(BIOMES,0,[
  {name:'Plains',sky:['#4f9fe0','#8fcff2','#d4f0fb'],far:'#9cc4cf',mid:'#6aa86a',top:'#6cc04a',top2:'#4f9a3a',dirt:'#8a5a32',dirt2:'#6e4526',farS:'hills',midS:'trees',mm:'#5aa040'},
  {name:'Snowy Forest',sky:['#7d98c0','#b2c6de','#e6eef7'],far:'#c9d6e8',mid:'#3f6050',top:'#f4f8ff',top2:'#c6d8ec',dirt:'#6d6377',dirt2:'#554b5e',farS:'peaks',midS:'pines',mm:'#d8e4f0'},
  {name:'Mountains',sky:['#4e6aa8','#8aa0cc','#c7d3ea'],far:'#8a8fb0',mid:'#5f6178',top:'#a0a6ae',top2:'#7b818c',dirt:'#5d5f6b',dirt2:'#474954',farS:'peaks',midS:'rocks',mm:'#8a8c98'},
  {name:'Volcano',sky:['#2a0e18','#6e2418','#d05a26'],far:'#4e2226',mid:'#2e1818',top:'#4c3636',top2:'#3a2626',dirt:'#2a1c1c',dirt2:'#1e1414',farS:'volcano',midS:'rocks',mm:'#a03a1a'},
- {name:'Ashen Wastes',sky:['#2e2a36','#6a5c60','#c2a084'],far:'#4e4650',mid:'#353034',top:'#a29a90',top2:'#7c746c',dirt:'#4a423e',dirt2:'#37302e',farS:'ruins',midS:'spires',mm:'#6e6660'},
+ {name:'Ashen Wastes',sky:['#2e2a36','#6a5c60','#c2a084'],far:'#4e4650',mid:'#353034',top:'#a29a90',top2:'#7c746c',dirt:'#4a423e',dirt2:'#37302e',farS:'ruins',midS:'spires',mm:'#6e6660'}]);
+reg(BIOMES,5,[
  {name:'Sky Meadow',sky:['#78c4f0','#b4e2f8','#eaf8ff'],far:'#a8cce0',mid:'#f4fbff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#5ee0c8'},
  {name:'Air Wilds',sky:['#5aa4e0','#9ad2f4','#e2f4ff'],far:'#b0d4ec',mid:'#f0f8ff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#a8d8f4'},
- {name:'Sunspire Isle',sky:['#8aa8ec','#cfc4f2','#fbe6f2'],far:'#cabce6',mid:'#fbf4ff',top:'#c8a8f0',top2:'#9a7ad0',dirt:'#ecdcc8',dirt2:'#d4bea4',farS:'isles',midS:'cloudbank',mm:'#c8a8f0'}];
-const BIOMEINFO=['Slimes & goblins','Deep snow slows you · blizzards','Uphill is slow · rockfall!','Heat burns · jump lava pits','No towns · raiders · ash storms','Peaceful skies','Pegasi · sky slimes · storms','Peaceful skies'];
+ {name:'Sunspire Isle',sky:['#8aa8ec','#cfc4f2','#fbe6f2'],far:'#cabce6',mid:'#fbf4ff',top:'#c8a8f0',top2:'#9a7ad0',dirt:'#ecdcc8',dirt2:'#d4bea4',farS:'isles',midS:'cloudbank',mm:'#c8a8f0'}]);
+reg(BIOMEINFO,0,['Slimes & goblins','Deep snow slows you · blizzards','Uphill is slow · rockfall!','Heat burns · jump lava pits','No towns · raiders · ash storms']);
+reg(BIOMEINFO,5,['Peaceful skies','Pegasi · sky slimes · storms','Peaceful skies']);
 function biomeAt(x){for(let i=0;i<NB;i++)if(x<BOUNDS[i+1])return WB[i];return WB[NB-1]}
-const ENEMY={
+Object.assign(ENEMY,{
  slime:{hp:14,dmg:6,spd:55,w:10,h:8,coin:[1,3]},
  goblin:{hp:20,dmg:7,spd:72,w:8,h:12,coin:[2,5]},
  goblinS:{hp:30,dmg:9,spd:80,w:8,h:12,coin:[4,9],base:'goblin'},
@@ -118,11 +129,13 @@ const ENEMY={
  // Ashen Wastes: tougher kin of the usual foes
  raider:{hp:38,dmg:11,spd:70,w:8,h:12,coin:[10,20],base:'goblin'},
  cinderSlime:{hp:32,dmg:10,spd:62,w:10,h:8,coin:[6,12],base:'slime'},
- scrapGolem:{hp:120,dmg:24,spd:28,w:16,h:26,coin:[45,80],base:'golem'},
- // Skylands air wilds (hull = damage to an airship)
+ scrapGolem:{hp:120,dmg:24,spd:28,w:16,h:26,coin:[45,80],base:'golem'}});
+// Skylands air wilds (hull = damage to an airship)
+Object.assign(ENEMY,{
  pegasus:{hp:55,dmg:11,hull:10,spd:190,w:18,h:14,coin:[6,12],air:1},
- skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1}};
-const SPAWNS=[[['slime',.6],['goblin',.4]],[['iceGolem',.4],['goblinS',.6]],[['stoneGolem',.5],['witch',.5]],[['witchV',.45],['lavaGolem',.55]],[['raider',.5],['cinderSlime',.36],['scrapGolem',.14]],[['slime',1]],[['pegasus',.55],['skySlime',.45]],[['slime',1]]];
+ skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1}});
+reg(SPAWNS,0,[[['slime',.6],['goblin',.4]],[['iceGolem',.4],['goblinS',.6]],[['stoneGolem',.5],['witch',.5]],[['witchV',.45],['lavaGolem',.55]],[['raider',.5],['cinderSlime',.36],['scrapGolem',.14]]]); // spawn tables per biome
+reg(SPAWNS,5,[[['slime',1]],[['pegasus',.55],['skySlime',.45]],[['slime',1]]]);
 function wmult(w,type){const e=w.elem;
  if(e==='fire'){if(type==='iceGolem')return 2;if(type==='slime')return 1.5;if(type==='lavaGolem')return .4}
  if(e==='ice'){if(type==='lavaGolem')return 2;if(type==='iceGolem')return .5}
