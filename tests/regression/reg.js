@@ -12,7 +12,7 @@ window.__step=n=>{for(let i=0;i<n;i++){vt+=1000/60;tq.sort((p,q)=>p.t-q.t||p.id-
 document.addEventListener('DOMContentLoaded',()=>{const s=document.createElement('style');s.textContent='*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}';document.head.appendChild(s)});})();`;
 const VPS=[[390,844,true,'p'],[844,390,true,'l'],[1280,800,false,'d']];
 const base=o=>Object.assign({money:500,hp:200,maxhp:200,potions:2,hauler:'bigwagon',haulers:['backpack','wheelbarrow','bigwagon'],weapons:['fists','sword','crossbow'],weapon:'sword',cargo:[{item:2,origin:1,qty:6,paid:30},{item:3,origin:2,qty:3,paid:100}],lastTown:1,x:2200,time:50,stats:{kills:3,profit:40,sold:5,deaths:0},visited:[0,1,2],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat'},mats:{essence:2,lava:1},look:{skin:1,body:0,hair:3,hc:2},ench:{sword:[{k:'fire',l:1}]},witch:{x:5000,t:40,seen:false},horse:null,lances:[],lance:null,scrap:{wood:20,apple:5,gold:0,done:false},wal:1,v:2,shelf:1},o);
-const W2=o=>base(Object.assign({w:1,x:1300,lastTown:6,money:600,w2seen:true,visited:[0,1,5,6],hauler:'bigwagon',cargo:[{item:6,origin:6,qty:3,paid:20}],horse:{on:true,x:null,dir:1,wings:true},lances:['woodlance'],lance:'woodlance',scrap:{wood:150,apple:50,gold:50,done:true},ws:{0:{x:14710,lastTown:5,money:900,park:null,stash:[],hold:[]}}},o));
+const W2=o=>base(Object.assign({w2l:2,w:1,x:1300,lastTown:6,money:600,w2seen:true,visited:[0,1,5,6],hauler:'bigwagon',cargo:[{item:6,origin:6,qty:3,paid:20}],horse:{on:true,x:null,dir:1,wings:true},lances:['woodlance'],lance:'woodlance',scrap:{wood:150,apple:50,gold:50,done:true},ws:{0:{x:14710,lastTown:5,money:900,park:null,stash:[],hold:[]}}},o));
 // End-game World 1 loadouts for World 2 balance (see ARCHITECTURE.md "World 2 difficulty"): max = best W1 kit, mid = partway through W1
 const ALLW=['fists','dagger','sword','crossbow','leafstaff','firestaff','warhammer','frostspear','obsidian','flamesword'];
 const BALPROF={
@@ -25,7 +25,7 @@ const BALPROF={
 // Skyhaven -> Sunspire crossing bot. c = careful (hops off for storm islands, band discipline, dodges telegraphed bolts and dives, potion < 30%), r = careless (holds right, swings, potion < 15%)
 const BALRUN=(p,m)=>async h=>{await h.seed(W2(Object.assign({x:1900,cargo:[{item:6,origin:6,qty:6,paid:20}]},BALPROF[p])));
  const r=await h.ev(m=>{let f=0,minhp=S.hp,hits=0,lh=S.hp,pots=0,lp=S.potions;const M=MR.maxHP();MR.P.dir=1;
-  for(;f<9000;f++){if(MR.mode!=='play'||MR.P.x>6790)break;tkeys.r=1;const P=MR.P;
+  for(;f<20000;f++){if(MR.mode!=='play'||MR.P.x>ISLES[1].x0-10)break;tkeys.r=1;const P=MR.P;
    if(!P.fly&&P.onGround&&!stormAt(P.x)&&!(m==='c'&&MR.E.some(e=>!e.dead&&ENEMY[e.type].isle&&Math.abs(e.x-P.x)<60)))pressed.tj=1;
    if(m==='c'&&!P.fly&&P.onGround&&S.horse){if(mounted()&&stormAt(P.x))pressed.tm=1;else if(!mounted()&&!stormAt(P.x))pressed.tm=1} // careful: cross a storm island on foot, whistle the horse back past it
    if(m==='c'){if(P.fly&&!(f%6)){const tb=SKYISLES.some(I=>P.x>I.x0-70&&P.x<I.x1+20)?2:1;if(P.band<tb)pressed.tu=1;else if(P.band>tb)pressed.td=1}
@@ -83,13 +83,13 @@ const SC=[
  // sky islands (World 2)
  ['isle_land',async h=>{await h.seed(W2({...BALPROF.max,x:1900}));await h.step(10);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{tkeys.r=1});for(let k=0;k<40&&await h.ev(()=>MR.P.x<2290);k++)await h.step(10);await h.ev(()=>{tkeys.r=0});await h.step(30);await h.shot('over');
    for(let k=0;k<3;k++){await h.ev(()=>{pressed.td=1});await h.step(20)}await h.step(40);await h.shot();await h.dig()}],
- ['isle_unicorn',async h=>{await h.seed(W2({...BALPROF.max,x:3195}));await h.step(5);for(let k=0;k<150&&!await h.ev(()=>MR.E.some(e=>e.type==='unicorn'&&e.st==='charge'));k++)await h.step(2);await h.step(20);await h.shot('tele');
+ ['isle_unicorn',async h=>{await h.seed(W2({...BALPROF.max,x:3445}));await h.step(5);for(let k=0;k<150&&!await h.ev(()=>MR.E.some(e=>e.type==='unicorn'&&e.st==='charge'));k++)await h.step(2);await h.step(20);await h.shot('tele');
    for(let k=0;k<60&&!await h.ev(()=>UB.length);k++)await h.step(1);await h.step(7);await h.shot('bolt');await h.step(40);await h.dig('hit');
    for(let k=0;k<200&&!await h.ev(()=>MR.E.some(e=>e.type==='unicorn'&&e.st==='charge'&&e.sT<.2));k++)await h.step(1);await h.ev(()=>{pressed.tj=1});await h.step(40);await h.shot('jump');await h.dig()}],
  ['isle_slime',async h=>{await h.seed(W2(Object.assign({},BALPROF.max,{x:2300,horse:{on:false,x:2270,dir:1,wings:true}})));await h.step(5);
    for(let k=0;k<60;k++){if(!await h.ev(()=>MR.E.some(e=>e.type==='bigSlime'&&!e.dead)))break;await h.ev(k=>{const e=MR.E.find(e=>e.type==='bigSlime'&&!e.dead);const d=e.x-MR.P.x;keys.d=d>14;keys.a=d<-14;keys.j=k%2===0;if(Math.abs(d)<=14)MR.P.dir=d>0?1:-1},k);await h.step(8);if(k===5)await h.shot('fight')}
    await h.ev(()=>{for(const k in keys)keys[k]=0});await h.step(12);await h.shot('split');await h.dig()}],
- ['isle_elite',async h=>{await h.seed(W2(Object.assign({},BALPROF.max,{x:4510})));await h.step(5);
+ ['isle_elite',async h=>{await h.seed(W2(Object.assign({},BALPROF.max,{x:5800})));await h.step(5);
    await h.ev(()=>{for(const e of MR.E){if(e.type==='dreadUni'){e.x=e.tx=MR.P.x+130;e.cd=.2}else if(e.type==='bigSlime')e.x=e.tx=SKYISLES[3].x1-12}});
    for(let k=0;k<200&&!await h.ev(()=>MR.E.some(e=>e.type==='dreadUni'&&e.st==='charge'));k++)await h.step(2);await h.step(18);await h.shot('tele');
    for(let k=0;k<90&&await h.ev(()=>UB.length<2);k++)await h.step(1);await h.step(3);await h.shot('burst');await h.step(60);await h.dig()}],
@@ -99,24 +99,37 @@ const SC=[
    await h.ev(()=>MR.toggleHorse());await h.ev(()=>{pressed.tj=1});await h.step(90);const fly=await sp(90);await h.ev(()=>{tkeys.r=0});
    h.put('spd',{ride,foot,fly,fly1:await h.ev(()=>!!MR.P.fly),told:await h.ev(()=>S.sky.ld)});await h.step(20);await h.dig()}],
  // storm island: plod mounted into the storm, hop off, whistle the horse back inside the storm, ride out past its edge and take off; Winged Cart hitched throughout
- ['isle_plod_storm',async h=>{await h.seed(W2({...BALPROF.max,x:3870,wcart:true,cargo:[{item:6,origin:6,qty:12,paid:20}]}));const kill=()=>h.ev(()=>{for(const e of MR.E)if(ENEMY[e.type].isle)e.dead=1;UB.length=0});
+ ['isle_plod_storm',async h=>{await h.seed(W2({...BALPROF.max,x:4615,wcart:true,cargo:[{item:6,origin:6,qty:12,paid:20}]}));const kill=()=>h.ev(()=>{for(const e of MR.E)if(ENEMY[e.type].isle)e.dead=1;UB.length=0});
    await h.ev(()=>{MR.P.dir=1;tkeys.r=1});for(let k=0;k<12;k++){await kill();await h.step(10)}const a=await h.ev(()=>({x:Math.round(MR.P.x),m:MR.mounted(),storm:stormAt(MR.P.x),cart:carriedH()}));
    await h.ev(()=>{pressed.tj=1});await h.step(20);const hop=await h.ev(()=>({fly:MR.P.fly,m:MR.mounted()}));await h.ev(()=>MR.toggleHorse());await h.step(30);await h.shot('foot');
    for(let k=0;k<12;k++){await kill();await h.step(10)}const b=await h.ev(()=>({x:Math.round(MR.P.x),m:MR.mounted(),hx:S.horse.x,cart:carriedH()}));
    await h.ev(()=>MR.toggleHorse());await h.step(10);const c=await h.ev(()=>({m:MR.mounted(),storm:stormAt(MR.P.x)}));
-   for(let k=0;k<60&&await h.ev(()=>stormAt(MR.P.x)||!MR.P.onGround);k++){await kill();await h.step(10)}await h.ev(()=>{pressed.tj=1});await h.step(40);await h.ev(()=>{tkeys.r=0});
+   for(let k=0;k<160&&await h.ev(()=>stormAt(MR.P.x)||!MR.P.onGround);k++){await kill();await h.step(10)}await h.ev(()=>{pressed.tj=1});await h.step(40);await h.ev(()=>{tkeys.r=0});
    h.put('chk',{a,hop,b,c,out:await h.ev(()=>({x:Math.round(MR.P.x),fly:MR.P.fly,m:MR.mounted(),cart:carriedH(),cargo:MR.cargoCount()}))});await h.shot('out');await h.dig()}],
  // a save made mounted on a sky island loads mounted and plodding, and takes straight off
- ['isle_plod_save',async h=>{await h.seed(W2({...BALPROF.max,x:4560,horse:{on:true,x:null,dir:1,wings:true}}));await h.step(30);await h.ev(()=>MR.save());const sv=await h.ev(()=>localStorage.getItem('merchantRoad.v1'));
+ ['isle_plod_save',async h=>{await h.seed(W2({...BALPROF.max,x:5951,horse:{on:true,x:null,dir:1,wings:true}}));await h.step(30);await h.ev(()=>MR.save());const sv=await h.ev(()=>localStorage.getItem('merchantRoad.v1'));
    await h.seed(sv);await h.step(10);const a=await h.ev(()=>({m:MR.mounted(),g:MR.P.onGround,fly:MR.P.fly,x:Math.round(MR.P.x)}));await h.ev(()=>{pressed.tj=1});await h.step(30);
    h.put('chk',{a,b:await h.ev(()=>({fly:MR.P.fly,m:MR.mounted()}))});await h.shot();await h.dig()}],
+ // bigger sky islands: every foe in its own patrol slice (min SKYI.gap apart), no foe within SKYI.safe of an end, over 12s of play; rewards deep inside
+ ['isle_spread',async h=>{await h.seed(W2({...BALPROF.max,x:1900,hp:9999,maxhp:9999}));const out=[];
+   for(let i=0;i<5;i++){const r=await h.ev(i=>{const I=SKYISLES[i];MR.P.x=I.x0+20;MR.P.y=surfY(MR.P.x);MR.P.fly=null;MR.P.onGround=true;S.hp=MR.maxHP();return 1},i);let gap=1e9,end=1e9,n=0;
+    for(let k=0;k<72;k++){await h.step(10);const q=await h.ev(i=>{const I=SKYISLES[i],F=MR.E.filter(e=>e.isl===i&&!e.dead&&e.type!=='isleSlime').map(e=>e.x).sort((a,b)=>a-b);S.hp=MR.maxHP();let g=1e9;for(let j=1;j<F.length;j++)g=Math.min(g,F[j]-F[j-1]);return{n:F.length,g,e:F.length?Math.min(F[0]-I.x0,I.x1-F[F.length-1]):1e9}},i);gap=Math.min(gap,q.g);end=Math.min(end,q.e);n=Math.max(n,q.n)}
+    out.push(await h.ev(([i,gap,end,n])=>{const I=SKYISLES[i],rx=rwX(i);return{i,w:I.x1-I.x0,n,gap:Math.round(gap),end:Math.round(end),rw:Math.min(rx-I.x0,I.x1-rx),pad:[I.x0+40,I.x1-40].map(x=>groundAt(x)!==null&&!stormAt(x))}},[i,gap,end,n]))}
+   const tk=[];for(let i=0;i<5;i++)for(const sd of [0,1]){await h.ev(([i,sd])=>{const I=SKYISLES[i];for(const e of MR.E)if(ENEMY[e.type].isle)e.dead=1;MR.P.x=sd?I.x1-30:I.x0+30;MR.P.y=surfY(MR.P.x);MR.P.fly=null;MR.P.onGround=true;MR.P.dir=sd?1:-1;if(!MR.mounted())MR.toggleHorse()},[i,sd]);await h.step(20);
+    await h.ev(()=>{pressed.tj=1});await h.step(30);tk.push(await h.ev(()=>!!MR.P.fly))}
+   h.put('sp',out);h.put('tk',tk);await h.dig()}],
+ // saves from the old (small-island) layout: positions carried onto the bigger islands, always on solid ground
+ ['isle_oldsave',async h=>{const L=[];
+   for(const [x,hx,fly] of [[3195,3300,0],[4100,null,0],[3100,null,1],[7750,7700,0],[6300,null,1]]){const o=W2({...BALPROF.max,x,wcart:true,horse:hx==null?{on:true,x:null,dir:1,wings:true}:{on:false,x:hx,dir:1,wings:true}});delete o.w2l;
+    await h.ev(()=>{window.save=()=>{}});await h.seed(o);await h.step(20);L.push(await h.ev(()=>({x:Math.round(MR.P.x),g:groundAt(MR.P.x)!==null,on:MR.P.onGround,sky:skyAt(MR.P.x),hx:S.horse.on?'on':Math.round(S.horse.x),hg:S.horse.on||groundAt(S.horse.x)!==null,w2l:S.w2l,mode:MR.mode})))}
+   h.put('old',L);await h.shot();await h.dig()}],
  ['bal_max_careful',BALRUN('max','c')],['bal_max_careless',BALRUN('max','r')],['bal_mid_careful',BALRUN('mid','c')],
- ['isle_storm',async h=>{await h.seed(W2({...BALPROF.max,x:3200}));await h.step(4);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{tkeys.r=1});
-   for(let k=0;k<140&&await h.ev(()=>!!MR.P.fly||MR.P.x<3850);k++)await h.step(5);await h.step(24);await h.shot('drop');await h.dig('drop');await h.ev(()=>{pressed.tj=1});await h.step(30);await h.ev(()=>MR.toggleHorse());await h.step(20);await h.ev(()=>MR.toggleHorse());await h.step(20);await h.dig('summon');await h.ev(()=>MR.toggleHorse()); // the winged horse plods on land: cross the storm on foot, whistle it back past the edge
-   for(let k=0;k<120&&await h.ev(()=>MR.P.x<4165);k++)await h.step(5);await h.ev(()=>MR.toggleHorse());await h.step(4);await h.ev(()=>{pressed.tj=1});await h.step(40);await h.ev(()=>{tkeys.r=0});await h.step(10);await h.shot('out');await h.dig()}],
- ['isle_save',async h=>{await h.seed(W2({x:5846,hp:100,maxhp:100,time:500}));await h.step(30);await h.shot('chest');await h.ev(()=>MR.save());const sv=await h.ev(()=>localStorage.getItem('merchantRoad.v1'));
+ ['isle_storm',async h=>{await h.seed(W2({...BALPROF.max,x:3485}));await h.step(4);await h.ev(()=>{MR.P.dir=1;pressed.tj=1});await h.step(30);await h.ev(()=>{tkeys.r=1});
+   for(let k=0;k<240&&await h.ev(()=>!!MR.P.fly||MR.P.x<4562);k++)await h.step(5);await h.step(24);await h.shot('drop');await h.dig('drop');await h.ev(()=>{pressed.tj=1});await h.step(30);await h.ev(()=>MR.toggleHorse());await h.step(20);await h.ev(()=>MR.toggleHorse());await h.step(20);await h.dig('summon');await h.ev(()=>MR.toggleHorse()); // the winged horse plods on land: cross the storm on foot, whistle it back past the edge
+   for(let k=0;k<220&&await h.ev(()=>MR.P.x<5455);k++)await h.step(5);await h.ev(()=>MR.toggleHorse());await h.step(4);await h.ev(()=>{pressed.tj=1});await h.step(40);await h.ev(()=>{tkeys.r=0});await h.step(10);await h.shot('out');await h.dig()}],
+ ['isle_save',async h=>{await h.seed(W2({x:7720,hp:100,maxhp:100,time:500}));await h.step(30);await h.shot('chest');await h.ev(()=>MR.save());const sv=await h.ev(()=>localStorage.getItem('merchantRoad.v1'));
    await h.seed(sv);await h.step(30);await h.shot('reload');await h.dig()}],
- ['isle_death',async h=>{await h.seed(W2({x:3200,hp:20,maxhp:100,cargo:[{item:6,origin:6,qty:4,paid:20}]}));for(let k=0;k<60&&await h.ev(()=>MR.mode==='play');k++)await h.step(10);await h.step(30);await h.shot();await h.dig()}],
+ ['isle_death',async h=>{await h.seed(W2({x:3485,hp:20,maxhp:100,cargo:[{item:6,origin:6,qty:4,paid:20}]}));for(let k=0;k<60&&await h.ev(()=>MR.mode==='play');k++)await h.step(10);await h.step(30);await h.shot();await h.dig()}],
 ];
 const LEGACY={ // synthetic older saves exercising stacked migrations
  v1_acc:{money:120,hp:80,maxhp:100,potions:1,hauler:'wheelbarrow',haulers:['backpack','wheelbarrow'],weapons:['fists','dagger'],weapon:'dagger',cargo:[{item:0,origin:0,qty:4},{item:1,origin:1,qty:2,paid:-3}],lastTown:1,x:1900,time:300,stats:{kills:1,profit:10,sold:2,deaths:1},visited:[0,1],park:{x:1700,dir:-1,cargo:[{item:2,origin:1,qty:3,paid:30}]},gear:['tophat'],eq:{acc:'tophat'},ench:{dagger:{k:'fire'}},offers:[1,2,3]},
