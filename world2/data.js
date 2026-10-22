@@ -1,0 +1,43 @@
+'use strict';
+// sky goods (World 2)
+reg(ITEMS,6,[
+ {id:'cloudwool',name:'Cloud Wool',base:20,col:'#e8f4ff'},
+ {id:'skyglass',name:'Sky Crystal',base:260,col:'#7de0ff'},
+ {id:'sunfruit',name:'Sunfruit',base:14,col:'#ffb040'},
+ {id:'starsilk',name:'Star Silk',base:160,col:'#e8c8ff'}]);
+HAULERS.wingcart={name:'Winged Cart',cap:20,spd:.9,jump:.95,price:400,w:1}; // World 2 only (Skyhaven), hitches to the winged horse
+COFF.wingcart=-18;HITCHR.wingcart=32;
+// airships: World 2 cargo haulers (hold = cargo cap there). spd/hull are used by phase-2 flying; shown in the shop now
+const SHIPS={small:{name:'Small Airship',cap:30,spd:1.15,hull:60,price:0,z:.72,pal:['#c84a3a','#e8d8b0']},
+ medium:{name:'Medium Airship',cap:60,spd:1,hull:100,price:6000,z:.9,pal:['#3a8ad0','#f4ead0']},
+ large:{name:'Large Airship',cap:100,spd:.85,hull:160,price:20000,z:1.08,pal:['#e0b440','#f8f4e8']}};const SORDER=['small','medium','large'];
+const SKY={dmg:.55,max:2,maxShip:3,pair:.3,gapHorse:[420,220],gapShip:[300,160],diveHorse:2.6,diveShip:1.6,diveRnd:1.2}; // air wilds: damage on the winged horse, foes at once, pair chance, px between spawns [min,+rnd], pegasus re-dive [s]
+const WCART={knockCd:4,keep:.4,flash:3.8}; // Winged Cart: seconds between knock-loose losses, chance a hit costs nothing, hit flash while cd > flash
+const W2LEN=9000,ISL0=150,ISL1=1950,W2DOCK=1560,W2TOWN=6,FLYALT=100,W2START=100; // World 2 layout; W2START = World 2's opening balance
+// World 2 phase 2: two floating islands with the open-sky "air wilds" between them
+const ISLES=[{x0:150,x1:1950},{x0:6800,x1:8600}];
+const DOCKS=[{x:1560,side:1,isl:0,town:6},{x:6990,side:-1,isl:1,town:7}]; // side: which way the moored airship hangs off the pier
+const BANDY=[-70,-140,-210]; // altitude bands: low (near islands, sky slimes), mid (pegasi), high (pegasi + tailwind)
+const WX=[{x0:2500,x1:3150,k:'rain'},{x0:3450,x1:3700,k:'up'},{x0:4250,x1:4950,k:'rain'},{x0:5300,x1:5550,k:'up'},{x0:6000,x1:6450,k:'rain'}]; // rain pushes you down a band, updrafts lift you
+// ===== FEATURE FLAG: drivable airships in World 2 (shop, boarding/mooring, piloting, hull + wrecks, airship cargo hold, mid-air leap to horse).
+// Shelved for now (see SHELVED.md): all the code and sprites stay below, intact; set this to true to bring them back.
+// The World 1 scrap-pile airship build and the airship that carries you between worlds (and the cutscene) are NOT affected.
+const FEATURE_DRIVABLE_AIRSHIPS=false;
+const SHIPV=118,HFLY=.5,JET=1.2,HULLFIX=12,WRECKLOSS=.3; // airship base speed (x ship spd); winged horse = gallop x0.5 (~69px/s: slower than any airship, the ship is the way to travel); high band x1.2; hull repairs 12/s while moored; a wreck loses 30% of the hold
+function islAt(x){for(let i=0;i<ISLES.length;i++)if(x>ISLES[i].x0&&x<ISLES[i].x1)return i;return -1}
+function onIsle(x){return islAt(x)>=0}
+function wxAt(x){for(const z of WX)if(x>z.x0&&x<z.x1)return z.k;return null}
+function dockShipX(i){const d=DOCKS[i];return d.x+d.side*52}
+reg(TOWNS,6,[
+ {name:'Skyhaven',x:1050,w:1,ships:1,sells:[6,7],weapons:[],haulers:[]},
+ {name:'Sunspire',x:7750,w:1,sells:[8,9],weapons:[],haulers:[]}]);
+reg(BIOMES,5,[
+ {name:'Sky Meadow',sky:['#78c4f0','#b4e2f8','#eaf8ff'],far:'#a8cce0',mid:'#f4fbff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#5ee0c8'},
+ {name:'Air Wilds',sky:['#5aa4e0','#9ad2f4','#e2f4ff'],far:'#b0d4ec',mid:'#f0f8ff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#a8d8f4'},
+ {name:'Sunspire Isle',sky:['#8aa8ec','#cfc4f2','#fbe6f2'],far:'#cabce6',mid:'#fbf4ff',top:'#c8a8f0',top2:'#9a7ad0',dirt:'#ecdcc8',dirt2:'#d4bea4',farS:'isles',midS:'cloudbank',mm:'#c8a8f0'}]);
+reg(BIOMEINFO,5,['Peaceful skies','Pegasi · sky slimes · storms','Peaceful skies']);
+// Skylands air wilds (hull = damage to an airship)
+Object.assign(ENEMY,{
+ pegasus:{hp:55,dmg:11,hull:10,spd:190,w:18,h:14,coin:[6,12],air:1},
+ skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1}});
+reg(SPAWNS,5,[[['slime',1]],[['pegasus',.55],['skySlime',.45]],[['slime',1]]]);
