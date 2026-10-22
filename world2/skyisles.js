@@ -8,12 +8,12 @@ DROPS.unicorn=[['essence',.3]];DROPS.dreadUni=[['essence',.7]]; // on top of the
 function skyS(){if(!S.sky)S.sky={r:{},st:0};if(!S.sky.r)S.sky.r={};return S.sky}
 function rwX(i){const I=SKYISLES[i];return Math.round((I.x0+I.x1)/2+(I.rx||0))}
 function rwReady(i){const r=S.sky&&S.sky.r?S.sky.r[i]:null;return r==null||S.time-r>=(SKYISLES[i].rw==='chest'?SKYI.chestCd:SKYI.nodeCd)}
-function skyTh(x,I){const w=I.x1-I.x0,ed=Math.min(x-I.x0,I.x1-x);return Math.round(7+w*.2*Math.sqrt(clamp(ed/(w*.5),0,1))+4*hash(Math.floor(x/3)))}
-function isleFoe(t,i,x){const e=spawnEnemy(t,x);e.isl=i;e.y=surfY(x);e.dir=rnd()<.5?-1:1;e.st='idle';e.sT=.4+rnd()*.6;e.tx=x;e.cd=1+rnd();e.tcd=0;e.onGround=true;e.vy=0;e.hx=0;e.hop=.5+rnd()*.8;e.sq=0;SKYST.foes.push(e);return e}
+function skyTh(x,I){const ed=Math.min(x-I.x0,I.x1-x),bl=7+92*Math.sqrt(clamp(ed/230,0,1))+9*Math.sin(x/41+I.h)*clamp(ed/120,0,1);return Math.max(5,Math.round(heightAt(x)-I.h+bl+4*hash(Math.floor(x/3))))} // fixed belly under the base height: ledges and hills sit on top
+function isleFoe(t,i,x,z0,z1){const e=spawnEnemy(t,x);e.isl=i;e.z0=z0;e.z1=z1;e.y=surfY(x);e.dir=rnd()<.5?-1:1;e.st='idle';e.sT=.4+rnd()*.6;e.tx=x;e.cd=1+rnd();e.tcd=0;e.onGround=true;e.vy=0;e.hx=0;e.hop=.5+rnd()*.8;e.sq=0;SKYST.foes.push(e);return e}
 function isleDeath(e){const y=e.y-ENEMY[e.type].h/2;
  const d=ENEMY[e.type];if(d.gem&&rnd()<d.gem*DROPMUL)dropUnit({item:7,origin:6,paid:0},e.x,e.y-10); // Sky Crystal
  if(d.uni){part(e.x,y,d.elite?'#ffd040':'#ff7ad8',10,120,40,.5);part(e.x,y,d.elite?'#1a1020':'#3e2c52',8,90,80,.5)}
- else{part(e.x,y,'#b8f8d8',8,110,200,.45);if(e.type==='bigSlime'&&SKYST.act[e.isl]){const I=SKYISLES[e.isl];for(const s of [-1,1]){const k=isleFoe('isleSlime',e.isl,clamp(e.x+s*8,I.x0+10,I.x1-10));k.onGround=false;k.y=e.y-6;k.vy=-170;k.hx=s*70;k.dir=s;k.hop=.5}}}}
+ else{part(e.x,y,'#b8f8d8',8,110,200,.45);if(e.type==='bigSlime'&&SKYST.act[e.isl]){const I=SKYISLES[e.isl];for(const s of [-1,1]){const k=isleFoe('isleSlime',e.isl,clamp(e.x+s*8,e.z0||I.x0+10,e.z1||I.x1-10),e.z0,e.z1);k.onGround=false;k.y=e.y-6;k.vy=-170;k.hx=s*70;k.dir=s;k.hop=.5}}}}
 function stormDrop(){part(P.x,P.y-20,'#c4d8f2',8,80,120,.5);if(!skyS().st){S.sky.st=1;toast(ico('wing',2)+' '+ico('x',2)+'<br>Storm cloud: land and cross on foot<br><small>take off again past its edge</small>',3200)}}
 function takeRw(i){const I=SKYISLES[i],x=rwX(i),y=surfY(x);let h='';
  if(I.rw==='chest'){const c=SKYI.chest[0]+Math.floor(rnd()*(SKYI.chest[1]-SKYI.chest[0]+1));S.money+=c;ftxt(x,y-22,'+$'+c,'#ffd75e');h='<span class="gold">+'+pr(c)+'</span>';
@@ -26,7 +26,8 @@ function skyTick(dt){if(WI!==1||DG||!P)return;
  if(horsePlod()&&Math.abs(P.hv||0)>8&&!skyS().ld){S.sky.ld=1;toast(ico('wing',2)+' Your sky horse is slow on land<br><small>hop off and walk; whistle it back to fly</small>',2800)} // once per save
  if(SKYST.ref!==ENEMIES){SKYST.ref=ENEMIES;SKYST.act=[];SKYST.foes=[];UB.length=0} // ENEMIES was reset (death, menu, travel)
  for(let i=0;i<SKYISLES.length;i++){const I=SKYISLES[i],dd=P.x<I.x0?I.x0-P.x:P.x>I.x1?P.x-I.x1:0;
-  if(!SKYST.act[i]&&dd<VW/2+70){SKYST.act[i]=1;const n=I.foes.length;I.foes.forEach((t,k)=>isleFoe(t,i,Math.round(I.x0+(I.x1-I.x0)*(k+1)/(n+1))))}
+  if(!SKYST.act[i]&&dd<VW/2+70){SKYST.act[i]=1;const n=I.foes.length,a=I.x0+SKYI.safe,sw=(I.x1-SKYI.safe-a)/n; // each foe owns one slice of the island (SKYI.gap between slices, SKYI.safe landing room at each end)
+   I.foes.forEach((t,k)=>isleFoe(t,i,Math.round(a+sw*(k+.5)),Math.round(a+sw*k+SKYI.gap/2),Math.round(a+sw*(k+1)-SKYI.gap/2)))}
   else if(SKYST.act[i]&&dd>VW*1.25+60){SKYST.act[i]=0;for(const e of SKYST.foes)if(e.isl===i)e.dead=1} // killed foes come back on the next visit
   if(dd>40)SKYST.full[i]=0;
   if(!P.fly&&dd===0&&rwReady(i)){const x=rwX(i);if(Math.abs(P.x-x)<12&&Math.abs(P.y-surfY(x))<16)takeRw(i)}}
@@ -44,7 +45,7 @@ function uniFire(e){const dir=e.dir,hx=e.x+dir*17,hy=e.y-12;let a=Math.atan2(e.a
  UB.push({x:hx,y:hy,vx:Math.cos(a)*UNI.spd*dir,vy:Math.sin(a)*UNI.spd,life:UNI.life,tr:[]});part(hx,hy,'#ff7ad8',6,70,0,.3);
  if(--e.bn>0){e.st='charge';e.sT=e.tele=UNI.gap;return} // burst: same aim, short re-glow between bolts
  e.st='cool';e.sT=.35;e.cd=UNI.cd+rnd()*UNI.cdR;e.vx-=dir*30}
-function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const lo=I.x0+8,hi=I.x1-8;
+function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const lo=e.z0!=null?e.z0:I.x0+8,hi=e.z1!=null?e.z1:I.x1-8;
  e.x=clamp(e.x+e.vx*dt,lo,hi);e.vx*=Math.pow(.02,dt);if(e.tcd>0)e.tcd-=dt;e.moving=false;
  const gy=surfY(e.x),dxp=P.x-e.x,adx=Math.abs(dxp),near=adx<240&&P.y>gy-150&&P.y<gy+40;
  if(d.uni){e.y=gy;
@@ -89,8 +90,25 @@ function drawSkyProps(ox,oy){for(let i=0;i<SKYISLES.length;i++){const I=SKYISLES
   if(I.top){rb(0,'#c8a8f0',sx,y,1,2);rb(1,'#9a7ad0',sx,y+2,1,2);if(hash(wx*.73)>.7){rb(0,'#c8a8f0',sx,y+2,1,1);rb(1,'#9a7ad0',sx,y+4,1,1)}}
   if(n>.8){const l=3+Math.floor(hash(wx*2.7)*10);rb(2,'#a89878',sx,y+th,1,l);rb(3,'#8a7a5a',sx+(l>7?1:0),y+th+l,1,2)}
   else if(n2>.955){const l=3+Math.floor(hash(wx*3.3)*6),cc=I.top?'#e8c8ff':'#7de0ff';rb(4,cc,sx,y+th-2,2,l);rb(5,'#ffffff',sx,y+th-1,1,Math.max(1,l-3))}
+  const sl=surfY(wx+2)-surfY(wx-2);if(Math.abs(sl)>3){rb(2,I.top?'#d4bea4':'#c8b896',sx,y+2,1,4);rb(3,'#a89878',sx,y+6,1,2)} // ledge face
   if(n2<.05)rb(6,I.top?'#ffd0a0':'#ffc8ec',sx,y-2,1,1);else if(n2<.13){rb(I.top?1:7,I.top?'#9a7ad0':'#3ab8a8',sx,y-2,1,2)}}
- rbFlush(X);drawRw(i,ox,oy)}}
+ rbFlush(X);drawIsleProps(i,ox,oy);drawRw(i,ox,oy)}}
+// bigger props on the sky islands (decor only, nothing is solid): crystal clusters, boulders, bushes, flowers, grass tufts, long hanging roots
+const SKYPROP=[];
+function isleProps(i){if(SKYPROP[i])return SKYPROP[i];const I=SKYISLES[i],L=[],rx=rwX(i);let x=I.x0+22,k=0;
+ while(x<I.x1-22){const h=hash(k*7.13+i*31.7);if(Math.abs(x-rx)>18){const t=h<.2?0:h<.34?1:h<.56?2:h<.72?3:h<.86?5:4;L.push({x:Math.round(x),t,s:hash(k*3.9+i),r:hash(k*1.7+i*5)})}
+  x+=18+Math.round(hash(k*2.31+i)*30);k++}
+ return SKYPROP[i]=L}
+function drawIsleProps(i,ox,oy){const I=SKYISLES[i],lil=I.top,C=lil?['#e8c8ff','#ffffff','#b890e8']:['#7de0ff','#c8f6ff','#4ab0d0'],G=lil?['#9a7ad0','#c8a8f0','#7a5ab0']:['#3ab8a8','#5ee0c8','#2a9888'];
+ for(const p of isleProps(i)){const x=Math.round(p.x-ox);if(x<-16||x>VW+16)continue;const y=Math.round(surfY(p.x)-oy),F=(a,b,w,h,c)=>px(X,x+a,y+b,w,h,c);
+  if(p.t===0){const n=2+Math.floor(p.s*3);for(let j=0;j<n;j++){const hx=(j-(n-1)/2)*3|0,hh=5+Math.round(hash(p.x+j)*(p.s>.7?12:7))-Math.abs(hx);F(hx,-hh,2,hh+1,j%2?C[2]:C[0]);F(hx,-hh,1,Math.max(1,hh-2),C[1])}}
+  else if(p.t===1){const w=5+Math.round(p.s*5);F(-(w>>1),-4,w,5,'#b8a888');F(-(w>>1)+1,-5,w-2,1,'#d8ccb0');F(-(w>>1),0,w,1,'#8a7a5a');F((w>>1)-2,-3,1,3,'#9a8a6a')}
+  else if(p.t===2){F(-4,-4,4,4,G[0]);F(-1,-6,5,6,G[1]);F(2,-4,4,4,G[0]);F(0,-5,2,1,'#ffffff');F(-4,-1,10,1,G[2]);if(p.r>.5)F(1,-3,1,1,lil?'#ffd0a0':'#ffc8ec')}
+  else if(p.t===3){const c=p.r<.5?(lil?'#ffd0a0':'#ffc8ec'):'#fff0a0';for(let j=-2;j<=2;j+=2){F(j,-3-(j&2?1:0),1,3,G[2]);F(j,-4-(j&2?1:0),1,1,c)}}
+  else if(p.t===5){for(let j=-2;j<=2;j++)F(j,-2-((j+2)%3),1,2+((j+2)%3),j%2?G[0]:G[1])}
+  if(p.t!==4&&p.r>.4){const th=skyTh(p.x+7,I),l=5+Math.round(p.r*10);for(let j=0;j<l;j++)F(7+Math.round(Math.sin(j/3+p.s*6)),th+j,1,1,j>l-3?'#8a7a5a':'#a89878')}
+  if(p.t===4){const th=skyTh(p.x,I),l=8+Math.round(p.s*16);for(let j=0;j<l;j++)F(Math.round(Math.sin(j/4+p.r*6)*1.2),th+j,1,1,j>l-3?'#8a7a5a':'#a89878');
+   if(p.r>.6){const yy=th+l;F(-1,yy,3,3,C[2]);F(0,yy,1,2,C[0])}}}}
 function drawRw(i,ox,oy){const I=SKYISLES[i],wx=rwX(i),x=Math.round(wx-ox),y=Math.round(surfY(wx)-oy),ok=rwReady(i);if(x<-20||x>VW+20)return;
  const O=(a,b,w,h,col)=>{px(X,x+a-1,y+b-1,w+2,h+2,'#1a1020')},F=(a,b,w,h,col)=>px(X,x+a,y+b,w,h,col);
  if(I.rw==='chest'){if(ok){O(-6,-8,12,8);F(-6,-8,12,8,'#8b5a2b');F(-6,-8,12,2,'#a8743c');F(-6,-5,12,1,'#ffd040');F(-1,-5,2,3,'#ffe88a');F(-6,-1,12,1,'#5e3a1e')}
@@ -100,11 +118,11 @@ function drawRw(i,ox,oy){const I=SKYISLES[i],wx=rwX(i),x=Math.round(wx-ox),y=Mat
  else{if(ok){for(const r of [[-4,-7,2,7],[-1,-11,3,11],[2,-6,2,6]])O(r[0],r[1],r[2],r[3]);F(-4,-7,2,7,'#7de0ff');F(-1,-11,3,11,'#a8f0ff');F(2,-6,2,6,'#7ac8e8');F(0,-10,1,4,'#ffffff')}
   else{F(-4,-2,2,2,'#7ac8e8');F(-1,-3,3,3,'#7ac8e8');F(2,-2,2,2,'#7ac8e8')}}
  if(ok&&Math.sin(menuT*3+i)>.75){const k=Math.floor(menuT*3+i)%3;px(X,x-4+k*4,y-15-k*2,1,1,'#ffffff')}}
-function drawStorms(ox,oy){for(const I of SKYISLES){if(!I.storm)continue;const a0=I.x0+STORMIN,a1=I.x1-STORMIN;const a=Math.max(0,Math.round(a0-20-ox)),b=Math.min(VW,Math.round(a1+20-ox));if(b<=a)continue;
+function drawStorms(ox,oy){for(const I of SKYISLES){if(!I.storm)continue;const a0=I.x0+STORMIN,a1=I.x1-STORMIN,c0=I.x0-14,c1=I.x1+14;const a=Math.max(0,Math.round(c0-ox)),b=Math.min(VW,Math.round(c1-ox));if(b<=a)continue; // cloud: the whole island; rain + no-fly: the core
  const cy=Math.round(-I.h-118-oy),fl=hash(Math.floor(menuT*2.5)+I.x0)>.95&&Math.sin(menuT*40)>0;
- wxTint({x0:a0-20,x1:a1+20},ox,a,b-a,'40,52,84',.22);
- for(let sx=a;sx<b;sx+=2){const wx=sx+ox,e=clamp(Math.min(wx-(a0-20),(a1+20)-wx)/44,0,1),h=Math.round((24+10*Math.abs(Math.sin(wx/19))+6*Math.sin(wx/7))*e);if(h<2)continue;const t0=Math.max(0,cy-Math.round(18*e));if(cy+h<0)continue;
+ wxTint({x0:c0,x1:c1},ox,a,b-a,'40,52,84',.22);
+ for(let sx=a;sx<b;sx+=2){const wx=sx+ox,e=clamp(Math.min(wx-c0,c1-wx)/44,0,1),h=Math.round((24+10*Math.abs(Math.sin(wx/19))+6*Math.sin(wx/7))*e);if(h<2)continue;const t0=Math.max(0,cy-Math.round(18*e));if(cy+h<0)continue;
   rb(0,fl?'#9aa8c0':'#5a6680',sx,t0,2,cy+h-t0);rb(1,fl?'#c8d4e8':'#7a88a0',sx,cy+h-3,2,3);if(hash(wx*.9)>.6)rb(2,'#4a5470',sx,t0,2,2)}rbFlush(X);
- X.fillStyle='#d0e2fa';const n=Math.round((b-a)/1.3);for(let k=0;k<n;k++){const s=hash(k*3.1+I.x0),wd=a1-a0,wx=a0+((s*977+menuT*24)%wd+wd)%wd,sx=Math.round(wx-ox);if(sx<a||sx>=b)continue;
+ X.fillStyle='#d0e2fa';const n=Math.round((a1-a0)/1.1);for(let k=0;k<n;k++){const s=hash(k*3.1+I.x0),wd=a1-a0,wx=a0+((s*977+menuT*24)%wd+wd)%wd,sx=Math.round(wx-ox);if(sx<a||sx>=b)continue;
   const g=Math.round(surfY(wx)-oy),top=cy+24,hh=g-top;if(hh<=4)continue;const ry=top+((hash(k*5.3)*hh+menuT*240*(1+s*.4))%hh),eA=clamp(Math.min(wx-a0,a1-wx)/30,0,1);
   X.globalAlpha=.3+.6*eA;X.fillRect(sx,Math.round(ry),1,5);if(ry>g-6)X.fillRect(sx-1,g-1,3,1)}X.globalAlpha=1}}
