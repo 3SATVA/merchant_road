@@ -12,6 +12,7 @@ const WEAPONS={
  flamesword:{name:'Flame Sword',dmg:60,range:24,cd:.38,elem:'fire',burn:1,price:0,crafted:1},
  // Cog Flail (World 2, Skyhaven): a spiked gear on a chain; very long reach, the swing seeks the nearest foe in a tall vertical band (FLAIL), on foot or on the (flying) horse
  cogflail:{name:'Cog Flail',dmg:50,range:58,cd:.7,flail:1,price:5000},
+ windstaff:{name:'Wind Staff',dmg:15,cd:.65,ranged:1,pspd:170,elem:'wind',multi:3,spread:.12,stag:.07,home:.45,kb:2.6,life:1.7,price:0,crafted:1}, // World 2 (Skyhaven forge): 3 gently homing wind balls per cast, strong knockback (kb multiplies the hit shove)
  // lances: horseback only; damage scales with gallop speed (see lanceTick)
  woodlance:{name:'Wooden Lance',dmg:14,range:30,cd:.5,lance:1,price:0},
  ironlance:{name:'Iron Lance',dmg:24,range:32,cd:.5,lance:1,price:900},
@@ -20,7 +21,7 @@ const LORDER=['woodlance','ironlance','magmalance'];
 const FLAIL={reach:68,vk:.8,vband:80,splash:20,pad:9,anim:.32};let FAIM={a:0,r:58},FSW=null; // flail: range (58) = drawn chain length only; hit lock reaches FLAIL.reach px (vertical x vk) to a foe's box edge within +-vband px, splash px around the landing point, the drawn gear hits anything within pad px all swing; FAIM = last swing's aim (angle, length) for the sprite
 // shop + balance tunables that used to be inline literals (one place to tune; also the shape a JSON/Supabase config would take)
 const INN={rest:i=>10+i*8,pot:30,potMax:5,potHP:45,potHPBerserk:23}; // rest price grows with the town index; potions
-const WORDER=['fists','dagger','sword','crossbow','leafstaff','firestaff','warhammer','frostspear','obsidian','flamesword','cogflail'];const ICONORDER=WORDER.concat(LORDER);
+const WORDER=['fists','dagger','sword','crossbow','leafstaff','firestaff','warhammer','frostspear','obsidian','flamesword','cogflail','windstaff'];const ICONORDER=WORDER.concat(LORDER);
 function wmult(w,type){const e=w.elem;
  if(e==='fire'){if(type==='iceGolem')return 2;if(type==='slime')return 1.5;if(type==='lavaGolem')return .4}
  if(e==='ice'){if(type==='lavaGolem')return 2;if(type==='iceGolem')return .5}

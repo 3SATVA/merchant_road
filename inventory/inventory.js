@@ -14,7 +14,7 @@ function openInv(){if(MODE!=='play')return;setMode('inv');renderInv()}
 function closeInv(){setMode('play')}
 $('ibtn').onclick=openInv;$('invX').onclick=closeInv;
 function tile(img,label,o){o=o||{};if(o.en&&encList(o.en).length){o.cls=(o.cls?o.cls+' ':'')+'ench';o.st='--ec:'+enchCol(o.en);o.s=(o.s||'')+enchTag(o.en)}return '<button class="tile'+(o.cls?' '+o.cls:'')+'"'+(o.st?' style="'+o.st+'"':'')+(o.act?' data-act="'+o.act+'" data-id="'+o.id+'"':'')+'>'+(o.q?'<span class="q">'+o.q+'</span>':'')+(img?'<img src="'+img+'">':'<span style="font-size:20px;opacity:.5">·</span>')+'<span>'+label+'</span>'+(o.s?'<span class="s">'+o.s+'</span>':'')+'</button>'}
-function wstat(W){return ico('tsword')+W.dmg+(W.ranged?' '+ico('tbow'):'')}
+function wstat(W){return ico('tsword')+W.dmg+(W.multi?'×'+W.multi:'')+(W.ranged?' '+ico('tbow'):'')}
 function renderInv(){$('imoney').textContent=pr(S.money);let h='';const W=WEAPONS[S.weapon];
  h+='<div class="tiles slots"><canvas id="iprev" width="28" height="28"></canvas>'+tile(WEPURL[S.weapon],W.name,{cls:'eq',s:wstat(W),en:S.weapon});
  for(const [sl,lab] of GSLOTS){const g=S.eq[sl];h+=g?tile(GEARURL[g],GEAR[g].name,{cls:'eq',act:'uneq',id:sl,s:GEAR[g].stat,en:g}):tile('','<span class="l">'+lab+'</span>',{cls:'empty'})}

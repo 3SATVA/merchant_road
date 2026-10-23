@@ -9,6 +9,7 @@ function wepPixels(id){switch(id){
  case 'firestaff':return ['#4a2a18','#4a2a18','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418'];
  case 'flamesword':return ['#5a3818','#5a3818','#d8b040','#a8301a','#c83a1a','#e8501a','#ff6a1a','#ff8a2a','#ffa030','#ffd040','#fff0a0'];
  case 'obsidian':return ['#3a2a3a','#3a2a3a','#c04aa0','#2a1a2e','#3a2440','#3a2440','#3a2440','#3a2440','#4a2e52','#4a2e52','#e070d0'];
+ case 'windstaff':return ['#a89070','#a89070','#c8b090','#c8b090','#c8b090','#c8b090','#c8b090','#c8b090','#c8b090','#c8b090'];
  case 'cogflail':return ['#5a3818','#5a3818','#6a4420','#7a5228','#9aa0aa'];
  case 'crossbow':return ['#6a4420','#6a4420','#6a4420','#7a5228','#7a5228','#7a5228','#9aa0aa'];
  case 'woodlance':return ['#5a3818','#5a3818','#5a3818','#a8743c','#8b5a2b','#a8743c','#8b5a2b','#a8743c','#8b5a2b','#a8743c','#8b5a2b','#a8743c','#c8a060','#d8b080','#f0d8a8'];
@@ -37,6 +38,7 @@ function drawWeapon(c,hx,hy,dir,ang,id,t,fl){
   if(id==='magmalance'){const f=Math.floor((t||0)*12);for(let i=9;i<P.length;i+=2){const k=hash(i*3.1+f);if(k>.5)px(c,hx+ca*i*dir-sa*dir*(k>.75?-1:1),hy+sa*i+ca*(k>.75?-1:1),1,1,k>.8?'#fff0a0':'#ff8a2a')}}}
  if(id==='cogflail')drawFlail(c,ex,ey,dir,ang,t,fl);
  if(id==='leafstaff'){px(c,ex-1,ey-1,3,3,'#3aa040');px(c,ex,ey-2,1,1,'#6cc04a');px(c,ex+1,ey,1,1,'#6cc04a');px(c,ex,ey,1,1,'#b8f080')}
+ if(id==='windstaff'){const f=Math.floor((t||0)*8)%4,R=[[0,-2],[2,0],[0,2],[-2,0]][f];px(c,ex-1,ey-1,3,3,'#7fd4ea');px(c,ex-1,ey-1,2,2,'#bdeefa');px(c,ex,ey,1,1,'#ffffff');px(c,ex+R[0],ey+R[1],1,1,'#e8fbff')}
  if(id==='firestaff'){const f=(Math.floor((t||0)*10)%2);px(c,ex-1,ey-1,3,3,'#ff7a1a');px(c,ex,ey,1,1,f?'#fff0a0':'#ffd040')}
 }
 function drawHauler(c,x,y,dir,type,fill,wheel){if(type==='wingcart'){drawWingCart(c,x,y,dir,fill,wheel||0,false);return}

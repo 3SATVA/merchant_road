@@ -42,6 +42,9 @@ function steerProj(p,dt){const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp
  const tr=3.6*(p.home||1)*dt,a=cur+clamp(da,-tr,tr);p.vx=Math.cos(a)*sp;p.vy=Math.sin(a)*sp}
 function playerAttack(){if(mounted()&&S.lance&&!WEAPONS[S.weapon].flail){lanceStrike();return}const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd;P.atk=1;P.atkD=w.flail?FLAIL.anim:.2;
  if(w.flail){flailSwing(w);return}
+ if(w.multi){const rm=1+gearSum('rng');for(let i=0;i<w.multi;i++){const a=(i===0?0:i%2?-1:1)*Math.ceil(i/2)*w.spread;
+  PROJ.push({x:P.x+P.dir*8,y:P.y-9,vx:P.dir*w.pspd*Math.cos(a),vy:w.pspd*Math.sin(a),g:0,dmg:w.dmg*rm,from:'p',elem:w.elem,kind:'wind',home:w.home,kb:w.kb,wait:i*w.stag,life:w.life,spin:rnd()*6})}
+  part(P.x+P.dir*8,P.y-9,'#e8fbff',4,40,0,.3);return}
  if(w.ranged){const fire=w.elem==='fire',twin=setOn('witch'),n=twin?2:1;for(let i=0;i<n;i++){const a=twin?(i?-.13:.13):0;
   PROJ.push({x:P.x+P.dir*8,y:P.y-9-(twin?(i?2:-2):0),vx:P.dir*w.pspd*Math.cos(a),vy:w.pspd*Math.sin(a)+(w.leaf?-4:0),g:w.leaf?6:0,dmg:w.dmg*(1+gearSum('rng'))*(twin?.75:1),from:'p',elem:w.elem,kind:fire?'fire':w.leaf?'leaf':'bolt',home:fire?1:w.leaf?.6:0,life:fire?2.2:w.leaf?1.8:1.4,spin:rnd()*6})}
   if(twin)part(P.x+P.dir*8,P.y-9,'#c060ff',4,40,0,.3);return}
@@ -74,10 +77,11 @@ function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min
  for(const e of ENEMIES){if(e.dead)continue;updEnemy(e,dt)}
  prune(ENEMIES,e=>!e.dead);
  // projectiles
- for(const p of PROJ){p.life-=dt;if(p.home)steerProj(p,dt);p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.kind==='fire'||p.kind==='lava')if(rnd()<(p.home?1:.6))PARTS.push({x:p.x-p.vx*.01,y:p.y-p.vy*.01,vx:(rnd()-.5)*12,vy:-10-rnd()*10,col:rnd()<.33?'#ff7a1a':rnd()<.5?'#ffd040':'#d8401a',g:0,life:p.home?.4:.25});
+ for(const p of PROJ){if(p.wait>0){p.wait-=dt;p.x=P.x+P.dir*8;p.y=P.y-9;p.vx=Math.abs(p.vx)*P.dir;continue} // staggered wind balls wait at the staff tip
+  p.life-=dt;if(p.home)steerProj(p,dt);p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.kind==='wind'&&rnd()<.35)PARTS.push({x:p.x-p.vx*.02,y:p.y+(rnd()-.5)*3,vx:-p.vx*.1,vy:(rnd()-.5)*8,col:rnd()<.5?'#e8fbff':'#bdeefa',g:0,life:.22});if(p.kind==='fire'||p.kind==='lava')if(rnd()<(p.home?1:.6))PARTS.push({x:p.x-p.vx*.01,y:p.y-p.vy*.01,vx:(rnd()-.5)*12,vy:-10-rnd()*10,col:rnd()<.33?'#ff7a1a':rnd()<.5?'#ffd040':'#d8401a',g:0,life:p.home?.4:.25});
   let solid;if(DG)solid=dSolid(p.x,p.y);else{const gy=groundAt(p.x);solid=gy!==null&&p.y>gy}
-  if(solid||p.life<=0||townAt(p.x,TOWNR-20)&&p.from==='e'){p.dead=1;part(p.x,p.y,p.kind==='bolt'?'#c8a060':p.kind==='leaf'?'#6cc04a':'#ff8a2a',5,70);continue}
-  if(p.from==='p'){for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(Math.abs(e.x-p.x)<d.w/2+2&&p.y>e.y-d.h&&p.y<e.y+1){hitEnemy(e,p.dmg,Math.sign(p.vx),p.elem);p.dead=1;break}}}
+  if(solid||p.life<=0||townAt(p.x,TOWNR-20)&&p.from==='e'){p.dead=1;part(p.x,p.y,p.kind==='wind'?'#c8f6ff':p.kind==='bolt'?'#c8a060':p.kind==='leaf'?'#6cc04a':'#ff8a2a',5,70);continue}
+  if(p.from==='p'){for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(Math.abs(e.x-p.x)<d.w/2+2&&p.y>e.y-d.h&&p.y<e.y+1){hitEnemy(e,p.dmg,Math.sign(p.vx),p.elem);if(p.kb&&!e.dead){e.vx*=p.kb;part(p.x,p.y,'#e8fbff',5,90,0,.3)}p.dead=1;break}}}
   else if(Math.abs(p.x-P.x)<(mounted()?9:6)&&p.y>P.y-(mounted()?27:17)&&p.y<P.y+1){p.dead=1;hurtPlayer(p.dmg,p.x)}}
  prune(PROJ,p=>!p.dead);
  // pickups (road only)
