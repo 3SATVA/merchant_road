@@ -12,19 +12,20 @@ function skyTh(x,I){const ed=Math.min(x-I.x0,I.x1-x),bl=7+92*Math.sqrt(clamp(ed/
 function isleFoe(t,i,x,z0,z1){const e=spawnEnemy(t,x);e.isl=i;e.z0=z0;e.z1=z1;e.y=surfY(x);e.dir=rnd()<.5?-1:1;e.st='idle';e.sT=.4+rnd()*.6;e.tx=x;e.cd=1+rnd();e.tcd=0;e.onGround=true;e.vy=0;e.hx=0;e.hop=.5+rnd()*.8;e.sq=0;SKYST.foes.push(e);return e}
 function isleDeath(e){const y=e.y-ENEMY[e.type].h/2;
  const d=ENEMY[e.type];if(d.gem&&rnd()<d.gem*DROPMUL)giveMat('skyglass'); // Sky Crystal: material, straight into S.mats
+ if(d.cult||d.bot){auDeath(e,d,y);return} // autumn foes (world2/autumnfoes.js)
  if(d.fruit&&rnd()<d.fruit*DROPMUL)dropUnit({item:8,origin:6,paid:0},e.x,e.y-12); // Sunfruit (sky slimes, instead of the World 1 apple)
  if(d.uni){part(e.x,y,d.elite?'#ffd040':'#ff7ad8',10,120,40,.5);part(e.x,y,d.elite?'#1a1020':'#3e2c52',8,90,80,.5)}
  else{part(e.x,y,'#b8f8d8',8,110,200,.45);if(e.type==='bigSlime'&&SKYST.act[e.isl]){const I=SKYISLES[e.isl];for(const s of [-1,1]){const k=isleFoe('isleSlime',e.isl,clamp(e.x+s*8,e.z0||I.x0+10,e.z1||I.x1-10),e.z0,e.z1);k.onGround=false;k.y=e.y-6;k.vy=-170;k.hx=s*70;k.dir=s;k.hop=.5}}}}
 function stormDrop(){part(P.x,P.y-20,'#c4d8f2',8,80,120,.5);if(!skyS().st){S.sky.st=1;toast(ico('wing',2)+' '+ico('x',2)+'<br>Storm cloud: land and cross on foot<br><small>call your horse past its edge</small>',3200)}}
 function takeRw(i){const I=SKYISLES[i],x=rwX(i),y=surfY(x);let h='';
  if(I.rw==='chest'){const c=SKYI.chest[0]+Math.floor(rnd()*(SKYI.chest[1]-SKYI.chest[0]+1));S.money+=c;ftxt(x,y-22,'+$'+c,'#ffd75e');h='<span class="gold">+'+pr(c)+'</span>';
-  const q=Math.min(SKYI.silk,cap()-cargoCount());if(q>0){addCargo(9,7,q,0);h+=' '+iconImg(ICONURL.starsilk)+' +'+q}part(x,y-8,'#ffe08a',12,110,120,.6)}
- else{const it=6,n=SKYI.wool,q=Math.min(n,cap()-cargoCount());
+  const am=!!I.au,q=Math.min(am?SKYI.amber:SKYI.silk,cap()-cargoCount());if(q>0){addCargo(am?10:9,am?8:7,q,0);h+=' '+iconImg(ICONURL[am?'spicedamber':'starsilk'])+' +'+q}part(x,y-8,'#ffe08a',12,110,120,.6)}
+ else{const lf=I.rw==='leaf',it=lf?11:6,n=lf?SKYI.leaf:SKYI.wool,q=Math.min(n,cap()-cargoCount()); // leaf = Emberleaf (autumn isles), else Cloud Wool
   if(q<=0){if(!SKYST.full[i]){SKYST.full[i]=1;toast(ico('pack',2)+' '+ico('x',2),1200)}return}
-  addCargo(it,6,q,0);h=iconImg(ICONURL[ITEMS[it].id])+' +'+q;ftxt(x,y-20,'+'+q,'#7de07a');part(x,y-8,'#ffffff',10,90,100,.5)}
+  addCargo(it,lf?8:6,q,0);h=iconImg(ICONURL[ITEMS[it].id])+' +'+q;ftxt(x,y-20,'+'+q,'#7de07a');part(x,y-8,lf?'#e8843a':'#ffffff',10,90,100,.5)}
  skyS().r[i]=S.time;toast(h,1600);save()}
 function skyTick(dt){if(WI!==1||DG||!P)return;
- if(SKYST.ref!==ENEMIES){SKYST.ref=ENEMIES;W2ENV.pk=undefined;SKYST.act=[];SKYST.foes=[];UB.length=0} // ENEMIES was reset (death, menu, travel)
+ if(SKYST.ref!==ENEMIES){SKYST.ref=ENEMIES;W2ENV.pk=undefined;SKYST.act=[];SKYST.foes=[];UB.length=0;AUP.length=0} // ENEMIES was reset (death, menu, travel)
  skyHorseTick(dt);
  for(let i=0;i<SKYISLES.length;i++){const I=SKYISLES[i],dd=P.x<I.x0?I.x0-P.x:P.x>I.x1?P.x-I.x1:0;
   if(!SKYST.act[i]&&dd<VW/2+70){SKYST.act[i]=1;const n=I.foes.length,a=I.x0+SKYI.safe,sw=(I.x1-SKYI.safe-a)/n; // each foe owns one slice of the island (SKYI.gap between slices, SKYI.safe landing room at each end)
@@ -41,7 +42,8 @@ function skyTick(dt){if(WI!==1||DG||!P)return;
   const hit=P.fly?airTouch(bb,BD):Math.abs(b.x-P.x)<(m?9:5)&&b.y>P.y-(m?27:17)&&b.y<P.y+1;
   if(hit){b.life=0;part(b.x,b.y,'#ff7ad8',6,90,60,.35);if(P.fly)airHit(bb,{dmg:UNI.bolt,hull:UNI.hull});else hurtPlayer(UNI.bolt,b.x)}
   else if(P.fly&&cartTouch(bb,BD)){b.life=0;part(b.x,b.y,'#ff7ad8',6,90,60,.35);cartHit(bb)}}
- for(let i=UB.length-1;i>=0;i--)if(UB[i].life<=0)UB.splice(i,1)}
+ for(let i=UB.length-1;i>=0;i--)if(UB[i].life<=0)UB.splice(i,1);
+ auTick(dt)}
 function uniFire(e){const dir=e.dir,hx=e.x+dir*17,hy=e.y-12;let a=Math.atan2(e.ay,Math.abs(e.ax)||1);if(Math.abs(e.ay)<16)a=0;a=clamp(a,-UNI.ang,UNI.ang);
  UB.push({x:hx,y:hy,vx:Math.cos(a)*UNI.spd*dir,vy:Math.sin(a)*UNI.spd,life:UNI.life,tr:[]});part(hx,hy,'#ff7ad8',6,70,0,.3);
  if(--e.bn>0){e.st='charge';e.sT=e.tele=UNI.gap;return} // burst: same aim, short re-glow between bolts
@@ -49,6 +51,7 @@ function uniFire(e){const dir=e.dir,hx=e.x+dir*17,hy=e.y-12;let a=Math.atan2(e.a
 function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const lo=e.z0!=null?e.z0:I.x0+8,hi=e.z1!=null?e.z1:I.x1-8;
  e.x=clamp(e.x+e.vx*dt,lo,hi);e.vx*=Math.pow(.02,dt);if(e.tcd>0)e.tcd-=dt;e.moving=false;
  const gy=surfY(e.x),dxp=P.x-e.x,adx=Math.abs(dxp),near=adx<240&&P.y>gy-150&&P.y<gy+40;
+ if(d.cult||d.bot){updAuFoe(e,dt,d,lo,hi,gy,dxp,adx,near);return} // cultist / Forgotten Robot: own attacks, no touch damage (world2/autumnfoes.js)
  if(d.uni){e.y=gy;
   if(e.st==='walk'){if(Math.abs(e.tx-e.x)<3){e.st='idle';e.sT=.5+rnd()*.8}else{const s=Math.sign(e.tx-e.x);e.dir=s;e.x=clamp(e.x+s*d.spd*dt,lo,hi);e.moving=true}}
   else if(e.st==='idle'){e.sT-=dt;if(near)e.dir=Math.sign(dxp)||e.dir;if(near&&adx<UNI.near){e.st='walk';e.tx=clamp(e.x-(Math.sign(dxp)||1)*80,lo,hi)}else if(e.sT<=0){e.st='walk';e.tx=lo+rnd()*(hi-lo)}}
@@ -67,7 +70,7 @@ function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const lo
 // ---- art ----
 function drawIsleFoe(c,e,sx,sy,t){const dir=e.dir||1,fl=e.hitT>0,R=[],G=[];const Q=(xo,yo,w,h,col)=>R.push([dir>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col]);
  const tt=t+(e.seed||0)*3;
- const dd=ENEMY[e.type];if(dd.uni){const el=dd.elite,B=el?'#241a30':'#3e2c52',B2=el?'#140e1c':'#2a1c3a',B3=el?'#3a2c4a':'#5a4672',M=el?'#e0a020':'#c0306a',M2=el?'#ffe060':'#ff5a8a',H=el?'#fff0b0':'#e8e0ff',HV='#1a1020';const ch=e.st==='charge',f=e.moving?Math.floor(tt*9)%4:0;
+ const dd=ENEMY[e.type];if(dd.cult||dd.bot){drawAuFoe(c,e,sx,sy,t);return}if(dd.uni){const el=dd.elite,B=el?'#241a30':'#3e2c52',B2=el?'#140e1c':'#2a1c3a',B3=el?'#3a2c4a':'#5a4672',M=el?'#e0a020':'#c0306a',M2=el?'#ffe060':'#ff5a8a',H=el?'#fff0b0':'#e8e0ff',HV='#1a1020';const ch=e.st==='charge',f=e.moving?Math.floor(tt*9)%4:0;
   const by=f===1||f===3?-1:0,sp=f===0?1:f===2?-1:0,lift=f===1?[1,0,0,1]:f===3?[0,1,1,0]:[0,0,0,0];
   [-7,-4,3,6].forEach((lx,k)=>{const x=lx+(k%2?-sp:sp)*(e.moving?1:0),l=lift[k];Q(x,-6+by,2,5-l-by,k===1||k===2?B2:B);Q(x,-1-l+by*0,2,1,HV)});
   const tw=Math.round(Math.sin(tt*5));Q(-11,-12+by+tw,3,2,M);Q(-12,-10+by+tw,2,4,M);Q(-11,-7+by+tw,1,2,M2);
@@ -89,20 +92,24 @@ function drawBolts(ox,oy){for(const b of UB){const tr=b.tr;for(let k=0;k<tr.leng
   const x=Math.round(b.x-ox),y=Math.round(b.y-oy);px(X,x-5,y-3,10,7,'rgba(255,90,216,.3)');px(X,x-4,y-2,8,5,'rgba(255,120,224,.5)');px(X,x-3,y-1,6,3,'#ff7ad8');px(X,x-2,y-1,4,2,'#ffd0f4');px(X,x-1,y,2,1,'#ffffff')}}
 function drawSkyProps(ox,oy){for(let i=0;i<SKYISLES.length;i++){const I=SKYISLES[i];if(I.x1<ox-20||I.x0>ox+VW+20)continue;
  for(let sx=Math.max(0,Math.ceil(I.x0-ox));sx<Math.min(VW,I.x1-ox);sx++){const wx=sx+ox;if(skyAt(wx)!==i)continue;const y=Math.round(surfY(wx)-oy),th=skyTh(wx,I),n=hash(wx*1.31),n2=hash(wx*.37+i);
-  if(I.top){rb(0,'#c8a8f0',sx,y,1,2);rb(1,'#9a7ad0',sx,y+2,1,2);if(hash(wx*.73)>.7){rb(0,'#c8a8f0',sx,y+2,1,1);rb(1,'#9a7ad0',sx,y+4,1,1)}}
+  const au=auAt(I,wx);if(au){rb(0,'#e8843a',sx,y,1,2);rb(1,'#c0502a',sx,y+2,1,2);if(hash(wx*.73)>.7){rb(0,'#f0a040',sx,y+2,1,1);rb(1,'#a83a22',sx,y+4,1,1)}}
+  else if(I.top||I.au){rb(0,'#c8a8f0',sx,y,1,2);rb(1,'#9a7ad0',sx,y+2,1,2);if(hash(wx*.73)>.7){rb(0,'#c8a8f0',sx,y+2,1,1);rb(1,'#9a7ad0',sx,y+4,1,1)}}
   if(n>.8){const l=3+Math.floor(hash(wx*2.7)*10);rb(2,'#a89878',sx,y+th,1,l);rb(3,'#8a7a5a',sx+(l>7?1:0),y+th+l,1,2)}
-  else if(n2>.955){const l=3+Math.floor(hash(wx*3.3)*6),cc=I.top?'#e8c8ff':'#7de0ff';rb(4,cc,sx,y+th-2,2,l);rb(5,'#ffffff',sx,y+th-1,1,Math.max(1,l-3))}
-  const sl=surfY(wx+2)-surfY(wx-2);if(Math.abs(sl)>3){rb(2,I.top?'#d4bea4':'#c8b896',sx,y+2,1,4);rb(3,'#a89878',sx,y+6,1,2)} // ledge face
-  if(n2<.05)rb(6,I.top?'#ffd0a0':'#ffc8ec',sx,y-2,1,1);else if(n2<.13){rb(I.top?1:7,I.top?'#9a7ad0':'#3ab8a8',sx,y-2,1,2)}}
- rbFlush(X);drawTreeList(isleTrees(i),ox,oy);drawIsleProps(i,ox,oy);drawRw(i,ox,oy)}}
+  else if(n2>.955){const l=3+Math.floor(hash(wx*3.3)*6),cc=au?'#f0a040':I.top||I.au?'#e8c8ff':'#7de0ff';rb(4,cc,sx,y+th-2,2,l);rb(5,'#ffffff',sx,y+th-1,1,Math.max(1,l-3))}
+  const sl=surfY(wx+2)-surfY(wx-2);if(Math.abs(sl)>3){rb(2,au?'#a8704a':I.top||I.au?'#d4bea4':'#c8b896',sx,y+2,1,4);rb(3,'#a89878',sx,y+6,1,2)} // ledge face
+  if(n2<.05)rb(6,au?'#ffe070':I.top?'#ffd0a0':'#ffc8ec',sx,y-2,1,1);else if(n2<.13){rb(I.top?1:7,au?'#a83a22':I.top||I.au?'#9a7ad0':'#3ab8a8',sx,y-2,1,2)}}
+ rbFlush(X);drawTreeList(isleTrees(i),ox,oy);drawIsleProps(i,ox,oy);if(I.au)drawAuSet(i,ox,oy);drawRw(i,ox,oy)}}
 // bigger props on the sky islands (decor only, nothing is solid): crystal clusters, boulders, bushes, flowers, grass tufts, long hanging roots
 const SKYPROP=[];
 function isleProps(i){if(SKYPROP[i])return SKYPROP[i];const I=SKYISLES[i],L=[],rx=rwX(i);let x=I.x0+22,k=0;
  while(x<I.x1-22){const h=hash(k*7.13+i*31.7);if(Math.abs(x-rx)>18){const t=h<.2?0:h<.34?1:h<.56?2:h<.72?3:h<.86?5:4;L.push({x:Math.round(x),t,s:hash(k*3.9+i),r:hash(k*1.7+i*5)})}
   x+=18+Math.round(hash(k*2.31+i)*30);k++}
  return SKYPROP[i]=L}
-function drawIsleProps(i,ox,oy){const I=SKYISLES[i],lil=I.top,C=lil?['#e8c8ff','#ffffff','#b890e8']:['#7de0ff','#c8f6ff','#4ab0d0'],G=lil?['#9a7ad0','#c8a8f0','#7a5ab0']:['#3ab8a8','#5ee0c8','#2a9888'];
- for(const p of isleProps(i)){const x=Math.round(p.x-ox);if(x<-16||x>VW+16)continue;const y=Math.round(surfY(p.x)-oy),F=(a,b,w,h,c)=>px(X,x+a,y+b,w,h,c);
+const AUC=['#f0a040','#ffe0a0','#c06a20'],AUG=['#c0502a','#e8843a','#8a3a1a'];
+// autumn colouring for an island column/prop: au:1 all autumn, au:2 (next to Sunspire) lilac fading into autumn towards the east (same rule as the trees)
+function auAt(I,x){return !!I.au&&!(I.au===2&&hash(x*.37)>(x-I.x0)/(I.x1-I.x0)*1.6)}
+function drawIsleProps(i,ox,oy){const I=SKYISLES[i],lil0=I.top||!!I.au,C0=lil0?['#e8c8ff','#ffffff','#b890e8']:['#7de0ff','#c8f6ff','#4ab0d0'],G0=lil0?['#9a7ad0','#c8a8f0','#7a5ab0']:['#3ab8a8','#5ee0c8','#2a9888'];
+ for(const p of isleProps(i)){const A=auAt(I,p.x),lil=lil0&&!A,C=A?AUC:C0,G=A?AUG:G0;const x=Math.round(p.x-ox);if(x<-16||x>VW+16)continue;const y=Math.round(surfY(p.x)-oy),F=(a,b,w,h,c)=>px(X,x+a,y+b,w,h,c);
   if(p.t===0){const n=2+Math.floor(p.s*3);for(let j=0;j<n;j++){const hx=(j-(n-1)/2)*3|0,hh=5+Math.round(hash(p.x+j)*(p.s>.7?12:7))-Math.abs(hx);F(hx,-hh,2,hh+1,j%2?C[2]:C[0]);F(hx,-hh,1,Math.max(1,hh-2),C[1])}}
   else if(p.t===1){const w=5+Math.round(p.s*5);F(-(w>>1),-4,w,5,'#b8a888');F(-(w>>1)+1,-5,w-2,1,'#d8ccb0');F(-(w>>1),0,w,1,'#8a7a5a');F((w>>1)-2,-3,1,3,'#9a8a6a')}
   else if(p.t===2){F(-4,-4,4,4,G[0]);F(-1,-6,5,6,G[1]);F(2,-4,4,4,G[0]);F(0,-5,2,1,'#ffffff');F(-4,-1,10,1,G[2]);if(p.r>.5)F(1,-3,1,1,lil?'#ffd0a0':'#ffc8ec')}
@@ -115,6 +122,8 @@ function drawRw(i,ox,oy){const I=SKYISLES[i],wx=rwX(i),x=Math.round(wx-ox),y=Mat
  const O=(a,b,w,h,col)=>{px(X,x+a-1,y+b-1,w+2,h+2,'#1a1020')},F=(a,b,w,h,col)=>px(X,x+a,y+b,w,h,col);
  if(I.rw==='chest'){if(ok){O(-6,-8,12,8);F(-6,-8,12,8,'#8b5a2b');F(-6,-8,12,2,'#a8743c');F(-6,-5,12,1,'#ffd040');F(-1,-5,2,3,'#ffe88a');F(-6,-1,12,1,'#5e3a1e')}
   else{O(-6,-12,12,3);O(-6,-6,12,6);F(-6,-12,12,3,'#a8743c');F(-6,-6,12,6,'#8b5a2b');F(-5,-6,10,1,'#3a2414');F(-6,-4,12,1,'#ffd040')}}
+ else if(I.rw==='leaf'){F(0,-4,1,4,'#6a4230');if(ok){for(const r of [[-6,-9,5,4],[-2,-12,5,5],[2,-9,5,4]])O(r[0],r[1],r[2],r[3]);F(-6,-9,5,4,'#c0502a');F(-2,-12,5,5,'#e8843a');F(2,-9,5,4,'#a83a22');F(-5,-6,11,1,'#8a3a1a');F(-1,-11,2,1,'#ffe070');F(3,-8,1,1,'#f0a040')}
+  else{F(-2,-3,2,1,'#8a3a1a');F(1,-4,2,1,'#a83a22')}}
  else{F(0,-5,1,5,'#c8b090');if(ok){for(const r of [[-6,-10,5,4],[-2,-13,5,5],[2,-10,5,4]])O(r[0],r[1],r[2],r[3]);F(-6,-10,5,4,'#ffffff');F(-2,-13,5,5,'#ffffff');F(2,-10,5,4,'#e8f4ff');F(-5,-7,11,1,'#dce8f6');F(-1,-12,2,1,'#ffffff')}
   else{F(-2,-3,2,1,'#3ab8a8');F(1,-4,2,1,'#3ab8a8')}}
  if(ok&&Math.sin(menuT*3+i)>.75){const k=Math.floor(menuT*3+i)%3;px(X,x-4+k*4,y-15-k*2,1,1,'#ffffff')}}

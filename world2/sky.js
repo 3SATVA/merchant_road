@@ -44,7 +44,7 @@ function updSky(dt){w2Tick(dt);wcTick(dt);if(W2ENV.leaveT>0)W2ENV.leaveT-=dt;con
  const ty=flyTarget()+(w==='rain'?8:w==='up'?-8:0);P.vy+=((ty-P.y)*7-P.vy*4.2)*dt;P.y+=P.vy*dt;
  if(sh){P.onGround=true;if(P.hinv>0)P.hinv-=dt;if(P.shipHit>0)P.shipHit-=dt}else P.onGround=false;
  // air foes live in the wilds
- if(b===6){env.spawnD+=Math.abs(dx);if(env.spawnD>env.next){env.spawnD=0;env.next=sh?SKY.gapShip[0]+rnd()*SKY.gapShip[1]:SKY.gapHorse[0]+rnd()*SKY.gapHorse[1];spawnAir(mv||P.dir)}}
+ if(AIRB.includes(b)){env.spawnD+=Math.abs(dx);if(env.spawnD>env.next){env.spawnD=0;env.next=sh?SKY.gapShip[0]+rnd()*SKY.gapShip[1]:SKY.gapHorse[0]+rnd()*SKY.gapHorse[1];spawnAir(mv||P.dir)}}
  for(const e of ENEMIES)if(ENEMY[e.type].air&&!ENEMY[e.type].isle&&Math.abs(e.x-P.x)>VW*1.3)e.dead=1;
  if(sh&&inp.leave()&&leaveFly())return;
  if(MODE!=='play'){showPrompt('');return}
