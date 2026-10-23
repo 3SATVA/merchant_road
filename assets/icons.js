@@ -13,6 +13,10 @@ const ICONS={
 const IPAL={e:'#ffb040',f:'#d8781a',m:'#e8c8ff',n:'#a87ad8',u:'#f4fbff',v:'#b8cce4',q:'#7de0ff',z:'#3a9ac8',x:'#ffffff',h:'#5a3a7a',p:'#c060ff',a:'#5e5e5e',c:'#d0d0d0',g:'#3a8a2a',r:'#d83a3a',w:'#ffd0d0',d:'#9a2020',t:'#c8a060',b:'#8b5a2b',o:'#5a3818',l:'#d8b080',k:'#22222a',i:'#b8c0cc',s:'#707884',y:'#ffd040'};
 const ICONPAL2={iron:{w:'#eef2f8'},gold:{w:'#fff4b0',o:'#c08a10'}};
 function iconCanvas(id){const c=document.createElement('canvas');c.width=8;c.height=8;const g=c.getContext('2d');const pal=Object.assign({},IPAL,ICONPAL2[id]||{});ICONS[id].forEach((row,y)=>{for(let x=0;x<8;x++){const ch=row[x];if(ch&&ch!=='.'){g.fillStyle=pal[ch];g.fillRect(x,y,1,1)}}});return c}
+// World 2 capital goods (Aldenreach)
+ICONS.spicedamber=['....k...','...kb...','..aaaa..','.axaaab.','.aaaaab.','.aaabbb.','..abbb..','........'];ICONPAL2.spicedamber={a:'#e88a2a',b:'#a8501a',x:'#ffe0a0',k:'#5a2a10'};
+ICONS.emberleaf=['......g.','....rrg.','..rreg..','.rrefr..','.refrr..','.efrr...','.ff.....','f.......'];ICONPAL2.emberleaf={r:'#c8482a',e:'#f08848',f:'#8a2a1a',g:'#5a3818'};
+ICONS.hearthcider=['...oo...','...bb...','..tttt..','.tyyyyt.','.tyxyyt.','.tyyyyt.','.tttttt.','........'];ICONPAL2.hearthcider={t:'#a8743a',y:'#d8a040',x:'#ffe08a',o:'#5a3818',b:'#c8a060'};
 const ICONC={},ICONURL={};ITEMS.forEach(it=>{ICONC[it.id]=iconCanvas(it.id);ICONURL[it.id]=ICONC[it.id].toDataURL()});
 ICONS.essence=['....w...','...pp...','..pmmp..','.pmwmmp.','.pmmmmp.','..pmmp..','...pp...','........'];ICONPAL2.essence={p:'#7a3aa0',m:'#c060ff',w:'#ffffff'};
 ICONS.lava=['........','..kkk...','.kkokkk.','kkookkk.','kokkkokk','kkkookk.','.kkkkk..','........'];ICONPAL2.lava={k:'#4a3030',o:'#ff6a1a'};

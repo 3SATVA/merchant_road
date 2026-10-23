@@ -1,5 +1,5 @@
 'use strict';
-TOWNS.forEach((t,i)=>{t.i=i;t.w=t.w||0;t.biome=t.w?(t.x>ISLES[1].x0?7:5):biomeAt(t.x)});let WT=TOWNS.filter(t=>!t.w),DUNGEONS=WORLDDEF[0].dungeons; // WT / DUNGEONS = towns / caves of the current world
+TOWNS.forEach((t,i)=>{t.i=i;t.w=t.w||0;t.biome=t.biome!=null?t.biome:t.w?(t.x>ISLES[1].x0?7:5):biomeAt(t.x)});let WT=TOWNS.filter(t=>!t.w),DUNGEONS=WORLDDEF[0].dungeons; // WT / DUNGEONS = towns / caves of the current world
 function rawH(x){return WORLDDEF[WI].rawH(x)} // terrain height formula of the current world
 let HCACHE;function buildH(){HCACHE=new Float32Array(WORLD/2+4);
 for(let i=0;i<HCACHE.length;i++){const x=i*2;let h=rawH(x);for(const t of WT){const d=Math.abs(x-t.x);if(d<170){const k=smooth(1-(d-100)/70);h=lerp(h,rawH(t.x),k)}}for(const q of DUNGEONS){const d=Math.abs(x-q.x);if(d<64){const k=smooth(1-(d-34)/30);h=lerp(h,rawH(q.x),k)}}for(const f of WORLDDEF[WI].flat){const d=Math.abs(x-f.x);if(d<f.r+f.fade){const k=smooth(1-(d-f.r)/f.fade);h=lerp(h,rawH(f.x),k)}}HCACHE[i]=h}}buildH();

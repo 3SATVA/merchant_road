@@ -36,4 +36,5 @@ function drawDecor(d,ox,oy){const x=Math.round(d.x-ox),y=Math.round(surfY(d.x)-o
   else if(r<.68){P(-4,-9,9,1,'#6a3a22');P(-4,-1,9,1,'#6a3a22');P(-5,-8,1,7,'#6a3a22');P(5,-8,1,7,'#6a3a22');P(0,-8,1,7,'#8a5a3a');P(-4,-5,9,1,'#8a5a3a');P(-1,-6,3,3,'#5a524e')}
   else if(r<.84){P(-3,-3,5,3,'#e8e0d0');P(-2,-4,3,1,'#e8e0d0');P(-2,-2,1,1,'#2a2422');P(0,-2,1,1,'#2a2422');P(3,-1,5,1,'#d8d0c0')}
   else{P(-5,-3,10,3,'#5a3a2a');P(-3,-6,6,3,'#7a4a30');P(-1,-8,2,2,'#8a8f98');if(Math.sin(menuT*2+d.k)>.4)P(0,-11-Math.floor((menuT*6+d.k)%4),1,1,'#777')}}
+ else if(d.b>=8)auDecor(d,P); // World 2 autumn (world2/capital.js)
  else{if(r<.4){P(0,-12,2,12,'#1a1010');P(-3,-9,3,1,'#1a1010');P(2,-7,3,1,'#1a1010')}else if(r<.75){const w=6+Math.floor(r*8);P(-w/2,-4,w,4,'#2a1c1c');P(-w/2+1,-2,2,1,'#ff6a1a')}else{P(-2,-2,4,2,'#3a2626');if(Math.sin(menuT*3+d.k)>.3)P(0,-6-Math.floor((menuT*8+d.k)%5),1,1,'#888')}}}
