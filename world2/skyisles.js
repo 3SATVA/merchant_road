@@ -94,7 +94,7 @@ function drawSkyProps(ox,oy){for(let i=0;i<SKYISLES.length;i++){const I=SKYISLES
   else if(n2>.955){const l=3+Math.floor(hash(wx*3.3)*6),cc=I.top?'#e8c8ff':'#7de0ff';rb(4,cc,sx,y+th-2,2,l);rb(5,'#ffffff',sx,y+th-1,1,Math.max(1,l-3))}
   const sl=surfY(wx+2)-surfY(wx-2);if(Math.abs(sl)>3){rb(2,I.top?'#d4bea4':'#c8b896',sx,y+2,1,4);rb(3,'#a89878',sx,y+6,1,2)} // ledge face
   if(n2<.05)rb(6,I.top?'#ffd0a0':'#ffc8ec',sx,y-2,1,1);else if(n2<.13){rb(I.top?1:7,I.top?'#9a7ad0':'#3ab8a8',sx,y-2,1,2)}}
- rbFlush(X);drawIsleProps(i,ox,oy);drawRw(i,ox,oy)}}
+ rbFlush(X);drawTreeList(isleTrees(i),ox,oy);drawIsleProps(i,ox,oy);drawRw(i,ox,oy)}}
 // bigger props on the sky islands (decor only, nothing is solid): crystal clusters, boulders, bushes, flowers, grass tufts, long hanging roots
 const SKYPROP=[];
 function isleProps(i){if(SKYPROP[i])return SKYPROP[i];const I=SKYISLES[i],L=[],rx=rwX(i);let x=I.x0+22,k=0;

@@ -2,7 +2,7 @@
 const CLOUDS=[];for(let x=1700,k=0;x<9100;k++){CLOUDS.push({x,y:-40-Math.round(hash(k*2.7)*220),w:16+Math.round(hash(k*5.3)*30)});x+=70+Math.round(hash(k*1.9)*90)}
 // clouds that would sit inside a sky island are skipped (c.isl)
 for(const c of CLOUDS)c.isl=SKYISLES.some(I=>c.x+c.w/2>I.x0-6&&c.x-c.w/2<I.x1+6&&c.y>-I.h-30&&c.y<-I.h+110);
-function drawClouds(ox,oy){drawSkyProps(ox,oy);for(const c of CLOUDS){const x=Math.round(c.x-ox),y=Math.round(c.y-oy);if(x<-50||x>VW+50||y<-20||y>VH+20||c.isl)continue;const w=c.w;
+function drawClouds(ox,oy){drawHomeTrees(ox,oy);drawSkyProps(ox,oy);for(const c of CLOUDS){const x=Math.round(c.x-ox),y=Math.round(c.y-oy);if(x<-50||x>VW+50||y<-20||y>VH+20||c.isl)continue;const w=c.w;
  px(X,x-w/2,y-3,w,5,'#ffffff');px(X,x-w/2+3,y-6,w-8,3,'#ffffff');px(X,x-w/4,y-8,w/2,2,'#ffffff');px(X,x-w/2+2,y+2,w-4,1,'#dce8f6')}}
 function drawCloudSea(ox,oy){for(let sx=0;sx<VW;sx+=2){const wx=sx+ox,y=Math.round(58+4*Math.sin(wx/37)+3*Math.sin(wx/13)-oy);if(y>=VH)continue;rb(0,'#e4f0fa',sx,y,2,2);rb(1,'#f6fbff',sx,y+2,2,VH-y)}rbFlush(X)}
 function wxTint(z,ox,a,wd,col,al){const l=z.x0-ox,len=z.x1-z.x0,f=Math.min(.45,90/len),gr=X.createLinearGradient(l,0,l+len,0);gr.addColorStop(0,'rgba('+col+',0)');gr.addColorStop(f,'rgba('+col+','+al+')');gr.addColorStop(1-f,'rgba('+col+','+al+')');gr.addColorStop(1,'rgba('+col+',0)');X.fillStyle=gr;X.fillRect(a,0,wd,VH)}
