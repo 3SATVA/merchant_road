@@ -29,5 +29,5 @@ function drawPlayer(c,x,y,dir,t,walking,air,flash,wep,atk,o){
  else if(atk>0){const k=1-atk;if(w.ranged){ang=0;ext=k<.3?-1:0}else if(wep==='frostspear'){ang=-.05;ext=Math.round(Math.sin(k*Math.PI)*6)}else ang=lerp(-2.0,.7,smooth(k))}
  else if(w.ranged)ang=-.25;
  const hx=2+ext+(atk>0&&wep==='fists'?3:0);P(2,-11+bob,2,3,'#3a6ea5');P(hx,-8+bob,2,2,SK[0]);
- if(!flash)drawWeapon(c,dir>0?x+hx+1:x-hx-2,y-8+bob,dir,ang,wep,t);
+ if(!flash)drawWeapon(c,dir>0?x+hx+1:x-hx-2,y-8+bob,dir,ang,wep,t,w.flail?{k:atk>0?1-atk:-1}:null);
 }

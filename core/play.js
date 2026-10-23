@@ -40,18 +40,26 @@ function steerProj(p,dt){const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp
  for(const e of ENEMIES){if(e.dead)continue;const tx=e.x-p.x,ty=e.y-ENEMY[e.type].h/2-p.y,d=Math.hypot(tx,ty);if(d<bd&&(tx*ux+ty*uy)/(d||1)>.34){bd=d;best=[tx,ty]}}
  if(!best)return;const want=Math.atan2(best[1],best[0]),cur=Math.atan2(uy,ux);let da=want-cur;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
  const tr=3.6*(p.home||1)*dt,a=cur+clamp(da,-tr,tr);p.vx=Math.cos(a)*sp;p.vy=Math.sin(a)*sp}
-function playerAttack(){if(mounted()&&S.lance){lanceStrike();return}const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd;P.atk=1;
+function playerAttack(){if(mounted()&&S.lance&&!WEAPONS[S.weapon].flail){lanceStrike();return}const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd;P.atk=1;P.atkD=w.flail?FLAIL.anim:.2;
+ if(w.flail){flailSwing(w);return}
  if(w.ranged){const fire=w.elem==='fire',twin=setOn('witch'),n=twin?2:1;for(let i=0;i<n;i++){const a=twin?(i?-.13:.13):0;
   PROJ.push({x:P.x+P.dir*8,y:P.y-9-(twin?(i?2:-2):0),vx:P.dir*w.pspd*Math.cos(a),vy:w.pspd*Math.sin(a)+(w.leaf?-4:0),g:w.leaf?6:0,dmg:w.dmg*(1+gearSum('rng'))*(twin?.75:1),from:'p',elem:w.elem,kind:fire?'fire':w.leaf?'leaf':'bolt',home:fire?1:w.leaf?.6:0,life:fire?2.2:w.leaf?1.8:1.4,spin:rnd()*6})}
   if(twin)part(P.x+P.dir*8,P.y-9,'#c060ff',4,40,0,.3);return}
  const x0=P.dir>0?P.x:P.x-w.range-4,x1=P.dir>0?P.x+w.range+4:P.x;
  for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(e.x+d.w/2>x0&&e.x-d.w/2<x1&&e.y-d.h<P.y+2&&e.y>P.y-24){hitEnemy(e,w.dmg,P.dir,w.elem);if(w.burn&&!e.dead&&e.type!=='lavaGolem')e.burn=2}}}
+// Cog Flail: light vertical auto-aim. The nearest foe ahead within reach and +-FLAIL.vband px of you (above or below, also on the flying horse) takes the hit, plus anyone within FLAIL.splash of it
+function flailSwing(w){const py=P.y-(mounted()?16:10);let best=null,bd=1e9;
+ for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type],dx=(e.x-P.x)*P.dir,dy=e.y-d.h/2-py;if(dx<-d.w/2-4||dx>w.range+d.w/2||Math.abs(dy)>FLAIL.vband)continue;const dd=Math.hypot(Math.max(0,dx),dy);if(dd<bd){bd=dd;best={e,dx,dy}}}
+ const hx=best?best.e.x:P.x+P.dir*w.range*.8,hy=best?best.e.y-ENEMY[best.e.type].h/2:py;FAIM=best?{a:clamp(Math.atan2(best.dy,Math.max(8,best.dx)),-1.25,1.25),r:clamp(Math.hypot(Math.max(8,best.dx),best.dy),16,w.range+8)}:{a:0,r:w.range};
+ for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(e===(best&&best.e)||(Math.abs(e.x-hx)<d.w/2+FLAIL.splash&&Math.abs(e.y-d.h/2-hy)<d.h/2+FLAIL.splash))hitEnemy(e,w.dmg,P.dir,w.elem)}
+ if(best)part(hx,hy,'#c8ccd4',6,90)}
 function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min(maxHP(),S.hp+rg*dt)}
  if(DG)updDungeon(dt);else if(WI&&P.fly)updSky(dt);else updWorld(dt);
  // actions
- if(P.cd>0)P.cd-=dt;if(P.atk>0)P.atk=Math.max(0,P.atk-dt/.2);if(P.inv>0)P.inv-=dt;
+ if(P.cd>0)P.cd-=dt;if(P.atk>0)P.atk=Math.max(0,P.atk-dt/(P.atkD||.2));if(P.inv>0)P.inv-=dt;
  if(inp.attack())playerAttack();if(mounted())lanceTick(dt);else P.couch=0;
- if(inp.swap()){if(mounted()&&S.lances.length){const i=S.lances.indexOf(S.lance);S.lance=S.lances[(i+1)%S.lances.length];toast(WEAPONS[S.lance].name,900)}else{const i=S.weapons.indexOf(S.weapon);S.weapon=S.weapons[(i+1)%S.weapons.length];toast(WEAPONS[S.weapon].name,900)}}
+ if(inp.swap()){if(mounted()&&S.lances.length){const fo=S.weapons.find(w=>WEAPONS[w].flail),L=S.lances.concat(fo?[fo]:[]),nx=L[(L.indexOf(heldW())+1)%L.length]; // the owned Cog Flail joins the saddle rotation
+  if(WEAPONS[nx].flail){if(!WEAPONS[S.weapon].flail)S.wprev=S.weapon;S.weapon=nx}else{S.lance=nx;if(WEAPONS[S.weapon].flail)S.weapon=S.wprev&&S.weapons.includes(S.wprev)?S.wprev:S.weapons.find(w=>!WEAPONS[w].flail)||'fists'}toast(WEAPONS[nx].name,900)}else{const i=S.weapons.indexOf(S.weapon);S.weapon=S.weapons[(i+1)%S.weapons.length];toast(WEAPONS[S.weapon].name,900)}}
  if(inp.pot()){if(S.potions>0&&S.hp<maxHP()){S.potions--;const ph=ench('berserk')?INN.potHPBerserk:INN.potHP;S.hp=Math.min(maxHP(),S.hp+ph);ftxt(P.x,P.y-26,'+'+ph,'#7de07a');part(P.x,P.y-10,'#7de07a',10,60,-40)}else if(!S.potions)toast('No potions',900)}
  // enemies
  for(const e of ENEMIES){if(e.dead)continue;updEnemy(e,dt)}

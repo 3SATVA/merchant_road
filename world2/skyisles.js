@@ -11,7 +11,7 @@ function rwReady(i){const r=S.sky&&S.sky.r?S.sky.r[i]:null;return r==null||S.tim
 function skyTh(x,I){const ed=Math.min(x-I.x0,I.x1-x),bl=7+92*Math.sqrt(clamp(ed/230,0,1))+9*Math.sin(x/41+I.h)*clamp(ed/120,0,1);return Math.max(5,Math.round(heightAt(x)-I.h+bl+4*hash(Math.floor(x/3))))} // fixed belly under the base height: ledges and hills sit on top
 function isleFoe(t,i,x,z0,z1){const e=spawnEnemy(t,x);e.isl=i;e.z0=z0;e.z1=z1;e.y=surfY(x);e.dir=rnd()<.5?-1:1;e.st='idle';e.sT=.4+rnd()*.6;e.tx=x;e.cd=1+rnd();e.tcd=0;e.onGround=true;e.vy=0;e.hx=0;e.hop=.5+rnd()*.8;e.sq=0;SKYST.foes.push(e);return e}
 function isleDeath(e){const y=e.y-ENEMY[e.type].h/2;
- const d=ENEMY[e.type];if(d.gem&&rnd()<d.gem*DROPMUL)dropUnit({item:7,origin:6,paid:0},e.x,e.y-10); // Sky Crystal
+ const d=ENEMY[e.type];if(d.gem&&rnd()<d.gem*DROPMUL)giveMat('skyglass'); // Sky Crystal: material, straight into S.mats
  if(d.fruit&&rnd()<d.fruit*DROPMUL)dropUnit({item:8,origin:6,paid:0},e.x,e.y-12); // Sunfruit (sky slimes, instead of the World 1 apple)
  if(d.uni){part(e.x,y,d.elite?'#ffd040':'#ff7ad8',10,120,40,.5);part(e.x,y,d.elite?'#1a1020':'#3e2c52',8,90,80,.5)}
  else{part(e.x,y,'#b8f8d8',8,110,200,.45);if(e.type==='bigSlime'&&SKYST.act[e.isl]){const I=SKYISLES[e.isl];for(const s of [-1,1]){const k=isleFoe('isleSlime',e.isl,clamp(e.x+s*8,e.z0||I.x0+10,e.z1||I.x1-10),e.z0,e.z1);k.onGround=false;k.y=e.y-6;k.vy=-170;k.hx=s*70;k.dir=s;k.hop=.5}}}}

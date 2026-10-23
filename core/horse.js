@@ -21,7 +21,7 @@ function drawHorse(c,x,y,dir,t,run,idle,flash){const P=(xo,yo,w,h,col)=>{px(c,di
  if(WI===1&&S&&S.horse&&S.horse.wings)drawWings(P,t,bob,idle||pl?0:run,idle)}
 // rider on horseback: horse, then the player seated, then a leg down the flank; lance couched while charging
 function drawRider(c,sx,sy,d,t,fl,cols){const s=lanceSpeed();drawHorse(c,sx,sy,d,t,s,0,fl);const hf=WI===1&&S.horse.wings?horseFlap(0):null,by=hf!==null&&P.fly==='horse'?FLAPBOB[flapF(t,hf)]:s>.02&&WI===1&&horsePlod()?plodBob(t):Math.round(Math.sin((P.ride||0)*.35)*(s>.05?.8:0));
- const ry=sy-10+by;drawPlayer(c,sx-1*d,ry,d,t,false,false,fl,S.lance||S.weapon,P.couch>0?1:0,{eq:S.eq,look:S.look});
+ const ry=sy-10+by;drawPlayer(c,sx-1*d,ry,d,t,false,false,fl,heldW(),WEAPONS[heldW()].flail?P.atk:P.couch>0?1:0,{eq:S.eq,look:S.look});
  const L=(xo,yo,w,h,col)=>px(c,d>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col);const FT=S.eq.feet;L(-1,-12+by,2,4,'#4a3b2a');L(-1,-8+by,3,1,FT==='witchboots'?'#c060ff':FT==='stoneboots'?'#b8b8c0':FT==='crystalboots'?'#5ac8e0':'#2a1d14');
  if(carriedH()==='backpack')drawHauler(c,sx-1*d,ry,d,'backpack',cols,0);
  setAura(c,sx,ry,t);enchAura(c,sx,ry,t);
@@ -31,7 +31,7 @@ const PLODF=5.5; // World 2 winged horse on land: slow heavy plod, wings folded 
 function plodBob(t){return Math.round(Math.abs(Math.sin(t*PLODF))*1.6)}
 const LANCEMIN=.25,LANCEMAX=1.75,MOUNTDMG=1.3,HITSLOW=.4; // mounted: +30% damage taken (after armor), a hit drops you to 40% of gallop // lance damage x0.25 standing .. x1.75 at full gallop
 function mounted(){return !!(S&&S.horse&&S.horse.on&&!DG)}
-function heldW(){return S&&S.horse&&S.horse.on&&!DG&&S.lance?S.lance:S?S.weapon:'fists'}
+function heldW(){return S&&S.horse&&S.horse.on&&!DG&&S.lance&&!(WEAPONS[S.weapon]&&WEAPONS[S.weapon].flail)?S.lance:S?S.weapon:'fists'} // the Cog Flail is swung from the saddle too (it beats the lance while selected)
 function nearHorse(){return !!(S&&S.horse&&!S.horse.on&&!DG&&P&&Math.abs(P.x-S.horse.x)<22)}
 function buyHorse(ti){if(S.horse||S.money<HORSEPRICE)return false;S.money-=HORSEPRICE;S.horse={on:false,x:TOWNS[ti].x+30,dir:-1};if(!S.lances.includes('woodlance'))S.lances.unshift('woodlance');if(!S.lance)S.lance='woodlance';
  toast('<img class="px" style="width:28px;height:20px;vertical-align:middle" src="'+HORSEURL+'"> <b>Horse</b> ✓<br><span class="small">'+(isTouch?'tap 🐴':'press R')+'</span>',2600);save();return true}

@@ -48,15 +48,19 @@ const W2K0=[1950,2250,2480,3180,3400,3800,4200,4500,4760,5620,5980,6800,9000],W2
 function w2Remap(x){if(!isFinite(x)||x<=W2K0[0])return x;const n=W2K0.length;for(let i=1;i<n;i++)if(x<=W2K0[i])return Math.round(W2K1[i-1]+(x-W2K0[i-1])*(W2K1[i]-W2K1[i-1])/(W2K0[i]-W2K0[i-1]));return Math.round(x-W2K0[n-1]+W2K1[n-1])}
 // an old save in the open sky lands on the nearest sky island's landing pad (within 400px), else ui.js puts it on the Skyhaven dock
 function w2Land(x){if(!isFinite(x)||onIsle(x))return x;let b=null,bd=401;for(const I of SKYISLES)for(const c of [I.x0+40,I.x1-40]){const d=Math.abs(c-x);if(d<bd){bd=d;b=c}}return b==null?x:b}
+// Sky Crystal moved from cargo (item 7) to materials: every unit in the hold, a parked cart, or the other world's stored hold becomes mats.skyglass 1:1
+function w2Mats(s){let n=0;const st=a=>Array.isArray(a)?a.filter(u=>{if(u&&u.item===7){n+=Math.max(0,Math.floor(+u.qty||0));return false}return true}):a;
+ s.cargo=st(s.cargo);if(s.park&&s.park.cargo)s.park.cargo=st(s.park.cargo);if(s.ws&&typeof s.ws==='object')for(const k in s.ws){const o=s.ws[k];if(!o)continue;o.hold=st(o.hold);if(o.park&&o.park.cargo)o.park.cargo=st(o.park.cargo)}
+ if(n){if(!s.mats||typeof s.mats!=='object')s.mats={};s.mats.skyglass=(Math.floor(+s.mats.skyglass)||0)+n}}
 function islAt(x){for(let i=0;i<ISLES.length;i++)if(x>ISLES[i].x0&&x<ISLES[i].x1)return i;return -1}
 function skyAt(x){for(let i=0;i<SKYISLES.length;i++)if(x>SKYISLES[i].x0&&x<SKYISLES[i].x1)return i;return -1}
 function stormAt(x){const i=skyAt(x);if(i<0||!SKYISLES[i].storm)return false;const I=SKYISLES[i];return x>I.x0+STORMIN&&x<I.x1-STORMIN}
 function onIsle(x){return islAt(x)>=0||skyAt(x)>=0}
 function wxAt(x){for(const z of WX)if(x>z.x0&&x<z.x1)return z.k;return null}
 function dockShipX(i){const d=DOCKS[i];return d.x+d.side*52}
-// Sky Crystal (item 7) is enemy-exclusive (dread unicorn / big slime drops), sold nowhere; Skyhaven has the forge for the crystal armor (inventory/forge.js)
+// Sky Crystal is an enemy-only material (S.mats.skyglass; item 7 stays reserved so old saves load, w2Mats converts it), sold nowhere; Skyhaven has the forge for the crystal armor (inventory/forge.js)
 reg(TOWNS,6,[
- {name:'Skyhaven',x:1050,w:1,ships:1,forge:1,sells:[6,8],weapons:[],haulers:[]},
+ {name:'Skyhaven',x:1050,w:1,ships:1,forge:1,sells:[6,8],weapons:['cogflail'],haulers:[]},
  {name:'Sunspire',x:9750,w:1,sells:[8,9],weapons:[],haulers:[]}]);
 reg(BIOMES,5,[
  {name:'Sky Meadow',sky:['#78c4f0','#b4e2f8','#eaf8ff'],far:'#a8cce0',mid:'#f4fbff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#5ee0c8'},
@@ -66,7 +70,7 @@ reg(BIOMEINFO,5,['Peaceful skies','Pegasi · sky islands · storms','Peaceful sk
 // Skylands air wilds (hull = damage to an airship)
 Object.assign(ENEMY,{
  pegasus:{hp:55,dmg:11,hull:10,spd:190,w:18,h:14,coin:[6,12],air:1,gem:.15},
- skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1,gem:.15}, // gem: open-sky Sky Crystal, straight into cargo (airGem)
+ skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1,gem:.15}, // gem: open-sky Sky Crystal, straight into S.mats (airGem)
  // sky-island foes: isle:1 routes them through updAir/drawAir to world2/skyisles.js (dmg = touch; the unicorn's bolt is UNI.bolt)
  // burst = bolts per volley (same aim, UNI.gap apart), gem = chance to drop a Sky Crystal, fruit = chance to drop a Sunfruit (replaces the slime apple), elite = gold-maned variant
  unicorn:{hp:70,dmg:7,hull:9,spd:34,w:16,h:20,coin:[10,18],air:1,isle:1,base:'witch',uni:1,burst:2},
@@ -91,7 +95,7 @@ WORLDDEF[1]={name:'Skylands',len:W2LEN,bounds:[0,ISLES[0].x1,ISLES[1].x0,W2LEN],
  cart(){return S.wcart&&!FEATURE_DRIVABLE_AIRSHIPS?'wingcart':'backpack'},parkIco:'wcartP',carry:'hold',autoHitch:0,
  leave(s,o){o.hold=s.cargo;o.park=s.park||null},
  fresh(s){s.w2l=W2L}, // new games are on the current World 2 layout
- migrate(s,d){if(d.w2l>=W2L)return;s.w2l=W2L; // older saves: World 2 positions onto the bigger islands (core/state.js load(), before anything checks them)
+ migrate(s,d){w2Mats(s);if(d.w2l>=W2L)return;s.w2l=W2L; // older saves: World 2 positions onto the bigger islands (core/state.js load(), before anything checks them)
   const M=x=>isFinite(x)?clamp(w2Remap(+x),0,W2LEN):x;
   if(s.w===1){s.x=w2Land(M(s.x));if(s.horse&&s.horse.x!=null)s.horse.x=M(s.horse.x);if(s.park)s.park.x=M(s.park.x)}
   else{const o=s.ws&&s.ws[1];if(o){o.x=w2Land(M(o.x));if(o.park)o.park.x=M(o.park.x)}}}};

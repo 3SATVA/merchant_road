@@ -9,12 +9,23 @@ function wepPixels(id){switch(id){
  case 'firestaff':return ['#4a2a18','#4a2a18','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418'];
  case 'flamesword':return ['#5a3818','#5a3818','#d8b040','#a8301a','#c83a1a','#e8501a','#ff6a1a','#ff8a2a','#ffa030','#ffd040','#fff0a0'];
  case 'obsidian':return ['#3a2a3a','#3a2a3a','#c04aa0','#2a1a2e','#3a2440','#3a2440','#3a2440','#3a2440','#4a2e52','#4a2e52','#e070d0'];
+ case 'cogflail':return ['#5a3818','#5a3818','#6a4420','#7a5228','#9aa0aa'];
  case 'crossbow':return ['#6a4420','#6a4420','#6a4420','#7a5228','#7a5228','#7a5228','#9aa0aa'];
  case 'woodlance':return ['#5a3818','#5a3818','#5a3818','#a8743c','#8b5a2b','#a8743c','#8b5a2b','#a8743c','#8b5a2b','#a8743c','#8b5a2b','#a8743c','#c8a060','#d8b080','#f0d8a8'];
  case 'ironlance':return ['#3a2414','#3a2414','#3a2414','#7a5228','#8a6030','#7a5228','#8a6030','#7a5228','#8a6030','#7a5228','#9aa0aa','#b8c0cc','#d0d8e0','#e8eef4','#ffffff'];
  case 'magmalance':return ['#2a1a1a','#2a1a1a','#2a1a1a','#3a2626','#4a3030','#3a2626','#4a3030','#3a2626','#4a3030','#a8301a','#e8501a','#ff6a1a','#ff8a2a','#ffd040','#fff0a0'];
  default:return []}}
-function drawWeapon(c,hx,hy,dir,ang,id,t){
+// Cog Flail head: a spiked gear (World 1 style: flat tones, highlight row, dark underside, no outline), brass hub
+function drawCog(c,x,y){x=Math.round(x);y=Math.round(y);const M='#8a909a',HL='#c8ccd4',DK='#5a606a',SP='#d0d8e0';
+ px(c,x-1,y-3,3,1,'#b8c0cc');px(c,x-1,y+3,3,1,'#6a707a');px(c,x-3,y-1,1,3,M);px(c,x+3,y-1,1,3,DK);for(const [a,b] of [[-3,-3],[3,-3],[-3,3],[3,3]])px(c,x+a,y+b,1,1,SP);
+ px(c,x-2,y-2,5,5,M);px(c,x-2,y-2,5,1,HL);px(c,x-2,y+2,5,1,DK);px(c,x-1,y-1,2,1,'#ffffff');px(c,x,y,1,1,'#d8b040');px(c,x+1,y+1,1,1,'#a8801a')}
+// chain + head from the grip tip: fl null = straight out (icons), fl.k<0 = hanging idle, fl.k 0..1 = swing toward FAIM (the auto-aimed foe)
+function drawFlail(c,ex,ey,dir,ang,t,fl){let hx,hy;const ca=Math.cos(ang),sa=Math.sin(ang);
+ if(!fl){hx=ex+ca*dir*6;hy=ey+sa*6}else if(fl.k<0){hx=ex+dir*(1+Math.round(Math.sin((t||0)*3)));hy=ey+7}
+ else{const k=fl.k,len=4+(FAIM.r-4)*Math.sin(Math.PI*Math.min(1,k*1.2)),th=lerp(-2.4,FAIM.a,smooth(Math.min(1,k*2.2)));hx=ex+dir*Math.cos(th)*len;hy=ey+Math.sin(th)*len;
+  if(k>.15&&k<.85){c.globalAlpha=.35;for(const j of [1,2]){const k2=Math.max(0,k-.07*j),l2=4+(FAIM.r-4)*Math.sin(Math.PI*Math.min(1,k2*1.2)),t2=lerp(-2.4,FAIM.a,smooth(Math.min(1,k2*2.2)));px(c,Math.round(ex+dir*Math.cos(t2)*l2)-1,Math.round(ey+Math.sin(t2)*l2)-1,3,3,'#e8eef4')}c.globalAlpha=1}}
+ const n=Math.max(1,Math.round(Math.hypot(hx-ex,hy-ey)/2));for(let i=1;i<n;i++)px(c,Math.round(ex+(hx-ex)*i/n),Math.round(ey+(hy-ey)*i/n),1,1,i%2?'#9aa0aa':'#6a707a');drawCog(c,hx,hy)}
+function drawWeapon(c,hx,hy,dir,ang,id,t,fl){
  const P=wepPixels(id);if(!P.length)return;const ca=Math.cos(ang),sa=Math.sin(ang);let ex=hx,ey=hy;
  if(WEAPONS[id]&&WEAPONS[id].lance)for(let i=3;i<P.length;i++)px(c,hx+ca*i*dir-sa*dir,hy+sa*i+ca,1,1,'#1e140c'); // dark underside so the lance reads against the horse
  for(let i=0;i<P.length;i++){const x=hx+ca*i*dir,y=hy+sa*i;px(c,x,y,1,1,P[i]);if(id==='sword'||id==='obsidian'||id==='flamesword'){if(i>2)px(c,x-sa*dir,y+ca,1,1,P[i])}ex=x;ey=y}
@@ -24,6 +35,7 @@ function drawWeapon(c,hx,hy,dir,ang,id,t){
  if(id==='flamesword'){const f=Math.floor((t||0)*12);for(let i=4;i<P.length;i+=2){const k=hash(i*3.1+f);if(k>.45){const x=hx+ca*i*dir-sa*dir*(k>.75?-1:2),y=hy+sa*i+ca*(k>.75?-1:2);px(c,x,y,1,1,k>.8?'#fff0a0':'#ff8a2a')}}}
  if(WEAPONS[id]&&WEAPONS[id].lance){const vx=hx+ca*dir*3,vy=hy+sa*3,vc=id==='ironlance'?'#9aa0aa':id==='magmalance'?'#5a3a3a':'#6e4526';for(let j=-2;j<=2;j++)px(c,vx+nx*j,vy+ny*j,1,1,Math.abs(j)===2?'#2a1a10':vc);
   if(id==='magmalance'){const f=Math.floor((t||0)*12);for(let i=9;i<P.length;i+=2){const k=hash(i*3.1+f);if(k>.5)px(c,hx+ca*i*dir-sa*dir*(k>.75?-1:1),hy+sa*i+ca*(k>.75?-1:1),1,1,k>.8?'#fff0a0':'#ff8a2a')}}}
+ if(id==='cogflail')drawFlail(c,ex,ey,dir,ang,t,fl);
  if(id==='leafstaff'){px(c,ex-1,ey-1,3,3,'#3aa040');px(c,ex,ey-2,1,1,'#6cc04a');px(c,ex+1,ey,1,1,'#6cc04a');px(c,ex,ey,1,1,'#b8f080')}
  if(id==='firestaff'){const f=(Math.floor((t||0)*10)%2);px(c,ex-1,ey-1,3,3,'#ff7a1a');px(c,ex,ey,1,1,f?'#fff0a0':'#ffd040')}
 }

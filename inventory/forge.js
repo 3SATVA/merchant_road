@@ -1,8 +1,8 @@
 'use strict';
 const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'firestaff',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'magmalance',kind:'w',need:{stone:3,lava:1,iron:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}},{id:'stonechest',kind:'g',need:{stone:3}},{id:'stonehelm',kind:'g',need:{stone:2}},{id:'witchboots',kind:'g',need:{essence:2}},{id:'stoneboots',kind:'g',need:{stone:2}},
- // World 2 (w:1, Skyhaven forge): Sky Crystal is a cargo item (CARGOMAT), essence a mat
+ // World 2 (w:1, Skyhaven forge): Sky Crystal and essence are mats
  {id:'crystalhelm',kind:'g',w:1,need:{skyglass:6,essence:15}},{id:'crystalchest',kind:'g',w:1,need:{skyglass:6,essence:15}},{id:'crystalboots',kind:'g',w:1,need:{skyglass:6,essence:15}}];
-const CARGOMAT={iron:4,skyglass:7}; // recipe needs paid in cargo units (any origin) instead of S.mats
+const CARGOMAT={iron:4}; // Sky Crystal is a material (S.mats.skyglass) since Oct 2026 // recipe needs paid in cargo units (any origin) instead of S.mats
 function recipesHere(){return RECIPES.filter(r=>(r.w||0)===WI)}
 function matURL(k){return CARGOMAT[k]!=null?ICONURL[ITEMS[CARGOMAT[k]].id]:MATURL[k]}
 function have(k){const it=CARGOMAT[k];return it!=null?S.cargo.filter(s=>s.item===it).reduce((a,s)=>a+s.qty,0):(S.mats[k]||0)}
