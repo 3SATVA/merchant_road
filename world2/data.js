@@ -76,6 +76,8 @@ Object.assign(ENEMY,{
 // (and the unicorn bolt) once, here; the numbers above stay readable as "World 1 sized". hull (shelved airships) is not scaled.
 const W2T={hp:4.5,dmg:4,coin:3};
 for(const t of ['pegasus','skySlime','unicorn','dreadUni','bigSlime','isleSlime']){const d=ENEMY[t];d.hp=Math.round(d.hp*W2T.hp);d.dmg=Math.round(d.dmg*W2T.dmg);d.coin=d.coin.map(c=>Math.round(c*W2T.coin))}
+// HP nerf on top of the tier (Oct 2026): pegasus, unicorn, dread unicorn and big slime at 1/2 (sky slime and the big slime's isle slimes unchanged)
+const W2HPN={pegasus:.5,unicorn:.5,dreadUni:.5,bigSlime:.5};for(const t in W2HPN)ENEMY[t].hp=Math.round(ENEMY[t].hp*W2HPN[t]);
 UNI.bolt=Math.round(UNI.bolt*W2T.dmg);
 reg(SPAWNS,5,[[['slime',1]],[['pegasus',.55],['skySlime',.45]],[['slime',1]]]);
 // World 2 definition (see WORLDDEF in core/registry.js)
