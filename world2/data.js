@@ -65,8 +65,8 @@ reg(BIOMES,5,[
 reg(BIOMEINFO,5,['Peaceful skies','Pegasi · sky islands · storms','Peaceful skies']);
 // Skylands air wilds (hull = damage to an airship)
 Object.assign(ENEMY,{
- pegasus:{hp:55,dmg:11,hull:10,spd:190,w:18,h:14,coin:[6,12],air:1},
- skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1},
+ pegasus:{hp:55,dmg:11,hull:10,spd:190,w:18,h:14,coin:[6,12],air:1,gem:.15},
+ skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1,gem:.15}, // gem: open-sky Sky Crystal, straight into cargo (airGem)
  // sky-island foes: isle:1 routes them through updAir/drawAir to world2/skyisles.js (dmg = touch; the unicorn's bolt is UNI.bolt)
  // burst = bolts per volley (same aim, UNI.gap apart), gem = chance to drop a Sky Crystal, fruit = chance to drop a Sunfruit (replaces the slime apple), elite = gold-maned variant
  unicorn:{hp:70,dmg:7,hull:9,spd:34,w:16,h:20,coin:[10,18],air:1,isle:1,base:'witch',uni:1,burst:2},

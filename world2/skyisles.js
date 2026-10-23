@@ -69,7 +69,7 @@ function drawIsleFoe(c,e,sx,sy,t){const dir=e.dir||1,fl=e.hitT>0,R=[],G=[];const
  const tt=t+(e.seed||0)*3;
  const dd=ENEMY[e.type];if(dd.uni){const el=dd.elite,B=el?'#241a30':'#3e2c52',B2=el?'#140e1c':'#2a1c3a',B3=el?'#3a2c4a':'#5a4672',M=el?'#e0a020':'#c0306a',M2=el?'#ffe060':'#ff5a8a',H=el?'#fff0b0':'#e8e0ff',HV='#1a1020';const ch=e.st==='charge',f=e.moving?Math.floor(tt*9)%4:0;
   const by=f===1||f===3?-1:0,sp=f===0?1:f===2?-1:0,lift=f===1?[1,0,0,1]:f===3?[0,1,1,0]:[0,0,0,0];
-  [-7,-4,3,6].forEach((lx,k)=>{const x=lx+(k%2?-sp:sp)*(e.moving?1:0),l=lift[k];Q(x,-6+by,2,5-l,k===1||k===2?B2:B);Q(x,-1-l+by*0,2,1,HV)});
+  [-7,-4,3,6].forEach((lx,k)=>{const x=lx+(k%2?-sp:sp)*(e.moving?1:0),l=lift[k];Q(x,-6+by,2,5-l-by,k===1||k===2?B2:B);Q(x,-1-l+by*0,2,1,HV)});
   const tw=Math.round(Math.sin(tt*5));Q(-11,-12+by+tw,3,2,M);Q(-12,-10+by+tw,2,4,M);Q(-11,-7+by+tw,1,2,M2);
   Q(-8,-12+by,16,6,B);Q(-7,-13+by,14,1,B);Q(-7,-12+by,12,1,B3);Q(-7,-7+by,14,1,B2);
   if(ch){Q(6,-13+by,4,5,B);Q(8,-13+by,6,4,B);Q(13,-11+by,1,2,B3);Q(10,-12+by,1,1,'#ff3a5a');Q(4,-15+by,3,6,M);Q(2,-14+by,2,3,M2);
@@ -77,13 +77,14 @@ function drawIsleFoe(c,e,sx,sy,t){const dir=e.dir||1,fl=e.hitT>0,R=[],G=[];const
    const gx=dir>0?sx+18:sx-19,gr=1+Math.round(p*3);G.push([gx-gr,sy-12+by-gr,gr*2+1,gr*2+1,'rgba(255,90,216,'+(.25+p*.35)+')']);G.push([gx-1,sy-13+by,3,3,'rgba(255,255,255,'+(.5+p*.5)+')'])}
   else{Q(5,-16+by,4,5,B);Q(6,-19+by,6,4,B);Q(11,-17+by,2,2,B3);Q(8,-18+by,1,1,'#ff3a5a');Q(4,-19+by,3,8,M);Q(3,-16+by,1,4,M2);Q(5,-20+by,2,1,M2);
    Q(10,-20+by,1,1,H);Q(11,-21+by,1,1,H);Q(12,-22+by,1,1,'#ffb0ec')}}
- else{const big=e.type==='bigSlime',W=big?24:11,H=big?18:9;const BD='#5ed49a',BD2='#34a878',HI='#d4fff0',CO='#46bc86',EY='#0e2a1e';
+ else{const big=e.type==='bigSlime',W=big?24:11,H=big?18:9;const BD='#2fae7a',BD2='#1f7a52',BH='#6ee0a8',HI='#c8ffe0',CO='#3cc08a',EY='#0a2a18';
   let s;if(e.onGround){s=e.sq>0?.3*e.sq/.22:e.hop<.25?.22*(1-e.hop/.25):.04*Math.sin(tt*5)}else s=clamp((e.vy||0)/900,-.28,.12);
   const w=Math.max(6,Math.round(W*(1+s))),h=Math.max(4,Math.round(H*(1-s))),x0=-Math.floor(w/2);
-  for(let i=0;i<w;i++){const u=(i+.5)/w*2-1,ch2=Math.max(2,Math.round(h*(.5+.5*Math.sqrt(Math.max(0,1-u*u)))));Q(x0+i,-ch2,1,ch2,BD);Q(x0+i,-2,1,2,BD2)}
+  for(let i=0;i<w;i++){const u=(i+.5)/w*2-1,ch2=Math.max(2,Math.round(h*(.5+.5*Math.sqrt(Math.max(0,1-u*u)))));Q(x0+i,-ch2,1,ch2,BD);Q(x0+i,-ch2,1,1,BH);Q(x0+i,-1,1,1,BD2)}
   if(big){Q(x0+Math.round(w*.3),-Math.round(h*.55),Math.round(w*.4),Math.round(h*.35),CO);Q(x0+3,-h+3,3,2,HI);Q(x0+3,-h+5,1,1,HI)}else Q(x0+2,-h+2,2,1,HI);
   const ey=-Math.round(h*.62),ex=Math.round(w*.12)+(big?2:1);Q(ex-(big?6:3),ey,big?2:1,big?3:2,EY);Q(ex+1,ey,big?2:1,big?3:2,EY);if(big){Q(ex-7,ey-2,3,1,EY);Q(ex+1,ey-2,3,1,EY)}}
- for(const r of R)px(c,r[0]-1,r[1]-1,r[2]+2,r[3]+2,'#1a1020');for(const r of R)px(c,r[0],r[1],r[2],r[3],r[4]);for(const g of G)px(c,g[0],g[1],g[2],g[3],g[4])}
+ for(const r of R)px(c,r[0],r[1],r[2],r[3],r[4]); // flat, no outline (World 1 conventions)
+for(const g of G)px(c,g[0],g[1],g[2],g[3],g[4])}
 function drawBolts(ox,oy){for(const b of UB){const tr=b.tr;for(let k=0;k<tr.length;k+=2){const a=1-k/tr.length;const w=a>.5?3:2;X.globalAlpha=a*.8;px(X,Math.round(tr[k]-ox)-1,Math.round(tr[k+1]-oy)-1,w,w,k%4?'#ff5ad8':'#ffb0ec')}X.globalAlpha=1;
   const x=Math.round(b.x-ox),y=Math.round(b.y-oy);px(X,x-5,y-3,10,7,'rgba(255,90,216,.3)');px(X,x-4,y-2,8,5,'rgba(255,120,224,.5)');px(X,x-3,y-1,6,3,'#ff7ad8');px(X,x-2,y-1,4,2,'#ffd0f4');px(X,x-1,y,2,1,'#ffffff')}}
 function drawSkyProps(ox,oy){for(let i=0;i<SKYISLES.length;i++){const I=SKYISLES[i];if(I.x1<ox-20||I.x0>ox+VW+20)continue;
