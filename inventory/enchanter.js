@@ -1,20 +1,21 @@
 'use strict';
 let wFlash=null;
 function openWitch(){if(MODE!=='play')return;wFlash=null;setMode('witch');renderWitch()}
-function closeWitch(){setMode('play');save()}
+function closeWitch(){setMode('play');save();WTOWER=0}
+const TQUOTES=['Up here the magic holds better. Costs more, too.','Fewer curses at the top. Mostly.','You climbed all those ladders? Respect.'];
 const WQUOTES=['Got essence? Let\'s make something cool.','Hand it over. I\'ll make it glow.','Curses hit hard. Both ways. Feeling lucky?'];
 let wSel=null,wRev=0;
 function itemName(id){return isWep(id)?WEAPONS[id].name:GEAR[id].name}
 function witchIds(){return S.weapons.filter(w=>w!=='fists').concat(S.lances,S.gear)}
 function renderWitch(){$('wmoney').textContent=pr(S.money);const es=S.mats.essence||0,ids=witchIds();if(!ids.includes(wSel))wSel=null;
- let h='<div class="wwrap"><div class="wl"><div class="wq">“'+WQUOTES[Math.floor(S.time/40)%WQUOTES.length]+'”</div>';
+ let h='<div class="wwrap"><div class="wl"><div class="wq">“'+(WTOWER?TQUOTES[Math.floor(S.time/40)%TQUOTES.length]:WQUOTES[Math.floor(S.time/40)%WQUOTES.length])+'”</div>';
  h+='<div class="wcols"><div class="wsl"><div class="eslot'+(wSel?' full':'')+(wRev?' rev':'')+'" id="eslot"'+(wSel&&encList(wSel).length?' style="--ec:'+enchCol(wSel)+'"':'')+'>';
  if(wSel){const l=encList(wSel);h+='<img class="px si" data-id="'+wSel+'" src="'+gearIcon(wSel)+'"><b>'+itemName(wSel)+'</b>'+(l.length?l.map((x,i)=>'<span class="el" style="animation-delay:'+(i*.18)+'s">'+enchSpan(x)+'<span class="sub">'+ENCH[x.k].d(eVal(x))+'</span></span>').join(''):'<span class="sub">—</span>')}
  else h+='<span class="sub">'+(ids.length?'Drag or tap an item':'No gear yet')+'</span>';
- h+='</div><button id="ebtn" '+(!wSel||es<ENCHCOST?'disabled':'')+'>'+ico('spark')+' Enchant · '+ENCHCOST+' <img class="px" style="width:12px;height:12px;vertical-align:middle" src="'+MATURL.essence+'"> <span style="opacity:.75">('+es+')</span></button>';
+ h+='</div><button id="ebtn" '+(!wSel||es<enchCost()?'disabled':'')+'>'+ico('spark')+' Enchant · '+enchCost()+' <img class="px" style="width:12px;height:12px;vertical-align:middle" src="'+MATURL.essence+'"> <span style="opacity:.75">('+es+')</span></button>';
  h+='</div><div class="wtr"><div class="tray" id="etray">';for(const id of ids){if(id===wSel)continue;const on=isWep(id)?(WEAPONS[id].lance?S.lance===id:S.weapon===id):Object.values(S.eq).includes(id),l=encList(id);
   h+='<div class="ti'+(l.length?' ench':'')+'" data-id="'+id+'" title="'+itemName(id)+'"'+(l.length?' style="--ec:'+enchCol(id)+'"':'')+'><img class="px" src="'+gearIcon(id)+'">'+(on?'<span class="eb">E</span>':'')+(l.length?'<span class="ed">'+l.length+'</span>':'')+'</div>'}
- h+='</div><div class="small" style="line-height:1.6;margin-top:4px">1–3 random enchants · <span class="cz" style="color:'+CURSECOL+'">red = curse</span></div></div></div>';
+ h+='</div><div class="small" style="line-height:1.6;margin-top:4px">1–3 random enchants · <span class="cz" style="color:'+CURSECOL+'">red = curse</span>'+(WTOWER?'<br><span class="gold">Tower: 92% curse-free</span> <span style="opacity:.7">(wagon 77%)</span>':'')+'</div></div></div>';
  h+='</div><img id="wpor" src="'+WPORTRAIT+'" alt="Vex"></div>';
  $('wbody').innerHTML=h;wRev=0}
 $('wX').onclick=closeWitch;

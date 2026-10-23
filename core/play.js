@@ -128,6 +128,7 @@ function updWorld(dt){if(WI){w2Tick(dt);wcTick(dt)}const H=HAULERS[carriedH()];c
  const dn=dungAt(P.x,20),nearCart=nearCartP();let h='';
  if(town){h='<b class="gold">'+town.name+'</b><br>'+(isTouch?'Tap E':'Press E')+' to trade';if(S.lastTown!==town.i){S.lastTown=town.i;if(!S.visited.includes(town.i))S.visited.push(town.i);save()}if(inp.use())enterTown(town)}
  else if(dn){const l=dState(dn);h=l?skulls(dn.diff,1)+' ✓<br>⟳ '+Math.ceil(l/60)+'m':skulls(dn.diff)+'<br>'+(isTouch?'E':'[E]')+' Enter';if(inp.use()&&!l)enterDungeon(dn)}
+ else if(nearTowerDoor()){h=towerPrompt();if(inp.use())enterTower()} // World 2: Vex's Tower door in the capital (world2/capital.js)
  else if(nearWitch()){h='<b style="color:#c9b4ec">🔮 Vex</b><br>'+(isTouch?'Tap E':'Press E')+' to enchant';if(inp.use())openWitch()}
  else if(nearDock()){h=ico('ship')+'<br>'+(isTouch?'Tap E':'[E]');if(inp.use())openDock()}
  else if(nearPile()){h=(S.scrap.done?'✈ <b class="gold">World 2</b>':'🛠 ✈ '+Math.floor(scrapFrac()*100)+'%')+'<br>'+(isTouch?'Tap E':'[E]');if(inp.use())openScrap()}

@@ -8,7 +8,7 @@ function skyCols(b0,b1,t,n){const out=[];for(let i=0;i<n;i++){const k=i/(n-1);co
  out.push(mixc(BIOMES[b0].sky[2],BIOMES[b1].sky[2],t));return out}
 function layer(bi,kind,f,baseY,col,cap,alpha){X.globalAlpha=alpha;const off=camX*f;
  for(let sx=0;sx<VW;sx+=2){const wx=sx+off;let h;
-  if(kind==='isles'){const p=((wx%300)+300)%300;if(p<110){const q=1-Math.abs(p-55)/55,tp=Math.round(baseY-50-10*Math.sin(Math.floor(wx/300)*2.3)),th=Math.round(3+16*Math.sqrt(q));rb(0,col,sx,tp,2,th);rb(1,'#8ad0c4',sx,tp,2,1)}continue}
+  if(kind==='isles'){const p=((wx%300)+300)%300;if(p<110){const q=1-Math.abs(p-55)/55,tp=Math.round(baseY-50-10*Math.sin(Math.floor(wx/300)*2.3)),th=Math.round(3+16*Math.sqrt(q));rb(0,col,sx,tp,2,th);rb(1,bi>=8?'#f0b080':'#8ad0c4',sx,tp,2,1)}continue}
   if(kind==='hills')h=28+16*Math.sin(wx/130)+8*Math.sin(wx/47+1);
   else if(kind==='peaks'){const a=Math.abs(Math.sin(wx/70)),bb=Math.abs(Math.sin(wx/41+2));h=30+40*a*a+14*bb}
   else if(kind==='volcano'){const p=((wx%700)+700)%700;h=22+8*Math.sin(wx/60);const d=Math.abs(p-350);if(d<150)h=Math.max(h,90-d*.45);if(d<22)h=Math.min(h,78)}
@@ -23,18 +23,19 @@ function layer(bi,kind,f,baseY,col,cap,alpha){X.globalAlpha=alpha;const off=camX
   if(kind==='volcano'){const p=((wx%700)+700)%700;if(Math.abs(p-350)<20)rb(2,'#ff6a1a',sx,y,2,2)}}
  rbFlush(X);X.globalAlpha=1}
 function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==='menu'?camX:camX;const mid=cx+VW/2;let b0=biomeAt(mid),b1=b0,t=0;
- for(let i=1;i<NB;i++){const d=mid-BOUNDS[i];if(Math.abs(d)<300){b0=WB[i-1];b1=WB[i];t=smooth((d+300)/600)}}
+ for(let i=1;i<NB;i++){const d=mid-BOUNDS[i],bw=WI&&i>=3?900:300;if(Math.abs(d)<bw){b0=WB[i-1];b1=WB[i];t=smooth((d+bw)/(2*bw))}} // World 2 autumn: a wide 1800px fade from Sunspire
  skyBands(b0,b1,t);
  const hor=Math.round(VH*.64)+(WI?Math.round(clamp(-(camY+22+VH*.64)*.35,-40,140)):0);
  // sun/moon
- const bs=t>.5?b1:b0;if(bs===4){X.fillStyle='rgba(240,200,150,.25)';X.fillRect(VW-76,22,22,22);X.fillStyle='#e8c49a';disc(VW-72,26,14)}else if(!((b0===3)||(b1===3&&t>.5))){X.fillStyle=b0===1?'#f4f8ff':'#fff2b0';disc(VW-70,24,12)}else{X.fillStyle='#ff8a3a';disc(VW-70,30,10)}
+ const bs=t>.5?b1:b0;if(bs===4){X.fillStyle='rgba(240,200,150,.25)';X.fillRect(VW-76,22,22,22);X.fillStyle='#e8c49a';disc(VW-72,26,14)}else if(WI&&(b0>=8||b1>=8)){const k=b0>=8?1:t,sy=Math.round(lerp(24,hor-46,k));X.fillStyle='rgba(255,160,90,'+(.22*k).toFixed(2)+')';disc(VW-70,sy,Math.round(12+9*k));X.fillStyle=mixc('#fff2b0','#ffb060',k);disc(VW-70,sy,Math.round(12+3*k))} // autumn: a low, big sunset sun
+ else if(!((b0===3)||(b1===3&&t>.5))){X.fillStyle=b0===1?'#f4f8ff':'#fff2b0';disc(VW-70,24,12)}else{X.fillStyle='#ff8a3a';disc(VW-70,30,10)}
  const bl=[[b0,1-(b1!==b0?t:0)],[b1,b1!==b0?t:0]];
  for(const [bi,a] of bl)if(a>0)layer(bi,BIOMES[bi].farS,.12,hor-14,BIOMES[bi].far,BIOMES[bi].farS==='peaks'?{h:62,c:'#f4f8ff'}:null,a);
  for(const [bi,a] of bl)if(a>0)layer(bi,BIOMES[bi].midS,.35,hor+10,BIOMES[bi].mid,bi===1?{h:30,c:'#e8f0f8'}:null,a);
  const ox=Math.round(camX)+shk(),oy=Math.round(camY)+shk();
  // towns
  if(WI)drawIsles(ox,oy);
- for(const tw of WT){if(Math.abs(tw.x-mid)<VW/2+160)drawTown(tw,ox,oy)}
+ for(const tw of WT){if(tw.big)drawCapital(ox,oy);else if(Math.abs(tw.x-mid)<VW/2+160)drawTown(tw,ox,oy)} // big = World 2's walled capital (world2/capital.js, culls itself)
  for(const d of DUNGEONS){if(Math.abs(d.x-mid)<VW/2+50)drawCave(d,ox,oy)}
  // decor behind
  for(const d of DECOR){if(d.x<camX-30||d.x>camX+VW+30)continue;drawDecor(d,ox,oy)}

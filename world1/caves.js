@@ -49,7 +49,7 @@ function openChest(){const D=DG;if(!D||D.chest.open)return;const d=D.d;D.chest.o
  toast((got.length?got.join('  ')+'<br>':'')+'<span class="gold">+'+pr(L.coin+extra)+'</span>'+(extra?' · 🎒 full':''),3400);save()}
 function dSolid(x,y){const D=DG;if(y>D.deathY)return true;for(const p of D.plats)if(x>=p.x0&&x<=p.x1&&y>=p.y&&y<=p.y+p.th)return true;return false}
 function setSafe(p){let sx=clamp(P.x,p.x0+6,p.x1-6);for(const q of DG.spikes)if(q.p===p&&sx>q.x0-8&&sx<q.x1+8)sx=q.x0-9>p.x0+4?q.x0-9:q.x1+9;P.safe={x:sx,y:p.y,p}}
-function updDungeon(dt){const D=DG;D.t+=dt;
+function updDungeon(dt){const D=DG;D.t+=dt;if(D.tower){updTower(dt);return} // World 2: Vex's Tower interior (world2/capital.js)
  for(const p of D.plats)if(p.mv){const k=.5-.5*Math.cos(D.t*p.mv.sp+p.mv.ph);const nx=p.bx+p.mv.ax*k,ny=p.by+p.mv.ay*k;p.dx=nx-p.x0;p.dy=ny-p.y;p.x0=nx;p.x1=nx+p.w;p.y=ny}
  let mv=(inp.left()?-1:0)+(inp.right()?1:0);if(mv)P.dir=mv;
  if(P.onGround&&P.plat){P.x+=P.plat.dx;P.y=P.plat.y}
@@ -91,7 +91,7 @@ function drawCave(d,ox,oy){const x=Math.round(d.x-ox),y=Math.round(surfY(d.x)-oy
  else{for(const sd of [-16,16]){px(X,x+sd,y-14,1,9,'#5a3818');const f=Math.sin(menuT*14+sd)>0;px(X,x+sd-1,y-17,3,3,f?'#ff8a2a':'#ffd040');px(X,x+sd,y-18-(f?1:0),1,1,'#fff0a0')}
   if(Math.sin(menuT*1.3+d.i*2)>.55){px(X,x-3,y-9,1,1,'#ff3030');px(X,x+2,y-9,1,1,'#ff3030')}}
  const n=d.diff;let sx=x-Math.round((n*7-2)/2);for(let k=0;k<n;k++)drawSkull(X,sx+k*7,y-44,cl?'#8a8070':'#f4f0e0')}
-function renderDungeon(){const D=DG,pal=DPAL[D.b],ox=Math.round(camX)+shk(),oy=Math.round(camY)+shk(),T=menuT;
+function renderDungeon(){if(DG.tower){renderTower();return}const D=DG,pal=DPAL[D.b],ox=Math.round(camX)+shk(),oy=Math.round(camY)+shk(),T=menuT;
  X.fillStyle=pal.bg;X.fillRect(0,0,VW,VH);
  // back wall: ceiling with stalactites and rubble silhouettes (parallax)
  for(let sx=0;sx<VW;sx+=2){const wx=sx+ox*.5;const hc=10+8*Math.abs(Math.sin(wx/23))+(hash(Math.floor(wx/6))>.82?10+Math.floor(hash(Math.floor(wx/6)+3)*14):0);rb(0,pal.bg2,sx,0,2,hc);

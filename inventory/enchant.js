@@ -24,15 +24,16 @@ const CURSECOL='#ff4a6a';for(const k in ENCH)if(ENCH[k].cur)ENCH[k].col=CURSECOL
 const ENCHCOST=3; // flat, every time
 const ENCHN=[60,30,10],ENCHL=[55,33,12]; // 1/2/3 enchants, level I/II/III
 const CURSEP=1/6; // each enchant rolled has this chance to be a curse
+let WTOWER=0;const ENCHT={cost:6,curse:.057}; // Vex's Tower (World 2 capital): 2x the wagon's essence, curse chance per enchant cut so a roll is ~92% curse-free (wagon ~77%)
 function isWep(id){return !GEAR[id]&&!!WEAPONS[id]}
 function wIdx(ws){let t=ws.reduce((a,b)=>a+b,0)*rnd();for(let i=0;i<ws.length;i++){if(t<ws[i])return i;t-=ws[i]}return 0}
 function rollEnchants(id){const c=isWep(id)?'w':'a',n=1+wIdx(ENCHN),out=[];
- for(let i=0;i<n;i++){const cur=rnd()<CURSEP;const ok=k=>ENCH[k].w[c]&&!out.some(o=>o.k===k);let pool=Object.keys(ENCH).filter(k=>ok(k)&&!!ENCH[k].cur===cur);if(!pool.length)pool=Object.keys(ENCH).filter(ok);if(!pool.length)break;
+ for(let i=0;i<n;i++){const cur=rnd()<(WTOWER?ENCHT.curse:CURSEP);const ok=k=>ENCH[k].w[c]&&!out.some(o=>o.k===k);let pool=Object.keys(ENCH).filter(k=>ok(k)&&!!ENCH[k].cur===cur);if(!pool.length)pool=Object.keys(ENCH).filter(ok);if(!pool.length)break;
   out.push({k:pool[wIdx(pool.map(k=>ENCH[k].w[c]))],l:1+wIdx(ENCHL)})}return out}
-function enchCost(){return ENCHCOST}
+function enchCost(){return WTOWER?ENCHT.cost:ENCHCOST}
 // replaces every enchant on the item with a fresh random roll
-function enchantItem(id){if(!(S.weapons.includes(id)||S.gear.includes(id)||S.lances.includes(id))||id==='fists')return null;if((S.mats.essence||0)<ENCHCOST)return null;
- S.mats.essence-=ENCHCOST;S.ench[id]=rollEnchants(id);save();return S.ench[id]}
+function enchantItem(id){if(!(S.weapons.includes(id)||S.gear.includes(id)||S.lances.includes(id))||id==='fists')return null;if((S.mats.essence||0)<enchCost())return null;
+ S.mats.essence-=enchCost();S.ench[id]=rollEnchants(id);save();return S.ench[id]}
 function encList(id){const e=S&&S.ench&&S.ench[id];return Array.isArray(e)?e:[]}
 function eVal(x){return ENCH[x.k].v[x.l-1]}
 function eName(x){return ENCH[x.k].n+' '+RN[x.l-1]}
