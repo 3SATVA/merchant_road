@@ -23,7 +23,6 @@ function drawEnemy(c,e,sx,sy,t){if(ENEMY[e.type].air){drawAir(c,e,sx,sy,t);retur
   P(-4,-11,8,10,rb);P(-5,-3,10,2,rb2);P(-3,-15,6,4,'#9acd7a');P(1,-13,1,1,'#ff3030');P(3,-12,1,2,'#7aa05a');
   P(-6,-16,12,1,'#2a1a3a');P(-3,-19,6,3,'#2a1a3a');P(-2,-21,4,2,'#2a1a3a');P(0,-23,2,2,'#2a1a3a');P(-3,-17,6,1,V?'#ff8030':'#c060ff');
   if(e.cast>0){P(5,-10,3,3,V?'#ff8030':'#d080ff');P(6,-9,1,1,'#ffffff')}else P(4,-9,2,2,'#9acd7a')}
- if(e.hp<e.max){px(c,sx-8,sy-ENEMY[e.type].h-8,16,2,'#000');px(c,sx-8,sy-ENEMY[e.type].h-8,Math.max(1,Math.round(16*e.hp/e.max)),2,'#e84a4a')}
 }
 function updEnemy(e,dt){const d=ENEMY[e.type],base=d.base||e.type;
  if(e.frz>0){e.frz-=dt;dt*=.45;if(rnd()<.15)PARTS.push({x:e.x+(rnd()-.5)*d.w,y:e.y-rnd()*d.h,vx:0,vy:12,col:rnd()<.5?'#e8f8ff':'#7ad0ff',g:0,life:.4})}

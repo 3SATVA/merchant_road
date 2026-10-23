@@ -100,7 +100,7 @@ function drawActors(ox,oy){
  for(const p of PARTS)px(X,p.x-ox,p.y-oy,1,1,p.col);
  if(WI)drawSparks(X,ox,oy);
 }
-// enemy health bars: show after a hit and fade ~3s later; big foes (golems, Vex's elite witches) always show theirs
+// enemy health bars, the ONE bar for every foe in both worlds (drawEnemy/drawAir draw none): show after a hit and fade ~3s later; big foes (golems, Vex's elite witches) always show theirs
 const HPBAR_T=3.2;
 function drawHPBars(ox,oy){for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(e.hpS==null)e.hpS=e.hp;if(e.hp<e.hpS)e.hbT=menuT;e.hpS=e.hp;
  const big=d.h>=24||e.type==='witchV',age=menuT-(e.hbT==null?-99:e.hbT);if(!big&&age>HPBAR_T)continue;const a=big?1:clamp((HPBAR_T-age)/.7,0,1);
