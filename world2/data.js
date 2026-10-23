@@ -3,8 +3,8 @@
 reg(ITEMS,6,[
  {id:'cloudwool',name:'Cloud Wool',base:20,col:'#e8f4ff'},
  {id:'skyglass',name:'Sky Crystal',base:260,col:'#7de0ff'},
- {id:'sunfruit',name:'Sunfruit',base:14,col:'#ffb040'},
- {id:'starsilk',name:'Star Silk',base:160,col:'#e8c8ff'}]);
+ {id:'sunfruit',name:'Sunfruit',base:500,col:'#ffb040'},
+ {id:'starsilk',name:'Star Silk',base:2000,col:'#e8c8ff'}]);
 HAULERS.wingcart={name:'Winged Cart',cap:20,spd:.9,jump:.95,price:400,w:1}; // World 2 only (Skyhaven), hitches to the winged horse
 COFF.wingcart=-18;HITCHR.wingcart=32;
 // airships: World 2 cargo haulers (hold = cargo cap there). spd/hull are used by phase-2 flying; shown in the shop now
@@ -27,16 +27,16 @@ const HLAND=1/3; // winged horse on any island (Skyhaven, Sunspire, sky islands)
 const SHIPV=118,HFLY=.5,JET=1.2,HULLFIX=12,WRECKLOSS=.3; // airship base speed (x ship spd); winged horse = gallop x0.5 (~69px/s: slower than any airship, the ship is the way to travel); high band x1.2; hull repairs 12/s while moored; a wreck loses 30% of the hold
 // sky islands: small landable islands in the air wilds (no towns). Logic + art in world2/skyisles.js.
 // h = surface height (BANDY is -70/-140/-210), top 1 = Sunspire lilac grass, storm 1 = under a storm cloud (no flying under it),
-// rw = reward (chest / wool / crystal node) at the centre + rx (deep inside: you walk through the fights to reach it), foes = spawned when you come near,
+// rw = reward (chest / wool node; Sky Crystal is enemy-only since Oct 2026, the storm island's crystal node became wool) at the centre + rx (deep inside: you walk through the fights to reach it), foes = spawned when you come near,
 // ld = ledges / hollows [from, to (fraction of the width), +px up / -px down], on top of gentle rolling ground (flat landing pads of SKYI.pad at both ends)
 const SKYISLES=[
  {x0:2250,x1:2870,h:100,top:0,rw:'wool',rx:40,foes:['bigSlime','unicorn'],ld:[[.28,.42,14],[.62,.71,-8]]},
  {x0:3430,x1:4030,h:190,top:1,rw:'chest',rx:-30,foes:['unicorn','bigSlime'],ld:[[.2,.33,-9],[.56,.72,16]]},
- {x0:4430,x1:5490,h:125,top:0,storm:1,rw:'crystal',rx:30,foes:['bigSlime','unicorn','bigSlime'],ld:[[.16,.27,12],[.38,.45,-10],[.62,.78,18],[.84,.9,10]]},
+ {x0:4430,x1:5490,h:125,top:0,storm:1,rw:'wool',rx:30,foes:['bigSlime','unicorn','bigSlime'],ld:[[.16,.27,12],[.38,.45,-10],[.62,.78,18],[.84,.9,10]]},
  {x0:5790,x1:6490,h:85,top:1,rw:'wool',rx:-40,foes:['dreadUni','bigSlime'],ld:[[.22,.37,15],[.6,.66,-8],[.73,.83,12]]},
  {x0:7190,x1:8150,h:160,top:1,storm:1,rw:'chest',rx:50,foes:['unicorn','dreadUni','bigSlime'],ld:[[.18,.28,-9],[.34,.48,15],[.68,.77,12]]}];
 const STORMIN=48; // the storm's no-fly core is the island minus this much at each end: land, cross, take off past the edge
-const SKYI={pad:80,safe:110,gap:80,chestCd:600,nodeCd:360,chest:[140,220],silk:2,wool:3,crystal:2}; // pad = flat landing strip at each end, safe = no foe spawns or patrols this close to an end, gap = min px between two foes' patrol zones; reward respawn [s of play time], chest coins + Star Silk, Cloud Wool / Sky Crystal per pick
+const SKYI={pad:80,safe:110,gap:80,chestCd:600,nodeCd:360,chest:[140,220],silk:2,wool:3}; // pad = flat landing strip at each end, safe = no foe spawns or patrols this close to an end, gap = min px between two foes' patrol zones; reward respawn [s of play time], chest coins + Star Silk, Cloud Wool per pick
 const UNI={near:52,bolt:10,hull:9,tele:.5,gap:.2,spd:180,life:1.6,range:210,ang:.6,cd:1.6,cdR:.8}; // unicorn bolt: damage (x W2T.dmg), hull, telegraph [s], s between burst bolts (ENEMY.burst), px/s, life [s], aggro px, max aim [rad], cooldown + rnd
 // island ground: base height + small ripple, gentle rolling hills (flat at the landing pads), then the ledges / hollows (14px ramps)
 function isleH(I,x){const w=I.x1-I.x0,u=x-I.x0,ed=Math.min(u,I.x1-x),e0=clamp(ed/36,0,1),pd=smooth(clamp((ed-SKYI.pad)/90,0,1));
@@ -54,8 +54,9 @@ function stormAt(x){const i=skyAt(x);if(i<0||!SKYISLES[i].storm)return false;con
 function onIsle(x){return islAt(x)>=0||skyAt(x)>=0}
 function wxAt(x){for(const z of WX)if(x>z.x0&&x<z.x1)return z.k;return null}
 function dockShipX(i){const d=DOCKS[i];return d.x+d.side*52}
+// Sky Crystal (item 7) is enemy-exclusive (dread unicorn / big slime drops), sold nowhere; Skyhaven has the forge for the crystal armor (inventory/forge.js)
 reg(TOWNS,6,[
- {name:'Skyhaven',x:1050,w:1,ships:1,sells:[6,7],weapons:[],haulers:[]},
+ {name:'Skyhaven',x:1050,w:1,ships:1,forge:1,sells:[6,8],weapons:[],haulers:[]},
  {name:'Sunspire',x:9750,w:1,sells:[8,9],weapons:[],haulers:[]}]);
 reg(BIOMES,5,[
  {name:'Sky Meadow',sky:['#78c4f0','#b4e2f8','#eaf8ff'],far:'#a8cce0',mid:'#f4fbff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#5ee0c8'},
@@ -67,11 +68,11 @@ Object.assign(ENEMY,{
  pegasus:{hp:55,dmg:11,hull:10,spd:190,w:18,h:14,coin:[6,12],air:1},
  skySlime:{hp:40,dmg:8,hull:7,spd:38,w:12,h:10,coin:[3,7],air:1},
  // sky-island foes: isle:1 routes them through updAir/drawAir to world2/skyisles.js (dmg = touch; the unicorn's bolt is UNI.bolt)
- // burst = bolts per volley (same aim, UNI.gap apart), gem = chance to drop a Sky Crystal, elite = gold-maned variant
+ // burst = bolts per volley (same aim, UNI.gap apart), gem = chance to drop a Sky Crystal, fruit = chance to drop a Sunfruit (replaces the slime apple), elite = gold-maned variant
  unicorn:{hp:70,dmg:7,hull:9,spd:34,w:16,h:20,coin:[10,18],air:1,isle:1,base:'witch',uni:1,burst:2},
  dreadUni:{hp:110,dmg:9,hull:11,spd:40,w:16,h:20,coin:[20,32],air:1,isle:1,base:'witch',uni:1,burst:3,elite:1,gem:.35},
- bigSlime:{hp:110,dmg:12,hull:10,spd:50,w:22,h:18,coin:[12,20],air:1,isle:1,base:'slime',gem:.15},
- isleSlime:{hp:24,dmg:7,hull:5,spd:50,w:10,h:8,coin:[2,4],air:1,isle:1,base:'slime'}});
+ bigSlime:{hp:110,dmg:12,hull:10,spd:50,w:22,h:18,coin:[12,20],air:1,isle:1,base:'slime',gem:.15,fruit:.25},
+ isleSlime:{hp:24,dmg:7,hull:5,spd:50,w:10,h:8,coin:[2,4],air:1,isle:1,base:'slime',fruit:.25}});
 // World 2 is end-game: you arrive with maxed World 1 gear (Magma Lance, Stone set, II-III enchants). The tier scales every sky foe
 // (and the unicorn bolt) once, here; the numbers above stay readable as "World 1 sized". hull (shelved airships) is not scaled.
 const W2T={hp:4.5,dmg:4,coin:3};

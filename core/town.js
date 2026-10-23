@@ -51,8 +51,8 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   h+='<div class="row"><span class="nm">🧪 Potion ×'+S.potions+'<span class="sub">+'+INN.potHP+' HP · max '+INN.potMax+' · press H</span></span><button data-act="pot" '+(S.potions>=INN.potMax||S.money<pc?'disabled':'')+'>'+pr(pc)+'</button></div>';
   h+='<div class="sec">STATS</div><div class="small">Profit '+pr(S.stats.profit)+' · Goods sold '+S.stats.sold+' · Kills '+S.stats.kills+' · Falls '+S.stats.deaths+'</div>';
  } else if(curTab==='craft'&&t.forge){
-  for(const r of RECIPES){const isW=r.kind==='w',img=isW?WEPURL[r.id]:GEARURL[r.id],nm=isW?WEAPONS[r.id].name:GEAR[r.id].name,st=isW?(WEAPONS[r.id].lance?'🐴 ':'')+'⚔'+WEAPONS[r.id].dmg+' 🔥':GEAR[r.id].stat;const own=owns(r),ok=canCraft(r);
-   const chips=Object.entries(r.need).map(([k,n])=>{const hv=have(k);return '<span class="ch'+(hv>=n?' ok':'')+'"><img src="'+(k==='iron'?ICONURL.iron:MATURL[k])+'">'+Math.min(hv,99)+'/'+n+'</span>'}).join('');
+  for(const r of recipesHere()){const isW=r.kind==='w',img=isW?WEPURL[r.id]:GEARURL[r.id],nm=isW?WEAPONS[r.id].name:GEAR[r.id].name,st=isW?(WEAPONS[r.id].lance?'🐴 ':'')+'⚔'+WEAPONS[r.id].dmg+' 🔥':GEAR[r.id].stat;const own=owns(r),ok=canCraft(r);
+   const chips=Object.entries(r.need).map(([k,n])=>{const hv=have(k);return '<span class="ch'+(hv>=n?' ok':'')+'"><img src="'+matURL(k)+'">'+Math.min(hv,99)+'/'+n+'</span>'}).join('');
    h+='<div class="row'+(own?' dim':'')+'">'+iconImg(img)+'<span class="nm">'+nm+' <span class="up">'+st+'</span><span class="sub" style="margin-top:4px">'+chips+'</span></span><button data-act="craft" data-id="'+r.id+'" '+(own||!ok?'disabled':'')+'>'+(own?ico('check'):'Craft')+'</button></div>'}
  } else if(curTab==='stable'&&t.stable){const Hs=S.horse;
   h+='<div class="row">'+iconImg(HORSEURL,'big')+'<span class="nm">Horse<span class="sub">👟 ×'+RIDE+' · 🛒 pulls carts · 🐴 lances</span></span>'+(Hs?'<button disabled>'+ico('check')+'</button>':'<button data-act="buyhorse" '+(S.money<HORSEPRICE?'disabled':'')+'>'+pr(HORSEPRICE)+'</button>')+'</div>';

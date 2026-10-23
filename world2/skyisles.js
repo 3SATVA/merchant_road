@@ -12,15 +12,16 @@ function skyTh(x,I){const ed=Math.min(x-I.x0,I.x1-x),bl=7+92*Math.sqrt(clamp(ed/
 function isleFoe(t,i,x,z0,z1){const e=spawnEnemy(t,x);e.isl=i;e.z0=z0;e.z1=z1;e.y=surfY(x);e.dir=rnd()<.5?-1:1;e.st='idle';e.sT=.4+rnd()*.6;e.tx=x;e.cd=1+rnd();e.tcd=0;e.onGround=true;e.vy=0;e.hx=0;e.hop=.5+rnd()*.8;e.sq=0;SKYST.foes.push(e);return e}
 function isleDeath(e){const y=e.y-ENEMY[e.type].h/2;
  const d=ENEMY[e.type];if(d.gem&&rnd()<d.gem*DROPMUL)dropUnit({item:7,origin:6,paid:0},e.x,e.y-10); // Sky Crystal
+ if(d.fruit&&rnd()<d.fruit*DROPMUL)dropUnit({item:8,origin:6,paid:0},e.x,e.y-12); // Sunfruit (sky slimes, instead of the World 1 apple)
  if(d.uni){part(e.x,y,d.elite?'#ffd040':'#ff7ad8',10,120,40,.5);part(e.x,y,d.elite?'#1a1020':'#3e2c52',8,90,80,.5)}
  else{part(e.x,y,'#b8f8d8',8,110,200,.45);if(e.type==='bigSlime'&&SKYST.act[e.isl]){const I=SKYISLES[e.isl];for(const s of [-1,1]){const k=isleFoe('isleSlime',e.isl,clamp(e.x+s*8,e.z0||I.x0+10,e.z1||I.x1-10),e.z0,e.z1);k.onGround=false;k.y=e.y-6;k.vy=-170;k.hx=s*70;k.dir=s;k.hop=.5}}}}
 function stormDrop(){part(P.x,P.y-20,'#c4d8f2',8,80,120,.5);if(!skyS().st){S.sky.st=1;toast(ico('wing',2)+' '+ico('x',2)+'<br>Storm cloud: land and cross on foot<br><small>call your horse past its edge</small>',3200)}}
 function takeRw(i){const I=SKYISLES[i],x=rwX(i),y=surfY(x);let h='';
  if(I.rw==='chest'){const c=SKYI.chest[0]+Math.floor(rnd()*(SKYI.chest[1]-SKYI.chest[0]+1));S.money+=c;ftxt(x,y-22,'+$'+c,'#ffd75e');h='<span class="gold">+'+pr(c)+'</span>';
   const q=Math.min(SKYI.silk,cap()-cargoCount());if(q>0){addCargo(9,7,q,0);h+=' '+iconImg(ICONURL.starsilk)+' +'+q}part(x,y-8,'#ffe08a',12,110,120,.6)}
- else{const it=I.rw==='wool'?6:7,n=I.rw==='wool'?SKYI.wool:SKYI.crystal,q=Math.min(n,cap()-cargoCount());
+ else{const it=6,n=SKYI.wool,q=Math.min(n,cap()-cargoCount());
   if(q<=0){if(!SKYST.full[i]){SKYST.full[i]=1;toast(ico('pack',2)+' '+ico('x',2),1200)}return}
-  addCargo(it,6,q,0);h=iconImg(ICONURL[ITEMS[it].id])+' +'+q;ftxt(x,y-20,'+'+q,'#7de07a');part(x,y-8,I.rw==='wool'?'#ffffff':'#a8f0ff',10,90,100,.5)}
+  addCargo(it,6,q,0);h=iconImg(ICONURL[ITEMS[it].id])+' +'+q;ftxt(x,y-20,'+'+q,'#7de07a');part(x,y-8,'#ffffff',10,90,100,.5)}
  skyS().r[i]=S.time;toast(h,1600);save()}
 function skyTick(dt){if(WI!==1||DG||!P)return;
  if(SKYST.ref!==ENEMIES){SKYST.ref=ENEMIES;W2ENV.pk=undefined;SKYST.act=[];SKYST.foes=[];UB.length=0} // ENEMIES was reset (death, menu, travel)
@@ -113,10 +114,8 @@ function drawRw(i,ox,oy){const I=SKYISLES[i],wx=rwX(i),x=Math.round(wx-ox),y=Mat
  const O=(a,b,w,h,col)=>{px(X,x+a-1,y+b-1,w+2,h+2,'#1a1020')},F=(a,b,w,h,col)=>px(X,x+a,y+b,w,h,col);
  if(I.rw==='chest'){if(ok){O(-6,-8,12,8);F(-6,-8,12,8,'#8b5a2b');F(-6,-8,12,2,'#a8743c');F(-6,-5,12,1,'#ffd040');F(-1,-5,2,3,'#ffe88a');F(-6,-1,12,1,'#5e3a1e')}
   else{O(-6,-12,12,3);O(-6,-6,12,6);F(-6,-12,12,3,'#a8743c');F(-6,-6,12,6,'#8b5a2b');F(-5,-6,10,1,'#3a2414');F(-6,-4,12,1,'#ffd040')}}
- else if(I.rw==='wool'){F(0,-5,1,5,'#c8b090');if(ok){for(const r of [[-6,-10,5,4],[-2,-13,5,5],[2,-10,5,4]])O(r[0],r[1],r[2],r[3]);F(-6,-10,5,4,'#ffffff');F(-2,-13,5,5,'#ffffff');F(2,-10,5,4,'#e8f4ff');F(-5,-7,11,1,'#dce8f6');F(-1,-12,2,1,'#ffffff')}
+ else{F(0,-5,1,5,'#c8b090');if(ok){for(const r of [[-6,-10,5,4],[-2,-13,5,5],[2,-10,5,4]])O(r[0],r[1],r[2],r[3]);F(-6,-10,5,4,'#ffffff');F(-2,-13,5,5,'#ffffff');F(2,-10,5,4,'#e8f4ff');F(-5,-7,11,1,'#dce8f6');F(-1,-12,2,1,'#ffffff')}
   else{F(-2,-3,2,1,'#3ab8a8');F(1,-4,2,1,'#3ab8a8')}}
- else{if(ok){for(const r of [[-4,-7,2,7],[-1,-11,3,11],[2,-6,2,6]])O(r[0],r[1],r[2],r[3]);F(-4,-7,2,7,'#7de0ff');F(-1,-11,3,11,'#a8f0ff');F(2,-6,2,6,'#7ac8e8');F(0,-10,1,4,'#ffffff')}
-  else{F(-4,-2,2,2,'#7ac8e8');F(-1,-3,3,3,'#7ac8e8');F(2,-2,2,2,'#7ac8e8')}}
  if(ok&&Math.sin(menuT*3+i)>.75){const k=Math.floor(menuT*3+i)%3;px(X,x-4+k*4,y-15-k*2,1,1,'#ffffff')}}
 // storm mood: 0..1 by how far the player is from a storm island's no-fly core (1 inside, smooth fade over STORMFADE px outside)
 const STORMFADE=170,STORMCY=232; // STORMCY: cloud base above the island top, as high as the regular rain clouds sit (visual only: the no-fly zone is stormAt, x only)

@@ -37,5 +37,5 @@ $('ibody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  else if(a==='eql'&&S.lances.includes(id))S.lance=id;
  S.hp=Math.min(S.hp,maxHP());save();renderInv()};
 function setOn(id){const st=SETS[id];return !!(S&&S.eq&&st.pieces.every(g=>S.eq[GEAR[g].slot]===g))}
-function maxHP(){return (S?S.maxhp:100)+(S&&setOn('stone')?30:0)+(S&&S.ench?ev('hardy'):0)}
+function maxHP(){return (S?S.maxhp:100)+(S&&setOn('stone')?30:0)+(S&&S.ench?ev('hardy'):0)+(S&&S.eq?gearSum('hp')+(setOn('crystal')?3*CRYSET-gearSum('hp'):0):0)} // gear hp (crystal armor), the Crystal Set lifts its 3 x 30 to 3 x CRYSET
 function gearSum(k){let v=0;for(const [sl] of GSLOTS){const g=S.eq&&S.eq[sl];if(g&&GEAR[g][k])v+=GEAR[g][k]}return v}

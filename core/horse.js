@@ -22,7 +22,7 @@ function drawHorse(c,x,y,dir,t,run,idle,flash){const P=(xo,yo,w,h,col)=>{px(c,di
 // rider on horseback: horse, then the player seated, then a leg down the flank; lance couched while charging
 function drawRider(c,sx,sy,d,t,fl,cols){const s=lanceSpeed();drawHorse(c,sx,sy,d,t,s,0,fl);const hf=WI===1&&S.horse.wings?horseFlap(0):null,by=hf!==null&&P.fly==='horse'?FLAPBOB[flapF(t,hf)]:s>.02&&WI===1&&horsePlod()?plodBob(t):Math.round(Math.sin((P.ride||0)*.35)*(s>.05?.8:0));
  const ry=sy-10+by;drawPlayer(c,sx-1*d,ry,d,t,false,false,fl,S.lance||S.weapon,P.couch>0?1:0,{eq:S.eq,look:S.look});
- const L=(xo,yo,w,h,col)=>px(c,d>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col);const FT=S.eq.feet;L(-1,-12+by,2,4,'#4a3b2a');L(-1,-8+by,3,1,FT==='witchboots'?'#c060ff':FT==='stoneboots'?'#b8b8c0':'#2a1d14');
+ const L=(xo,yo,w,h,col)=>px(c,d>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col);const FT=S.eq.feet;L(-1,-12+by,2,4,'#4a3b2a');L(-1,-8+by,3,1,FT==='witchboots'?'#c060ff':FT==='stoneboots'?'#b8b8c0':FT==='crystalboots'?'#5ac8e0':'#2a1d14');
  if(carriedH()==='backpack')drawHauler(c,sx-1*d,ry,d,'backpack',cols,0);
  setAura(c,sx,ry,t);enchAura(c,sx,ry,t);
  if(s>.7&&Math.floor(t*20)%2)part(P.x-d*12,P.y-1,'#c8b898',1,30,0,.3)}

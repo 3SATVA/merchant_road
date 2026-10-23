@@ -24,5 +24,8 @@ ICONS.witchrobe=['..pppp..','.pmppmp.','pppppppp','.pppppp.','.pmmmmp.','.pppppp
 ICONS.stonechest=['.a....a.','aab..baa','aabbbbaa','.abccba.','.abbbba.','.abbbba.','.aabbaa.','..aaaa..'];ICONPAL2.stonechest={a:'#5e5e5e',b:'#8a8a8a',c:'#d0d0d0'};
 ICONS.tophat=['........','..hhhh..','..hhhh..','..hhhh..','..yyyy..','..hhhh..','hhhhhhhh','........'];ICONPAL2.tophat={h:'#8a2b2b',y:'#d8b040'};
 ICONS.witchhat=['.....h..','....hh..','...hhh..','...hhh..','..hhhhh.','..ppppp.','hhhhhhhh','.hhhhhh.'];ICONPAL2.witchhat={h:'#5a3a7a',p:'#c060ff'};
+ICONS.crystalhelm=['...x....','..aqa...','.aqqqa..','aqxqqqa.','aqqqqqzb','aaaaaaab','a.kkkk.b','........'];ICONPAL2.crystalhelm={a:'#5ac8e0',q:'#a8f4ff',x:'#ffffff',z:'#3a9ac8',b:'#2a7aa0',k:'#1a3a50'};
+ICONS.crystalchest=['.a....a.','aaq..qaa','aqqxqqqa','.aqqqqa.','.aqxqqa.','.aqqqza.','.aazzaa.','..bbbb..'];ICONPAL2.crystalchest={a:'#5ac8e0',q:'#a8f4ff',x:'#ffffff',z:'#3a9ac8',b:'#2a7aa0'};
+ICONS.crystalboots=['........','.aa..aa.','.aq..aq.','.ax..ax.','.aqq.aqq','aaqqaaqq','bbbbbbbb','........'];ICONPAL2.crystalboots={a:'#5ac8e0',q:'#a8f4ff',x:'#ffffff',b:'#2a7aa0'};
 const GEARC={},GEARURL={};for(const id in GEAR){GEARC[id]=iconCanvas(id);GEARURL[id]=GEARC[id].toDataURL()}
 const MATC={},MATURL={};for(const id in MATS){MATC[id]=iconCanvas(id);MATURL[id]=MATC[id].toDataURL()}

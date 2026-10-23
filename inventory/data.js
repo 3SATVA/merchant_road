@@ -29,8 +29,13 @@ GEAR.stonehelm={name:'Stone Helm',slot:'head',def:.1,val:60,stat:'🛡 -10%'};
 GEAR.witchboots={name:'Witch Boots',slot:'feet',rng:.1,spd:.08,val:80,stat:'🏹 +10% 👟 +8%'};
 GEAR.stoneboots={name:'Stone Boots',slot:'feet',def:.06,kb:.5,val:60,stat:'🛡 -6% ⚓'};
 GEAR.witchrobe={name:'Witch Robes',slot:'chest',def:.08,rng:.15,val:120,stat:'🏹 +15% 🛡 -8%'};
+// World 2 crystal armor (forged at Skyhaven from enemy-only Sky Crystal + Magic Essence): +30 max HP each, +45 each with the full Crystal Set (CRYSET)
+GEAR.crystalhelm={name:'Sky Crystal Helm',slot:'head',hp:30,def:.08,spd:.05,val:300,stat:'❤ +30 🛡 -8% 👟 +5%'};
+GEAR.crystalchest={name:'Sky Crystal Chestplate',slot:'chest',hp:30,def:.08,spd:.05,val:300,stat:'❤ +30 🛡 -8% 👟 +5%'};
+GEAR.crystalboots={name:'Sky Crystal Boots',slot:'feet',hp:30,def:.08,spd:.05,val:300,stat:'❤ +30 🛡 -8% 👟 +5%'};
+const CRYSET=45; // per piece with all 3 worn (3 x 45 = +135)
 const GSLOTS=[['head','Head'],['chest','Chest'],['feet','Feet']];
-const SETS={witch:{name:'Witch Set',pieces:['witchhat','witchrobe','witchboots'],col:'#c060ff',desc:'🔮 Twin shots'},stone:{name:'Stone Set',pieces:['stonehelm','stonechest','stoneboots'],col:'#7de0ff',desc:'❤ +30 · ⚓ · 📦 safe'}};
+const SETS={witch:{name:'Witch Set',pieces:['witchhat','witchrobe','witchboots'],col:'#c060ff',desc:'🔮 Twin shots'},stone:{name:'Stone Set',pieces:['stonehelm','stonechest','stoneboots'],col:'#7de0ff',desc:'❤ +30 · ⚓ · 📦 safe'},crystal:{name:'Crystal Set',pieces:['crystalhelm','crystalchest','crystalboots'],col:'#a8f4ff',desc:'❤ +45 each · +135'}};
 const MATS={stone:{name:'Sentient Stone',col:'#a8a8a8'},essence:{name:'Magic Essence',col:'#c060ff'},lava:{name:'Dried Lava',col:'#ff6a1a'}};
 // drop chances by enemy family (DROPMUL lets tests force drops)
 const DROPS={slime:[['apple',.25]],goblin:[['dagger',.1]],golem:[['stone',.3]],witch:[['essence',.3]],lavaGolem:[['lava',.1]]};let DROPMUL=1;

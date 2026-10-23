@@ -32,7 +32,7 @@ function hitEnemy(e,dmg,dir,elem){const w=WEAPONS[S.weapon];const m=wmult({elem:
  if(e.hp<=0)killEnemy(e)}
 function killEnemy(e){const d=ENEMY[e.type];e.dead=1;S.stats.kills++;const c=Math.round((d.coin[0]+Math.floor(rnd()*(d.coin[1]-d.coin[0]+1)))*(1+ev('greedy')));S.money+=c;ftxt(e.x,e.y-d.h-10,'+$'+c,'#ffd75e');
  const base=d.base||e.type;part(e.x,e.y-d.h/2,'#ffffff',8,70,30,.45);if(d.h>=18)shake(1);part(e.x,e.y-d.h/2,e.type==='pegasus'?'#e8f0ff':e.type==='skySlime'?'#8ad8ff':base==='slime'?'#5cc84a':base==='golem'?golemPal(e.type)[0]:base==='witch'?'#a060e0':'#6aa84f',14,140);
- for(const [id,ch] of (DROPS[base]||[]).concat(base!==e.type?DROPS[e.type]||[]:[]))if(rnd()<ch*DROPMUL*(1+.6*ev('greedy')))dropLoot(id,e.x,e.y-10);
+ for(const [id,ch] of (d.fruit?[]:DROPS[base]||[]).concat(base!==e.type?DROPS[e.type]||[]:[]))if(rnd()<ch*DROPMUL*(1+.6*ev('greedy')))dropLoot(id,e.x,e.y-10);
  if(DG){let n=0;for(const u of e.loot)if(cargoCount()<cap()){addCargo(u.item,u.origin,1,u.paid);n++}if(n)ftxt(P.x,P.y-30,'+'+n,'#7de07a')}else for(const u of e.loot)dropUnit(u,e.x,e.y-10);e.loot=[]}
 // homing fireballs: pick the nearest enemy within range in a forward cone, turn toward it at a limited rate
 function steerProj(p,dt){const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp;let best=null,bd=190;

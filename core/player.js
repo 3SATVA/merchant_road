@@ -11,14 +11,16 @@ function drawPlayer(c,x,y,dir,t,walking,air,flash,wep,atk,o){
  const ph=walking?Math.sin(t*14):0;const la=Math.round(ph*1.5),lb=-la;
  if(air){P(-3,-6,2,4,'#4a3b2a');P(1,-5,2,4,'#4a3b2a');P(-4,-2,3,1,'#2a1d14');P(1,-1,3,1,'#2a1d14')}
  else{P(-3+la,-5,2,4,'#4a3b2a');P(1+lb,-5,2,4,'#4a3b2a');P(-3+la,-1,3,1,'#2a1d14');P(1+lb,-1,3,1,'#2a1d14')}
- {const FT=o&&o.eq&&o.eq.feet;if(FT){const ft=air?[[-4,-2],[1,-1]]:[[-3+la,-1],[1+lb,-1]];for(const [fx,fy] of ft){if(FT==='witchboots'){P(fx,fy-2,3,3,'#5a3a7a');P(fx,fy-2,3,1,'#c060ff');P(fx+3,fy,1,1,'#c060ff')}else{P(fx,fy-2,3,3,'#8a8a8a');P(fx,fy-2,3,1,'#b8b8c0');P(fx+3,fy,1,1,'#6a6a6a')}}}}
+ {const FT=o&&o.eq&&o.eq.feet;if(FT){const ft=air?[[-4,-2],[1,-1]]:[[-3+la,-1],[1+lb,-1]];for(const [fx,fy] of ft){if(FT==='witchboots'){P(fx,fy-2,3,3,'#5a3a7a');P(fx,fy-2,3,1,'#c060ff');P(fx+3,fy,1,1,'#c060ff')}else if(FT==='crystalboots'){P(fx,fy-2,3,3,'#5ac8e0');P(fx,fy-2,3,1,'#c8faff');P(fx+1,fy-1,1,1,'#ffffff');P(fx+3,fy,1,1,'#2a7aa0')}else{P(fx,fy-2,3,3,'#8a8a8a');P(fx,fy-2,3,1,'#b8b8c0');P(fx+3,fy,1,1,'#6a6a6a')}}}}
  const bob=walking&&Math.abs(ph)>.7?-1:0;
  const EQ=(o&&o.eq)||{head:'tophat'},LK=(o&&o.look)||DEFLOOK,SK=SKINS[LK.skin]||SKINS[0];
  if(LK.body===1){P(-3,-11+bob,6,4,'#3a6ea5');P(-3,-11+bob,6,1,'#5a8ec5');P(-4,-7+bob,8,3,'#3a6ea5');P(-4,-5+bob,8,1,'#2e5a8a')}else{P(-4,-11+bob,8,6,'#3a6ea5');P(-4,-11+bob,8,1,'#5a8ec5')}if(EQ.chest==='witchrobe'){P(-4,-11+bob,8,9,'#5a3a7a');P(-4,-11+bob,8,1,'#c060ff');P(-1,-10+bob,2,5,'#4a2e6a');P(-5,-4+bob,10,1,'#4a2e6a');P(-4,-6+bob,8,1,'#c060ff')}
+ else if(EQ.chest==='crystalchest'){P(-4,-11+bob,8,4,'#5ac8e0');P(-4,-11+bob,8,1,'#c8faff');P(-5,-11+bob,2,2,'#2a7aa0');P(-2,-10+bob,3,2,'#a8f4ff');P(-1,-10+bob,1,1,'#ffffff');P(2,-9+bob,1,1,'#3a9ac8')}
  else if(EQ.chest==='stonechest'){P(-4,-11+bob,8,4,'#8a8a8a');P(-4,-11+bob,8,1,'#c8c8c8');P(-5,-11+bob,2,2,'#6a6a6a');P(-1,-10+bob,2,2,'#5e5e5e')}P(-4,-7+bob,8,1,'#5a3a1a');P(0,-7+bob,1,1,'#d8b040');
  P(-3,-16+bob,6,5,SK[0]);P(1,-14+bob,1,1,'#1a1420');P(3,-13+bob,1,1,SK[1]);if(LK.body===1){P(2,-15+bob,1,1,'#1a1420');P(1,-12+bob,1,1,'#c85a5a')}
  const HC=HAIRC[LK.hc]||HAIRC[0];for(const r of (HAIRS[LK.hair]||HAIRS[0]).r)P(r[0],r[1]+bob,r[2],r[3],HC);
  if(EQ.head==='stonehelm'){P(-4,-19+bob,8,4,'#8a8a8a');P(-3,-20+bob,6,1,'#8a8a8a');P(-3,-20+bob,4,1,'#c8c8c8');P(-4,-16+bob,8,1,'#5e5e5e');P(-4,-15+bob,1,3,'#6a6a6a');P(1,-18+bob,2,1,'#7de0ff')}
+ else if(EQ.head==='crystalhelm'){P(-4,-19+bob,8,4,'#5ac8e0');P(-3,-20+bob,6,1,'#5ac8e0');P(-3,-20+bob,4,1,'#c8faff');P(-1,-22+bob,2,2,'#a8f4ff');P(-1,-22+bob,1,1,'#ffffff');P(-4,-16+bob,8,1,'#2a7aa0');P(-4,-15+bob,1,3,'#3a9ac8');P(1,-18+bob,2,1,'#ffffff')}
  else if(EQ.head==='witchhat'){P(-6,-17+bob,12,1,'#3a2450');P(-3,-20+bob,6,3,'#4a2e6a');P(-3,-18+bob,6,1,'#c060ff');P(-2,-22+bob,4,2,'#4a2e6a');P(-2,-24+bob,2,2,'#4a2e6a');P(-3,-25+bob,1,1,'#4a2e6a')}
  else if(EQ.head==='tophat'){P(-5,-17+bob,10,1,'#6a2424');P(-3,-20+bob,6,3,'#8a2b2b');P(-3,-18+bob,6,1,'#d8b040')}
  // arm + weapon
