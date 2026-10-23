@@ -58,6 +58,7 @@ function render(dt){if(DG&&MODE!=='menu'){renderDungeon();return}const cx=MODE==
  // parked cart
  if(S&&S.park&&(!WI||!FEATURE_DRIVABLE_AIRSHIPS)&&MODE!=='menu')drawParked(ox,oy);
  if(S&&S.horse&&!S.horse.on&&MODE!=='menu'&&Math.abs(S.horse.x-ox-VW/2)<VW/2+40){const hx=Math.round(S.horse.x-ox),hy=Math.round(surfY(S.horse.x)-oy);drawHorse(X,hx,hy,S.horse.dir,menuT,0,1);if(nearHorse()&&MODE==='play'&&Math.sin(menuT*4)>0)px(X,hx,hy-27,1,2,'#ffd75e')}
+ if(WI)stormShade();
  drawActors(ox,oy);
  // weather
  const bm=biomeAt(mid);
