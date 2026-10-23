@@ -11,7 +11,7 @@ COFF.wingcart=-18;HITCHR.wingcart=32;
 const SHIPS={small:{name:'Small Airship',cap:30,spd:1.15,hull:60,price:0,z:.72,pal:['#c84a3a','#e8d8b0']},
  medium:{name:'Medium Airship',cap:60,spd:1,hull:100,price:6000,z:.9,pal:['#3a8ad0','#f4ead0']},
  large:{name:'Large Airship',cap:100,spd:.85,hull:160,price:20000,z:1.08,pal:['#e0b440','#f8f4e8']}};const SORDER=['small','medium','large'];
-const SKY={dmg:.85,max:3,maxShip:3,pair:.45,gapHorse:[320,170],gapShip:[300,160],diveHorse:2,diveShip:1.6,diveRnd:1.1}; // air wilds: damage on the winged horse, foes at once, pair chance, px between spawns [min,+rnd], pegasus re-dive [s]
+const SKY={dmg:.6,max:3,maxShip:3,pair:.45,gapHorse:[320,170],gapShip:[300,160],diveHorse:2,diveShip:1.6,diveRnd:1.1}; // air wilds: damage on the winged horse, foes at once, pair chance, px between spawns [min,+rnd], pegasus re-dive [s]
 const WCART={knockCd:4,keep:.4,flash:3.8}; // Winged Cart: seconds between knock-loose losses, chance a hit costs nothing, hit flash while cd > flash
 const W2LEN=11000,ISL0=150,ISL1=1950,W2DOCK=1560,W2TOWN=6,FLYALT=100,W2START=100; // World 2 layout; W2START = World 2's opening balance
 // World 2 phase 2: two floating islands with the open-sky "air wilds" between them
@@ -75,7 +75,7 @@ Object.assign(ENEMY,{
  // burst = bolts per volley (same aim, UNI.gap apart), gem = chance to drop a Sky Crystal, fruit = chance to drop a Sunfruit (replaces the slime apple), elite = gold-maned variant
  unicorn:{hp:70,dmg:7,hull:9,spd:34,w:16,h:20,coin:[10,18],air:1,isle:1,base:'witch',uni:1,burst:2},
  dreadUni:{hp:110,dmg:9,hull:11,spd:40,w:16,h:20,coin:[20,32],air:1,isle:1,base:'witch',uni:1,burst:3,elite:1,gem:.35},
- bigSlime:{hp:110,dmg:12,hull:10,spd:50,w:22,h:18,coin:[12,20],air:1,isle:1,base:'slime',gem:.15,fruit:.25},
+ bigSlime:{hp:110,dmg:9,hull:10,spd:50,w:22,h:18,coin:[12,20],air:1,isle:1,base:'slime',gem:.15,fruit:.25},
  isleSlime:{hp:24,dmg:7,hull:5,spd:50,w:10,h:8,coin:[2,4],air:1,isle:1,base:'slime',fruit:.25}});
 // World 2 is end-game: you arrive with maxed World 1 gear (Magma Lance, Stone set, II-III enchants). The tier scales every sky foe
 // (and the unicorn bolt) once, here; the numbers above stay readable as "World 1 sized". hull (shelved airships) is not scaled.
