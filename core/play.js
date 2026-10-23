@@ -47,17 +47,26 @@ function playerAttack(){if(mounted()&&S.lance&&!WEAPONS[S.weapon].flail){lanceSt
   if(twin)part(P.x+P.dir*8,P.y-9,'#c060ff',4,40,0,.3);return}
  const x0=P.dir>0?P.x:P.x-w.range-4,x1=P.dir>0?P.x+w.range+4:P.x;
  for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(e.x+d.w/2>x0&&e.x-d.w/2<x1&&e.y-d.h<P.y+2&&e.y>P.y-24){hitEnemy(e,w.dmg,P.dir,w.elem);if(w.burn&&!e.dead&&e.type!=='lavaGolem')e.burn=2}}}
-// Cog Flail: light vertical auto-aim. The nearest foe ahead within reach and +-FLAIL.vband px of you (above or below, also on the flying horse) takes the hit, plus anyone within FLAIL.splash of it
-function flailSwing(w){const py=P.y-(mounted()?16:10);let best=null,bd=1e9;
- for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type],dx=(e.x-P.x)*P.dir,dy=e.y-d.h/2-py;if(dx<-d.w/2-4||dx>w.range+d.w/2||Math.abs(dy)>FLAIL.vband)continue;const dd=Math.hypot(Math.max(0,dx),dy);if(dd<bd){bd=dd;best={e,dx,dy}}}
- const hx=best?best.e.x:P.x+P.dir*w.range*.8,hy=best?best.e.y-ENEMY[best.e.type].h/2:py;FAIM=best?{a:clamp(Math.atan2(best.dy,Math.max(8,best.dx)),-1.25,1.25),r:clamp(Math.hypot(Math.max(8,best.dx),best.dy),16,w.range+8)}:{a:0,r:w.range};
- for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if(e===(best&&best.e)||(Math.abs(e.x-hx)<d.w/2+FLAIL.splash&&Math.abs(e.y-d.h/2-hy)<d.h/2+FLAIL.splash))hitEnemy(e,w.dmg,P.dir,w.elem)}
- if(best)part(hx,hy,'#c8ccd4',6,90)}
+// Cog Flail: light vertical auto-aim. Everything is measured from the hand the chain swings from (flPivot), to the nearest edge of each foe's box (not its centre), so the hitbox matches where the gear is drawn.
+// Lock: nearest foe ahead whose box is within FLAIL.reach (vertical distance counts x FLAIL.vk, so the reach is a tall ellipse) and +-FLAIL.vband px; it is always hit.
+// Splash: anyone within FLAIL.splash px of the gear's landing point. Sweep: for the whole swing, any foe whose box the drawn gear passes within FLAIL.pad px of is hit too (once per swing).
+function flPivot(){const m=mounted();return {x:P.x+P.dir*(m?2:3.5),y:P.y-(m?18:8)}}
+function boxD(e,x,y){const d=ENEMY[e.type],nx=clamp(x,e.x-d.w/2,e.x+d.w/2),ny=clamp(y,e.y-d.h,e.y);return {dx:(nx-x)*P.dir,dy:ny-y}}
+function flHead(k){const o=flPivot(),ga=lerp(-2.0,.7,smooth(k)),ex=o.x+Math.cos(ga)*P.dir*4,ey=o.y+Math.sin(ga)*4,len=4+(FAIM.r-4)*Math.sin(Math.PI*Math.min(1,k*1.2)),th=lerp(-2.4,FAIM.a,smooth(Math.min(1,k*2.2)));return {x:ex+P.dir*Math.cos(th)*len,y:ey+Math.sin(th)*len}} // same path drawFlail draws
+function flailSwing(w){const o=flPivot();let best=null,bd=1e9;
+ for(const e of ENEMIES){if(e.dead)continue;const d=ENEMY[e.type];if((e.x-o.x)*P.dir<-d.w/2-4)continue;const b=boxD(e,o.x,o.y);if(Math.abs(b.dy)>FLAIL.vband)continue;const dd=Math.hypot(Math.max(0,b.dx),b.dy*FLAIL.vk);if(dd<=FLAIL.reach&&dd<bd){bd=dd;best=e}}
+ let lx,ly;if(best){const d=ENEMY[best.type],cx=(best.x-o.x)*P.dir,cy=best.y-d.h/2-o.y;FAIM={a:clamp(Math.atan2(cy,Math.max(8,cx)),-1.25,1.25),r:clamp(Math.hypot(Math.max(8,cx),cy),16,w.range+8)};lx=best.x;ly=best.y-d.h/2}
+ else{FAIM={a:0,r:w.range};lx=o.x+P.dir*w.range;ly=o.y} // no lock: splash where the gear is actually drawn (was 0.8x range, short of the sprite)
+ const hl=flHead(1/2.4),hit=new Set(); // the gear's drawn landing point (full extension)
+ for(const e of ENEMIES){if(e.dead)continue;const b1=boxD(e,lx,ly),b2=boxD(e,hl.x,hl.y);if(e===best||Math.hypot(b1.dx,b1.dy)<=FLAIL.splash||Math.hypot(b2.dx,b2.dy)<=FLAIL.splash){hit.add(e);hitEnemy(e,w.dmg,P.dir,w.elem)}}
+ FSW={w,hit};if(best)part(lx,ly,'#c8ccd4',6,90)}
+function flailTick(){const f=FSW;if(!f)return;if(P.atk<=0||!WEAPONS[heldW()].flail){FSW=null;return}const k=1-P.atk;if(k<.1||k>.8)return;const h=flHead(k);
+ for(const e of ENEMIES){if(e.dead||f.hit.has(e))continue;const b=boxD(e,h.x,h.y);if(Math.hypot(b.dx,b.dy)<=FLAIL.pad){f.hit.add(e);hitEnemy(e,f.w.dmg,P.dir,f.w.elem)}}}
 function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min(maxHP(),S.hp+rg*dt)}
  if(DG)updDungeon(dt);else if(WI&&P.fly)updSky(dt);else updWorld(dt);
  // actions
  if(P.cd>0)P.cd-=dt;if(P.atk>0)P.atk=Math.max(0,P.atk-dt/(P.atkD||.2));if(P.inv>0)P.inv-=dt;
- if(inp.attack())playerAttack();if(mounted())lanceTick(dt);else P.couch=0;
+ flailTick();if(inp.attack())playerAttack();if(mounted())lanceTick(dt);else P.couch=0;
  if(inp.swap()){if(mounted()&&S.lances.length){const fo=S.weapons.find(w=>WEAPONS[w].flail),L=S.lances.concat(fo?[fo]:[]),nx=L[(L.indexOf(heldW())+1)%L.length]; // the owned Cog Flail joins the saddle rotation
   if(WEAPONS[nx].flail){if(!WEAPONS[S.weapon].flail)S.wprev=S.weapon;S.weapon=nx}else{S.lance=nx;if(WEAPONS[S.weapon].flail)S.weapon=S.wprev&&S.weapons.includes(S.wprev)?S.wprev:S.weapons.find(w=>!WEAPONS[w].flail)||'fists'}toast(WEAPONS[nx].name,900)}else{const i=S.weapons.indexOf(S.weapon);S.weapon=S.weapons[(i+1)%S.weapons.length];toast(WEAPONS[S.weapon].name,900)}}
  if(inp.pot()){if(S.potions>0&&S.hp<maxHP()){S.potions--;const ph=ench('berserk')?INN.potHPBerserk:INN.potHP;S.hp=Math.min(maxHP(),S.hp+ph);ftxt(P.x,P.y-26,'+'+ph,'#7de07a');part(P.x,P.y-10,'#7de07a',10,60,-40)}else if(!S.potions)toast('No potions',900)}

@@ -43,7 +43,7 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
  } else if(curTab==='weapons'){
   const row=id=>{const W=WEAPONS[id];const own=S.weapons.includes(id),eq=S.weapon===id;const el=W.elem==='fire'?' · 🔥':W.elem==='ice'?' · ❄':W.elem==='crush'?' · 🪨':W.leaf?' · 🍃':'';
    const btn=eq?'<button disabled>Equipped</button>':own?'<button data-act="usew" data-id="'+id+'">Equip</button>':'<button data-act="buyw" data-id="'+id+'" '+(S.money<W.price?'disabled':'')+'>'+pr(W.price)+'</button>';
-   return '<div class="row" data-w="'+id+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+W.dmg+' · '+(1/W.cd).toFixed(1)+'/s · '+(W.ranged?'ranged':'reach '+W.range)+el+'</span></span>'+btn+'</div>'};
+   return '<div class="row" data-w="'+id+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+W.dmg+' · '+(1/W.cd).toFixed(1)+'/s · '+(W.ranged?'ranged':'reach '+(W.flail?FLAIL.reach:W.range))+el+'</span></span>'+btn+'</div>'};
   const sale=WORDER.filter(id=>t.weapons.includes(id));h+=shopLists(WORDER,t.weapons,S.weapons,row);
   if(sale.some(id=>WEAPONS[id].elem))h+='<div class="small" style="margin-top:6px">🔥 melts ice golems · ❄ cracks lava golems · 🪨 crushes golems</div>';
  } else if(curTab==='inn'){const rc=INN.rest(t.i),pc=INN.pot;
