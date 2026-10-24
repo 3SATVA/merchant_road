@@ -2,7 +2,7 @@
 const KEY='merchantRoad.v1';
 let S,P,ENEMIES=[],PROJ=[],PARTS=[],PICK=[],ROCKS=[],FTXT=[];
 let MODE='menu';
-function fresh(){const s={wcart:false,money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,horse:null,lances:[],lance:null,scrap:{wood:0,apple:0,gold:0,done:false},w:0,ws:{},ships:['small'],ship:'small',w2seen:false,wal:1,moor:0,hull:60,v:2};for(const W of WORLDDEF)if(W.fresh)W.fresh(s);return s}
+function fresh(){const s={wcart:false,money:50,hp:100,maxhp:100,potions:1,hauler:'backpack',haulers:['backpack'],weapons:['fists'],weapon:'fists',cargo:[],lastTown:0,x:TOWNS[0].x,time:0,stats:{kills:0,profit:0,sold:0,deaths:0},visited:[0],park:null,dng:{},caves:[],gear:['tophat'],eq:{head:'tophat',chest:null,feet:null},mats:{essence:0,lava:0},look:Object.assign({},DEFLOOK),ench:{},witch:null,horse:null,lances:[],lance:null,scrap:{wood:0,apple:0,gold:0,done:false,v:2},w:0,ws:{},ships:['small'],ship:'small',w2seen:false,wal:1,moor:0,hull:60,v:2};for(const W of WORLDDEF)if(W.fresh)W.fresh(s);return s}
 function newPlayer(x){return {x,y:surfY(x),vy:0,kbx:0,dir:1,onGround:true,inv:0,cd:0,atk:0,walk:0,wheel:0,lastSafe:x,heat:0}}
 function save(){if(!S)return;S.x=Math.round(DG?DG.d.x:P.x);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo){const s=Object.assign(fresh(),d);
@@ -41,7 +41,12 @@ function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo)
   if(s.w===1&&!s.horse){leaveW(s,s.x);const o=enterW(s,0);s.x=isFinite(o.x)?o.x:SCRAPX-60}
   if(s.w===1&&s.park){if(!Array.isArray(s.park.cargo))s.park=null;else s.park.cargo=cargoOK(s.park.cargo)}if(!TOWNS[s.lastTown]||TOWNS[s.lastTown].w!==s.w)s.lastTown=s.w?W2TOWN:0;
   /* airship scrap pile (new): deposits are permanent */
-  {const sc=s.scrap;s.scrap={wood:0,apple:0,gold:0,done:false};if(sc&&typeof sc==='object'){for(const k of SCRAPK)s.scrap[k]=clamp(Math.floor(+sc[k]||0),0,NEED[k]);s.scrap.done=!!sc.done&&SCRAPK.every(k=>s.scrap[k]>=NEED[k])}}
+  /* v2 requirement (100 wood, 40 apples, 50 gold; v1 was 150/50/50): contributions carry over and count toward the new totals; a part that is
+     already at or over the new total is complete, and anything deposited over it on an unbuilt pile goes back to the World 1 wallet at the
+     good's base price (nothing lost, nothing extra taken). A built airship stays built. scrap.v marks saves already on v2. */
+  {const sc=s.scrap;s.scrap={wood:0,apple:0,gold:0,done:false,v:2};if(sc&&typeof sc==='object'){const v1=sc.v!==2,built=!!sc.done;let back=0;
+   for(const k of SCRAPK){const n=Math.max(0,Math.floor(+sc[k]||0));if(v1&&!built&&n>NEED[k])back+=(n-NEED[k])*ITEMS[SCRAPI[k]].base;s.scrap[k]=built?NEED[k]:Math.min(n,NEED[k])}
+   s.scrap.done=built;if(back>0){const o=s.w===1?s.ws&&s.ws[0]:s;if(o)o.money=Math.max(0,Math.round(+o.money||0))+back;s.scrapBack=back}}}
   const wt=s.witch;if(!(wt&&isFinite(wt.x)&&isFinite(wt.t)))s.witch=null;else wt.seen=!!wt.seen;
   /* cost basis: stacks from old saves without a valid price get the good's base price */
   const fixPaid=a=>{if(Array.isArray(a))for(const c of a)if(c&&!(isFinite(c.paid)&&c.paid>=0))c.paid=ITEMS[c.item]?ITEMS[c.item].base:0};fixPaid(s.cargo);if(s.park)fixPaid(s.park.cargo);

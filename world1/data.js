@@ -13,7 +13,7 @@ Object.assign(HAULERS,{
 const HORDER=['backpack','wheelbarrow','smallwagon','bigwagon'];
 Object.assign(COFF,{wheelbarrow:11,smallwagon:-15,bigwagon:-23});
 Object.assign(HITCHR,{wheelbarrow:22,smallwagon:30,bigwagon:38});
-const SCRAPX=WORLD-170,NEED={wood:150,apple:50,gold:50},SCRAPI={wood:2,apple:0,gold:5},SCRAPK=['wood','apple','gold'];
+const SCRAPX=WORLD-170,NEED={wood:100,apple:40,gold:50},SCRAPI={wood:2,apple:0,gold:5},SCRAPK=['wood','apple','gold'];
 reg(TOWNS,0,[
  {name:'Wake Ridge',x:300,barber:1,sells:[0,1,2],weapons:['dagger'],haulers:['wheelbarrow']},
  {name:'Bog Town',x:1800,stable:1,sells:[0,1,2],weapons:['sword','crossbow'],haulers:['wheelbarrow','smallwagon']},
