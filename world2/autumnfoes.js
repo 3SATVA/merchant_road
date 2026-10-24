@@ -10,29 +10,48 @@ const AUP=[]; // harpy feathers in flight
 DROPS.cultist=[['essence',.35]];DROPS.robot=[['essence',.2]];DROPS.harpy=[['essence',.4]]; // plus: cultist 6% Spiced Amber, robot 50% Sky Crystal, harpy 20% Sky Crystal (ENEMY .amber/.gem)
 function segD(px0,py0,x0,y0,x1,y1){const dx=x1-x0,dy=y1-y0,l=dx*dx+dy*dy,t=l?clamp(((px0-x0)*dx+(py0-y0)*dy)/l,0,1):0;return Math.hypot(px0-x0-t*dx,py0-y0-t*dy)}
 function auHitP(e,d,dmg,src){if(P.fly==='ship')hullHit(d.hull,e.x);else if(P.fly)hurtPlayer(dmg*SKY.dmg,e.x,false);else hurtPlayer(dmg,e.x,true,src)}
-function auWander(e,dt,d,lo,hi,sp){if(e.st==='walk'){if(Math.abs(e.tx-e.x)<3){e.st='idle';e.sT=.5+rnd()*.9}else{const s=Math.sign(e.tx-e.x);e.dir=s;e.x=clamp(e.x+s*sp*dt,lo,hi);e.moving=true}}
- else{e.st='idle';e.sT-=dt;if(e.sT<=0){e.st='walk';e.tx=lo+rnd()*(hi-lo)}}}
+// pathing: an autumn foe roams its whole island (lo..hi) while you are reachable there, patrols its own slice (z0..z1) otherwise.
+// Every step reports whether it really moved, so nobody walks in place against an edge.
+function auReach(I){if(P.fly||P.x<I.x0+4||P.x>I.x1-4)return false;const g=surfY(P.x);return P.y>g-70&&P.y<g+12} // on foot / riding on this island (a jump still counts)
+function auStep(e,tx,sp,dt,lo,hi){const x0=e.x,s=Math.sign(tx-e.x);if(!s)return false;e.dir=s;e.x=clamp(e.x+s*Math.min(sp*dt,Math.abs(tx-e.x)),lo,hi);if(Math.abs(e.x-x0)>1e-3){e.moving=true;return true}return false}
+function auWander(e,dt,d,lo,hi,sp){const z0=e.z0!=null?clamp(e.z0,lo,hi):lo,z1=e.z1!=null?clamp(e.z1,lo,hi):hi;
+ if(e.st==='walk'){if(Math.abs(e.tx-e.x)<3||!auStep(e,e.tx,sp,dt,lo,hi)){e.st='idle';e.sT=.5+rnd()*.9}}
+ else{e.st='idle';e.sT-=dt;if(e.sT<=0){e.st='walk';e.tx=z0+rnd()*(z1-z0)}}}
 function robEye(e){return {x:e.x+e.dir*4,y:e.y-18}}
-function updAuFoe(e,dt,d,lo,hi,gy,dxp,adx,near){e.y=gy;e.cd-=dt;
+// laser geometry: the line from the eye at angle a, cut where it first meets the ground (it never passes through terrain)
+function auRay(o,a,l){const c=Math.cos(a),sn=Math.sin(a);for(let k=4;k<=l;k+=2){const x=o.x+c*k,y=o.y+sn*k,g=groundAt(x);if(g!==null&&y>g+1)return {x,y,l:k}}return {x:o.x+c*l,y:o.y+sn*l,l}}
+function auAimPt(){return {x:P.x,y:P.y-(P.fly==='ship'?6:10)}}
+function auLOS(e){const o=robEye(e),t=auAimPt(),l=Math.hypot(t.x-o.x,t.y-o.y);return auRay(o,Math.atan2(t.y-o.y,t.x-o.x),l).l>=l-3}
+function auOnCam(e){return e.x>camX+6&&e.x<camX+VW-6&&e.y>camY+20&&e.y<camY+VH+10} // no shots from off screen (phone portrait is narrow)
+// the player's hit box, the same one the unicorn bolts and harpy feathers use (beam half-width added)
+function auInBox(x,y){const w=1.5;if(P.fly==='ship'){const hw=shipHW();return Math.abs(x-P.x)<hw+w&&y>P.y-52-w&&y<P.y+14+w}const m=mounted();return Math.abs(x-P.x)<(m?9:5)+w&&y>P.y-(m?27:17)-w&&y<P.y+1+w}
+function auBeamHit(x0,y0,x1,y1){const n=Math.ceil(Math.hypot(x1-x0,y1-y0));for(let k=0;k<=n;k++){const t=n?k/n:0;if(auInBox(x0+(x1-x0)*t,y0+(y1-y0)*t))return true}return false}
+function auBeamSet(e){const o=robEye(e),r=auRay(o,e.ba,AUF.laser.range+90);e.bx0=o.x;e.by0=o.y;e.bx1=r.x;e.by1=r.y}
+function updAuFoe(e,dt,d,lo,hi,gy,dxp,adx,near,I){e.y=gy;e.cd-=dt;
+ const rch=auReach(I);e.agg=rch&&(e.agg||(adx<240&&Math.abs(P.y-gy)<150))?1:0; // aggro at 240 px, then it follows you anywhere on the island until you leave it
  if(d.cult){const A=AUF.lunge;
   if(e.st==='wind'){e.sT-=dt;if(e.sT<=0){e.st='lunge';e.sT=A.t;e.hitDone=0;part(e.x,e.y-3,'#e8dcc8',4,50,60,.3)}}
-  else if(e.st==='lunge'){e.sT-=dt;e.x=clamp(e.x+e.dir*A.spd*dt,lo,hi);e.moving=true;if(!e.hitDone&&airTouch(e,d)){e.hitDone=1;auHitP(e,d,d.dmg)}if(e.sT<=0){e.st='cool';e.sT=.45;e.cd=A.cd+rnd()*.5}}
+  else if(e.st==='lunge'){e.sT-=dt;const x0=e.x;e.x=clamp(e.x+e.dir*A.spd*dt,lo,hi);e.moving=e.x!==x0;if(!e.hitDone&&airTouch(e,d)){e.hitDone=1;auHitP(e,d,d.dmg)}if(e.sT<=0){e.st='cool';e.sT=.45;e.cd=A.cd+rnd()*.5}}
   else if(e.st==='cool'){e.sT-=dt;if(e.sT<=0){e.st='idle';e.sT=.2}}
-  else if(near){e.st='chase';e.dir=Math.sign(dxp)||e.dir;if(adx>14){e.x=clamp(e.x+e.dir*d.spd*dt,lo,hi);e.moving=true}if(e.cd<=0&&adx<A.near&&P.y>gy-40){e.st='wind';e.sT=A.tele}}
+  else if(e.agg){e.st='chase';e.dir=Math.sign(dxp)||e.dir;if(adx>14)auStep(e,P.x,d.spd,dt,lo,hi);if(e.cd<=0&&adx<A.near&&P.y>gy-40&&P.y<gy+30){e.st='wind';e.sT=A.tele}}
   else{if(e.st==='chase')e.st='idle';auWander(e,dt,d,lo,hi,d.spd*.4)}
   return}
  const L=AUF.laser,SL=AUF.slam;if(e.lcd==null)e.lcd=1+rnd();e.lcd-=dt;
+ const canLaser=()=>e.lcd<=0&&adx>L.min&&adx<L.range&&auOnCam(e)&&auLOS(e),aim=()=>{e.st='aim';e.sT=L.tele;e.ba=null;const t=auAimPt();e.ax=t.x;e.ay=t.y;e.dir=Math.sign(dxp)||e.dir};
  if(e.st==='slam'){e.sT-=dt;if(e.sT<=0){e.st='cool';e.sT=.6;e.cd=SL.cd;e.slamT=.35;const fx=e.x+e.dir*12;shake(adx<140?1.4:.4);part(fx,gy,'#c8b8a0',8,90,160,.4);part(fx,gy-2,'#ffd070',4,80,120,.25);
    if(!P.fly&&Math.abs(P.x-fx)<SL.near&&P.y>gy-30&&P.y<gy+6)hurtPlayer(d.dmg,e.x,true,'golem');else if(P.fly&&airTouch(e,d))auHitP(e,d,d.dmg)}}
- else if(e.st==='aim'){e.sT-=dt;if(e.sT>L.lock){e.ax=P.x;e.ay=P.y-(P.fly==='ship'?6:10);e.dir=Math.sign(e.ax-e.x)||e.dir}
-  if(e.sT<=0){e.st='beam';e.sT=L.beam;e.hitDone=0;const o=robEye(e),a=Math.atan2(e.ay-o.y,e.ax-o.x),l=L.range+90;e.bx0=o.x;e.by0=o.y;e.bx1=o.x+Math.cos(a)*l;e.by1=o.y+Math.sin(a)*l;shake(.6)}}
- else if(e.st==='beam'){e.sT-=dt;if(!e.hitDone){const py=P.y-(P.fly==='ship'?6:10),r=P.fly==='ship'?16:mounted()?10:7;
-   if(segD(P.x,py,e.bx0,e.by0,e.bx1,e.by1)<r){e.hitDone=1;if(P.fly==='ship')hullHit(d.hull+4,e.x);else hurtPlayer(L.dmg*(P.fly?SKY.dmg:1),e.x,true);part(P.x,py,'#ff5a3a',8,100,60,.35)}}
+ else if(e.st==='aim'){e.sT-=dt;
+  if(e.sT>L.lock){const t=auAimPt();e.ax=t.x;e.ay=t.y;e.dir=Math.sign(e.ax-e.x)||e.dir;
+   if(adx>L.range+60||!auLOS(e)||!auOnCam(e)){e.st='cool';e.sT=.3;e.lcd=.8+rnd()*.5}} // lost you (out of range / behind the ground) before the lock: stand down, retry soon
+  if(e.st==='aim'){const o=robEye(e);e.ba=Math.atan2(e.ay-o.y,e.ax-o.x);
+   if(e.sT<=0){e.st='beam';e.sT=L.beam;e.hitDone=0;auBeamSet(e);shake(.6)}}}
+ else if(e.st==='beam'){e.sT-=dt;auBeamSet(e); // the beam stays on the eye if the robot is knocked back
+  if(!e.hitDone&&auBeamHit(e.bx0,e.by0,e.bx1,e.by1)){e.hitDone=1;const py=P.y-(P.fly==='ship'?6:10);if(P.fly==='ship')hullHit(d.hull+4,e.x);else hurtPlayer(L.dmg*(P.fly?SKY.dmg:1),e.x,true);part(P.x,py,'#ff5a3a',8,100,60,.35)}
   if(e.sT<=0){e.st='cool';e.sT=.5;e.lcd=L.cd+rnd()}}
  else if(e.st==='cool'){e.sT-=dt;if(e.sT<=0){e.st='idle';e.sT=.3}}
- else if(near){e.st='chase';e.dir=Math.sign(dxp)||e.dir;if(adx>SL.near-8){e.x=clamp(e.x+e.dir*d.spd*dt,lo,hi);e.moving=true}
-  if(e.cd<=0&&adx<SL.near&&P.y>gy-30){e.st='slam';e.sT=SL.tele}else if(e.lcd<=0&&adx>L.min&&adx<L.range){e.st='aim';e.sT=L.tele;e.ax=P.x;e.ay=P.y-10}}
- else{if(e.st==='chase')e.st='idle';auWander(e,dt,d,lo,hi,d.spd)}
+ else if(e.agg){e.st='chase';e.dir=Math.sign(dxp)||e.dir;if(adx>SL.near-8)auStep(e,P.x,d.spd,dt,lo,hi);e.dir=Math.sign(dxp)||e.dir;
+  if(e.cd<=0&&adx<SL.near&&P.y>gy-30&&P.y<gy+6){e.st='slam';e.sT=SL.tele}else if(canLaser())aim()}
+ else{if(e.st==='chase')e.st='idle';if(near&&canLaser())aim();else auWander(e,dt,d,lo,hi,d.spd)} // can't reach you (flying, other island): patrol, laser if it sees you
  if(e.slamT>0)e.slamT-=dt}
 function updHarpy(e,dt,d){const F=AUF.feather,tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;
  if(e.age>20&&e.state!=='leave')e.state='leave';
@@ -97,8 +116,8 @@ function drawHarpy(c,e,sx,sy,t){const dir=e.dir,fl=e.hitT>0,tt=t+(e.seed||0)*3,f
  for(const L of [L1,R])for(const r of L)px(c,r[0],r[1],r[2],r[3],r[4])}
 // world-space: robot aim lines + beams, harpy feathers, falling leaves (drawn from drawWeather, after the bolts)
 function drawAuShots(ox,oy){if(WI!==1)return;
- for(const e of SKYST.foes){if(e.dead||(e.st!=='aim'&&e.st!=='beam'))continue;const L=AUF.laser;
-  if(e.st==='aim'){const o=robEye(e),a=Math.atan2(e.ay-o.y,e.ax-o.x),lock=e.sT<L.lock,n=Math.round((L.range+90)/2);X.globalAlpha=lock?(Math.sin(menuT*40)>0?.9:.5):.35+.15*Math.sin(menuT*12);
+ for(const e of SKYST.foes){if(e.dead||e.hp<=0||(e.st!=='aim'&&e.st!=='beam'))continue;const L=AUF.laser;
+  if(e.st==='aim'){const o=robEye(e),a=e.ba!=null?e.ba:Math.atan2(e.ay-o.y,e.ax-o.x),lock=e.sT<L.lock,n=Math.round(auRay(o,a,L.range+90).l/2);X.globalAlpha=lock?(Math.sin(menuT*40)>0?.9:.5):.35+.15*Math.sin(menuT*12);
    for(let k=2;k<n;k++){if(!lock&&k%3===2)continue;px(X,Math.round(o.x+Math.cos(a)*k*2-ox),Math.round(o.y+Math.sin(a)*k*2-oy),1,1,lock?'#ffb0a0':'#ff5a3a')}X.globalAlpha=1}
   else{const n=Math.round(Math.hypot(e.bx1-e.bx0,e.by1-e.by0)/2),p=e.sT/L.beam;for(let k=0;k<n;k++){const x=Math.round(e.bx0+(e.bx1-e.bx0)*k/n-ox),y=Math.round(e.by0+(e.by1-e.by0)*k/n-oy);px(X,x-1,y-2,3,5,'rgba(255,70,40,'+(.35*p+.1)+')');px(X,x,y-1,2,3,'#ff5a3a');px(X,x,y,2,1,'#fff0d0')}}}
  for(const b of AUP){const x=Math.round(b.x-ox),y=Math.round(b.y-oy),ca=Math.cos(b.a),sa=Math.sin(b.a);px(X,x-3,y-3,7,7,'rgba(255,170,80,.22)');

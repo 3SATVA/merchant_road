@@ -48,10 +48,10 @@ function uniFire(e){const dir=e.dir,hx=e.x+dir*17,hy=e.y-12;let a=Math.atan2(e.a
  UB.push({x:hx,y:hy,vx:Math.cos(a)*UNI.spd*dir,vy:Math.sin(a)*UNI.spd,life:UNI.life,tr:[]});part(hx,hy,'#ff7ad8',6,70,0,.3);
  if(--e.bn>0){e.st='charge';e.sT=e.tele=UNI.gap;return} // burst: same aim, short re-glow between bolts
  e.st='cool';e.sT=.35;e.cd=UNI.cd+rnd()*UNI.cdR;e.vx-=dir*30}
-function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const lo=e.z0!=null?e.z0:I.x0+8,hi=e.z1!=null?e.z1:I.x1-8;
+function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const au=d.cult||d.bot,lo=!au&&e.z0!=null?e.z0:I.x0+8,hi=!au&&e.z1!=null?e.z1:I.x1-8; // autumn foes roam the whole island (they only patrol their own slice)
  e.x=clamp(e.x+e.vx*dt,lo,hi);e.vx*=Math.pow(.02,dt);if(e.tcd>0)e.tcd-=dt;e.moving=false;
  const gy=surfY(e.x),dxp=P.x-e.x,adx=Math.abs(dxp),near=adx<240&&P.y>gy-150&&P.y<gy+40;
- if(d.cult||d.bot){updAuFoe(e,dt,d,lo,hi,gy,dxp,adx,near);return} // cultist / Forgotten Robot: own attacks, no touch damage (world2/autumnfoes.js)
+ if(au){updAuFoe(e,dt,d,lo,hi,gy,dxp,adx,near,I);return} // cultist / Forgotten Robot: own attacks, no touch damage (world2/autumnfoes.js)
  if(d.uni){e.y=gy;
   if(e.st==='walk'){if(Math.abs(e.tx-e.x)<3){e.st='idle';e.sT=.5+rnd()*.8}else{const s=Math.sign(e.tx-e.x);e.dir=s;e.x=clamp(e.x+s*d.spd*dt,lo,hi);e.moving=true}}
   else if(e.st==='idle'){e.sT-=dt;if(near)e.dir=Math.sign(dxp)||e.dir;if(near&&adx<UNI.near){e.st='walk';e.tx=clamp(e.x-(Math.sign(dxp)||1)*80,lo,hi)}else if(e.sT<=0){e.st='walk';e.tx=lo+rnd()*(hi-lo)}}
