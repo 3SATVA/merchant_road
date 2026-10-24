@@ -103,75 +103,72 @@ function auDecor(d,P){const r=d.r;
  else if(r<.88){const fl=Math.sin(menuT*8+d.k)>0;P(0,-14,1,14,'#3a2a24');P(-2,-18,5,1,'#3a2a24');P(-1,-17,3,3,fl?'#ffd070':'#ffb040');P(0,-16,1,1,'#fff0b8')}
  else{P(-2,-3,1,3,'#d8a040');P(0,-4,1,4,'#e8b850');P(2,-3,1,3,'#c08a30');P(-1,-2,1,2,'#c08a30')}}
 // ---- Vex's Tower ----
-// Interior coordinates: room x 0..TOWER.w, floors at TOWER.fl (y, upward is negative). Ladders join floor k to k+1; the door is on the ground floor.
-const TOWER={w:200,fl:[0,-70,-140,-210],lad:[{x:150,y0:0,y1:-70},{x:50,y0:-70,y1:-140},{x:150,y0:-140,y1:-210}],door:28,vex:56,climb:78};
+// Interior: one tall, narrow shaft (x 0..TOWER.w, y up is negative). The ground floor has the door; one ladder runs straight up to Vex's landing at the top.
+// Up (W / arrow / tU / jump) anywhere on the ground floor slides you onto the ladder and climbs; down anywhere on the landing climbs back. Your cart and horse stay hitched (they are invisible on foot).
+const TOWER={w:112,fl:[0,-236],lad:[{x:76,y0:0,y1:-236}],door:20,vex:30,climb:120};
 function nearTowerDoor(){return WI===1&&!DG&&!!P&&!P.fly&&Math.abs(P.x-CAPW.tower)<16&&Math.abs(P.y-surfY(CAPW.tower))<12}
 function towerPrompt(){return '<b style="color:#c9b4ec">'+ico('ball')+' Vex\'s Tower</b><br>'+(isTouch?'Tap E':'Press E')+' to enter'}
-function enterTower(){if(DG||!WI)return;const dx=CAPW.tower;fadeIn();if(S.horse&&S.horse.on)dismount(dx+30);if(!S.park&&curH()!=='backpack')unhitch(dx-34);
+function enterTower(){if(DG||!WI)return;const dx=CAPW.tower;fadeIn();if(S.horse&&S.horse.on)dismount(dx+30);
  save();DG={tower:1,d:{x:dx,diff:0},t:0,minX:TOWER.w/2-VW/2,maxX:TOWER.w/2+VW/2,plats:[],foes:[]};ENEMIES=[];PROJ=[];PICK=[];PARTS=[];FTXT=[];ROCKS=[];
- P=newPlayer(0);P.x=TOWER.door+6;P.y=0;P.onGround=true;P.plat=null;P.safe={x:P.x,y:0,p:null};P.inv=.6;P.dir=1;P.climb=null;
- camX=DG.minX;camY=P.y-VH*.6;showPrompt('')}
-function updTower(dt){const D=DG,T=TOWER;D.minX=T.w/2-VW/2;D.maxX=T.w/2+VW/2;P.onGround=true;P.vy=0;
+ P=newPlayer(0);P.x=TOWER.door+8;P.y=0;P.onGround=true;P.plat=null;P.safe={x:P.x,y:0,p:null};P.inv=.6;P.dir=1;P.climb=null;
+ const t=$('toasts');if(t)t.innerHTML=''; // drop the region banner so it does not sit over the room
+ camX=DG.minX;camY=towerCamY();showPrompt('')}
+// camera: on the ground floor the room sits at 62% height, clear of the touch buttons; it eases up with you on the climb so the top landing
+// (Vex) ends at 60%, below the prompt box
+function towerCamY(){const f=clamp(-P.y/-TOWER.fl[1],0,1);return lerp(Math.min(-VH*.62,P.y-60),P.y-VH*.6,f)}
+function updTower(dt){const D=DG,T=TOWER,L=T.lad[0],top=T.fl[1];D.minX=T.w/2-VW/2;D.maxX=T.w/2+VW/2;P.onGround=true;P.vy=0;
  if(MODE!=='play'){showPrompt('');return}
  const up=!!(keys.w||keys.arrowup||tkeys.u),dn=!!(keys.s||keys.arrowdown||tkeys.d),upP=inp.jump()||pressed.tu,dnP=!!(pressed.s||pressed.arrowdown||pressed.td);
  const mv=(inp.left()?-1:0)+(inp.right()?1:0);let h='';const k=isTouch?'Tap E':'Press E';
- if(P.climb){const L=P.climb;P.x+=(L.x-P.x)*Math.min(1,dt*14);if(up)P.cv=-1;else if(dn)P.cv=1; // a tap starts the climb and it carries on; holding steers
-  P.y+=P.cv*T.climb*dt;P.walk=1;P.wheel+=dt*8;
-  if(P.y<=L.y1){P.y=L.y1;P.climb=null;P.x=L.x+(L.x<T.w/2?14:-14);P.dir=L.x<T.w/2?1:-1}else if(P.y>=L.y0){P.y=L.y0;P.climb=null;P.x=L.x+(L.x<T.w/2?14:-14)}
+ if(P.climb){P.x+=(L.x-P.x)*Math.min(1,dt*10);const atL=Math.abs(P.x-L.x)<2; // slide onto the ladder, then climb; it carries on by itself
+  P.walk=1;if(atL){P.y+=P.cv*T.climb*dt;P.wheel+=dt*8;
+   if(P.y<=L.y1){P.y=L.y1;P.climb=null;P.x=L.x-16;P.dir=-1}else if(P.y>=L.y0){P.y=L.y0;P.climb=null;P.x=L.x-16;P.dir=-1}}
   showPrompt('');return}
  if(mv)P.dir=mv;const ox=P.x;P.x=clamp(P.x+mv*94*spdMul()*dt,8,T.w-8);P.walk=mv&&1;P.wheel+=(P.x-ox)/4;
- for(const L of T.lad){if(Math.abs(P.x-L.x)>12)continue;
-  if(Math.abs(P.y-L.y0)<1){h=ico('up')+'<br>'+(isTouch?'Tap':'[W]')+' climb';if(upP||up){P.climb=L;P.cv=-1;break}}
-  else if(Math.abs(P.y-L.y1)<1){h=ico('down')+'<br>'+(isTouch?'Tap':'[S]')+' down';if(dnP||dn){P.climb=L;P.cv=1;break}}}
- if(P.climb){showPrompt('');return}
- const top=T.fl[T.fl.length-1];
- if(P.y===0&&Math.abs(P.x-T.door)<14){h=ico('exit')+' Leave<br>'+k;if(inp.use()){showPrompt('');exitDungeon();return}}
- else if(P.y===top&&Math.abs(P.x-T.vex)<22){h='<b style="color:#c9b4ec">'+ico('ball')+' Vex</b><br>'+k+' to enchant';if(inp.use()){showPrompt('');WTOWER=1;openWitch();return}}
+ if(P.y===0){if(upP||up){P.climb=L;P.cv=-1;showPrompt('');return}
+  if(Math.abs(P.x-T.door)<14){h=ico('exit')+' Leave<br>'+k;if(inp.use()){showPrompt('');exitDungeon();return}}
+  else h=ico('up')+'<br>'+(isTouch?'Tap':'[W]')+' climb'}
+ else if(P.y===top){if(dnP||dn){P.climb=L;P.cv=1;showPrompt('');return}
+  h='<b style="color:#c9b4ec">'+ico('ball')+' Vex</b><br>'+k+' to enchant';if(inp.use()){showPrompt('');WTOWER=1;openWitch();return}}
  showPrompt(h)}
 let TWC=null;
-function towerArt(){const T=TOWER,W=T.w+80,H=310,g0=280,cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d'),F=(x,y,w,h,c)=>px(g,x+40,g0+y,w,h,c);
- F(-40,-280,W,H,'#241e2c');F(0,-262,T.w,262,'#4a4058');
- for(let y=-262,r=0;y<0;y+=8,r++){F(0,y,T.w,1,'#3e3550');for(let x=(r%2?8:0);x<T.w;x+=16)F(x,y,1,8,'#3e3550');if(r%5===2)F((r*37)%180+6,y+3,6,2,'#544a64')}
- F(-4,-262,4,262,'#3a3248');F(T.w,-262,4,262,'#3a3248');
- // windows with the sunset outside
- for(const [wx,wy] of [[96,-46],[100,-118],[96,-186],[20,-118],[176,-46]]){F(wx-2,wy-2,16,24,'#5a526a');for(let j=0;j<20;j++){const c=j<6?'#ec9470':j<12?'#f2a272':'#ffd2a2';F(wx,wy+j,12,1,c)}for(let i=0;i<12;i++){const h=Math.round(5*(1-Math.sqrt(Math.max(0,1-((i-5.5)/6)**2))));F(wx+i,wy,1,h,'#5a526a')}F(wx+5,wy,2,20,'#5a526a');F(wx,wy+9,12,1,'#5a526a');F(wx-3,wy+20,18,2,'#6e6680')}
- // floors: flagstones at the bottom, plank floors above, each with a hatch where the ladder comes through
- F(0,0,T.w,30,'#5a5068');for(let x=0;x<T.w;x+=13)F(x,0,1,6,'#4a4058');F(0,0,T.w,1,'#6e6680');
- for(let i=1;i<T.fl.length;i++){const y=T.fl[i];F(0,y,T.w,6,'#8a6448');F(0,y,T.w,1,'#a87c58');F(0,y+5,T.w,1,'#4a3226');for(let x=6;x<T.w;x+=17)F(x,y+1,1,4,'#6a4a3a');for(let x=20;x<T.w;x+=48){F(x,y+6,4,6,'#5a3e2e')}
-  const L=T.lad[i-1];F(L.x-8,y,16,6,'#1e1826')}
- // ladders
- for(const L of T.lad){F(L.x-7,L.y1-4,1,L.y0-L.y1+4,'#8a5a3a');F(L.x+6,L.y1-4,1,L.y0-L.y1+4,'#8a5a3a');for(let y=L.y1;y<L.y0;y+=6)F(L.x-6,y,12,1,'#a87444')}
- // ground floor: door (warm daylight), rug, barrels, a bench
+function towerArt(){const T=TOWER,W=T.w+80,H=340,g0=300,top=T.fl[1],L=T.lad[0],cv=document.createElement('canvas');cv.width=W;cv.height=H;const g=cv.getContext('2d'),F=(x,y,w,h,c)=>px(g,x+40,g0+y,w,h,c);
+ F(-40,-300,W,H,'#241e2c');F(0,-290,T.w,290,'#4a4058');
+ for(let y=-290,r=0;y<0;y+=8,r++){F(0,y,T.w,1,'#3e3550');for(let x=(r%2?8:0);x<T.w;x+=16)F(x,y,1,8,'#3e3550');if(r%5===2)F((r*37)%96+6,y+3,6,2,'#544a64')}
+ F(-4,-290,4,290,'#3a3248');F(T.w,-290,4,290,'#3a3248');
+ // tall slit windows with the sunset outside, up the shaft
+ for(const [wx,wy,wh] of [[40,-70,30],[16,-150,30],[92,-120,30],[44,-200,22],[96,-276,22]]){F(wx-2,wy-2,10,wh+4,'#5a526a');for(let j=0;j<wh;j++){const c=j<wh*.3?'#ec9470':j<wh*.6?'#f2a272':'#ffd2a2';F(wx,wy+j,6,1,c)}F(wx,wy,1,2,'#5a526a');F(wx+5,wy,1,2,'#5a526a');F(wx+2,wy,2,wh,'#5a526a');F(wx-3,wy+wh,12,2,'#6e6680')}
+ // wall shelves up the shaft: books, potions, a star chart
+ {const y=-104;F(4,y,30,2,'#6a4230');for(let b=0;b<9;b++){const c=['#a83a2a','#3a6a8a','#e8b040','#5a7a3a','#8a4a8a'][b%5];F(6+b*3,y-7+(b%3===1?1:0),2,7-(b%3===1?1:0),c)}}
+ {const y=-176;F(80,y,28,2,'#6a4230');for(let b=0;b<4;b++){const c=['#e84a6a','#5ae0a0','#c890ff','#ffd070'][b];F(83+b*6,y-5,3,5,c);F(84+b*6,y-6,1,1,'#e8e0d0')}}
+ F(8,-222,26,18,'#2a2a4a');F(7,-223,28,1,'#e8b040');F(7,-204,28,1,'#e8b040');for(const [a,b] of [[11,-219],[17,-214],[24,-218],[29,-209],[14,-208]])F(a,b,1,1,'#ffffff');F(12,-218,6,1,'#6a6a9a');F(18,-214,7,1,'#6a6a9a');
+ // ground: flagstones, door (warm daylight), rug, barrels
+ F(0,0,T.w,40,'#5a5068');for(let x=0;x<T.w;x+=13)F(x,0,1,6,'#4a4058');F(0,0,T.w,1,'#6e6680');
  F(T.door-9,-26,18,26,'#5a526a');for(let i=-7;i<=7;i++){const h=Math.round(18+5*Math.sqrt(1-(i/7.5)**2));F(T.door+i,-h,1,h,'#ffd2a2')}F(T.door-7,-3,15,3,'#f2a272');
- F(60,-1,60,1,'#8a2a4a');F(62,-1,56,1,'#a83a5a');for(let x=64;x<118;x+=6)F(x,-1,2,1,'#e8b040');
- for(const bx of [178,188]){F(bx-4,-10,8,10,'#7a5038');F(bx-4,-8,8,1,'#5a3a22');F(bx-4,-3,8,1,'#5a3a22')}
- F(110,-8,22,2,'#7a5038');F(112,-6,2,6,'#5a3a22');F(128,-6,2,6,'#5a3a22');
- // floor 1: bookshelves, cauldron
- {const y=-70;for(const bx of [8,30]){F(bx,y-36,18,36,'#6a4230');for(let s=0;s<4;s++){F(bx+1,y-35+s*9,16,8,'#3a2418');for(let b=0;b<7;b++){const c=['#a83a2a','#3a6a8a','#e8b040','#5a7a3a','#8a4a8a'][(b*3+s+bx)%5];F(bx+2+b*2,y-34+s*9+(b%3===1?1:0),2,7-(b%3===1?1:0),c)}}}
-  F(84,y-12,20,12,'#2a2430');F(82,y-14,24,3,'#3a3440');F(86,y-14,16,2,'#5ae0a0');F(88,y,3,0,'#000');for(const lx of [86,100])F(lx,y-1,2,1,'#2a2430')}
- // floor 2: potion shelves, star chart
- {const y=-140;for(const sy of [-30,-18]){F(80,y+sy,50,2,'#6a4230');for(let b=0;b<7;b++){const c=['#e84a6a','#5ae0a0','#c890ff','#ffd070'][b%4];F(83+b*7,y+sy-5,3,5,c);F(84+b*7,y+sy-6,1,1,'#e8e0d0')}}
-  F(150,y-50,34,26,'#2a2a4a');F(149,y-51,36,1,'#e8b040');F(149,y-24,36,1,'#e8b040');for(const [a,b] of [[155,-46],[162,-40],[170,-45],[176,-34],[158,-30],[167,-33]])F(a,y+b,1,1,'#ffffff');F(156,y-45,7,1,'#6a6a9a');F(163,y-41,7,1,'#6a6a9a')}
- // top floor: Vex's desk with the crystal ball, a telescope by the window, candles
- {const y=-210;F(74,y-10,30,2,'#6a4230');F(76,y-8,2,8,'#4a3226');F(100,y-8,2,8,'#4a3226');F(82,y-13,8,3,'#4a3a5a');for(const [a,b] of [[108,-30],[150,-30]]){}
-  F(160,y-2,10,2,'#3a2a24');F(164,y-12,2,10,'#5a3a22');for(let i=0;i<14;i++)F(162+i,y-14-Math.round(i*.6),2,2,i<10?'#b08a50':'#d8b070');
-  F(20,y-36,14,24,'#8a2a4a');F(20,y-36,14,1,'#e8b040');for(const [a,b] of [[26,-30],[24,-26],[28,-26],[26,-22]])F(a,y+b,2,2,'#e8b040');
-  F(-0,-262,T.w,6,'#3a2a24');for(let x=10;x<T.w;x+=36)F(x,-256,6,8,'#3a2a24')}
+ F(34,-1,30,1,'#8a2a4a');F(36,-1,26,1,'#a83a5a');for(let x=38;x<62;x+=6)F(x,-1,2,1,'#e8b040');
+ for(const bx of [96,104]){F(bx-4,-10,8,10,'#7a5038');F(bx-4,-8,8,1,'#5a3a22');F(bx-4,-3,8,1,'#5a3a22')}
+ // the landing at the top (planks, a hatch for the ladder), Vex's desk with the crystal ball, a rug
+ F(0,top,T.w,6,'#8a6448');F(0,top,T.w,1,'#a87c58');F(0,top+5,T.w,1,'#4a3226');for(let x=6;x<T.w;x+=17)F(x,top+1,1,4,'#6a4a3a');for(let x=6;x<T.w;x+=30)F(x,top+6,4,6,'#5a3e2e');F(L.x-8,top,16,6,'#1e1826');
+ F(40,top-10,22,2,'#6a4230');F(42,top-8,2,8,'#4a3226');F(58,top-8,2,8,'#4a3226');F(46,top-13,8,3,'#4a3a5a');
+ F(6,top-1,40,1,'#8a2a4a');for(let x=8;x<44;x+=6)F(x,top-1,2,1,'#e8b040');
+ F(0,-290,T.w,6,'#3a2a24');for(let x=10;x<T.w;x+=26)F(x,-284,6,8,'#3a2a24');
+ // the ladder, straight up the shaft
+ F(L.x-7,L.y1-4,1,L.y0-L.y1+4,'#8a5a3a');F(L.x+6,L.y1-4,1,L.y0-L.y1+4,'#8a5a3a');for(let y=L.y1;y<L.y0;y+=6)F(L.x-6,y,12,1,'#a87444');
  TWC=cv}
 function renderTower(){const T=TOWER,ox=Math.round(camX)+shk(),oy=Math.round(camY)+shk(),M=menuT;
- X.fillStyle='#1a1620';X.fillRect(0,0,VW,VH);if(!TWC)towerArt();X.drawImage(TWC,-40-ox,-280-oy);
+ X.fillStyle='#1a1620';X.fillRect(0,0,VW,VH);if(!TWC)towerArt();X.drawImage(TWC,-40-ox,-300-oy);
  const S2=(x,y,w,h,c)=>px(X,Math.round(x-ox),Math.round(y-oy),w,h,c);
  // candles (desk, shelves) and the cauldron's bubbles
- for(const [cx,cy] of [[78,-223],[100,-223],[128,-156],[12,-108],[118,-12]]){const f=Math.sin(M*11+cx)>0;S2(cx,cy,2,4,'#e8e0d0');S2(cx,cy-3-(f?1:0),2,3,f?'#ffd070':'#ffb040');S2(cx,cy-3,1,1,'#fff0b8');X.globalAlpha=.1;X.fillStyle='#ffd070';X.beginPath();X.arc(Math.round(cx-ox)+1,Math.round(cy-oy)-2,10,0,7);X.fill();X.globalAlpha=1}
- for(let j=0;j<3;j++){const p=(M*.8+j/3)%1;X.globalAlpha=1-p;S2(88+j*5+Math.round(Math.sin(M*3+j)*1),-85-p*14,2,2,'#5ae0a0')}X.globalAlpha=1;
+ for(const [cx,cy] of [[42,-249],[58,-249],[30,-108],[104,-180],[92,-14]]){const f=Math.sin(M*11+cx)>0;S2(cx,cy,2,4,'#e8e0d0');S2(cx,cy-3-(f?1:0),2,3,f?'#ffd070':'#ffb040');S2(cx,cy-3,1,1,'#fff0b8');X.globalAlpha=.1;X.fillStyle='#ffd070';X.beginPath();X.arc(Math.round(cx-ox)+1,Math.round(cy-oy)-2,10,0,7);X.fill();X.globalAlpha=1}
+ 
  // crystal ball on the desk
- {const bx=Math.round(86-ox),by=Math.round(-226-oy),pl=.5+.5*Math.sin(M*2.4);X.globalAlpha=.18+.12*pl;X.fillStyle='#c890ff';X.beginPath();X.arc(bx,by,9,0,7);X.fill();X.globalAlpha=1;
+ {const bx=Math.round(50-ox),by=Math.round(-252-oy),pl=.5+.5*Math.sin(M*2.4);X.globalAlpha=.18+.12*pl;X.fillStyle='#c890ff';X.beginPath();X.arc(bx,by,9,0,7);X.fill();X.globalAlpha=1;
   for(let i=-3;i<=3;i++){const h=Math.round(3.6*Math.sqrt(1-(i/3.8)**2));px(X,bx+i,by-h,1,h*2,i>0?'#8a3ac0':'#c060ff')}px(X,bx-2,by-2,1,1,'#f0d0ff')}
  // dust in the window light
- for(let i=0;i<10;i++){const s=hash(i*3.7),x=12+((s*977+M*6*(1+s))%176),y=-250+((hash(i*5.1)*250+M*8)%250);S2(x,y,1,1,'rgba(255,220,180,.5)')}
+ for(let i=0;i<10;i++){const s=hash(i*3.7),x=8+((s*977+M*6*(1+s))%96),y=-280+((hash(i*5.1)*280+M*8)%280);S2(x,y,1,1,'rgba(255,220,180,.5)')}
  // Vex, at the top, facing you
- drawVex(X,Math.round(T.vex-ox),Math.round(T.fl[3]-oy),P&&P.x>T.vex?1:-1,M);
- if(P&&P.y===T.fl[3]&&Math.abs(P.x-T.vex)<22&&Math.sin(M*4)>0)S2(T.vex-1,T.fl[3]-30,2,2,'#c890ff');
+ drawVex(X,Math.round(T.vex-ox),Math.round(T.fl[1]-oy),P&&P.x>T.vex?1:-1,M);
+ if(P&&P.y===T.fl[1]&&Math.abs(P.x-T.vex)<22&&Math.sin(M*4)>0)S2(T.vex-1,T.fl[1]-30,2,2,'#c890ff');
  drawActors(ox,oy);
  X.fillStyle='rgba(0,0,0,.18)';X.fillRect(0,0,VW,6);X.fillRect(0,VH-6,VW,6);
  drawFTXT(ox,oy)}

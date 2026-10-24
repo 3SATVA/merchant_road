@@ -140,7 +140,7 @@ const SC=[
  ['cap_tower',async h=>{await h.seed(W2({w2l:2,x:18250,lastTown:8,visited:[0,1,5,6,7,8],money:3000,mats:{essence:12}}));await h.step(40);await h.shot('door');
    await h.ev(()=>{pressed.te=1});await h.step(40);await h.shot('in');
    const go=async tx=>{for(let i=0;i<200;i++){const x=await h.ev(()=>MR.P.x);if(Math.abs(x-tx)<3)break;await h.ev(([x,tx])=>{tkeys.r=x<tx;tkeys.l=x>tx},[x,tx]);await h.step(2)}await h.ev(()=>{tkeys.r=0;tkeys.l=0});await h.step(2)};
-   for(const lx of await h.ev(()=>MR.TOWER.lad.map(l=>l.x))){await go(lx);await h.ev(()=>{pressed.tu=1});await h.step(2);await h.ev(()=>{tkeys.u=1});await h.step(20);if(lx===150)await h.shot('ladder');await h.step(70);await h.ev(()=>{tkeys.u=0});await h.step(5)}
+   for(const lx of await h.ev(()=>MR.TOWER.lad.map(l=>l.x))){await go(lx);await h.ev(()=>{pressed.tu=1});await h.step(2);await h.ev(()=>{tkeys.u=1});await h.step(20);await h.shot('ladder');await h.step(70);await h.ev(()=>{tkeys.u=0});await h.step(5)}
    await go(await h.ev(()=>MR.TOWER.vex)+14);await h.ev(()=>{pressed.te=1});await h.step(8);await h.shot('vex');await h.dig()}],
  ['au_foes',async h=>{await h.seed(W2({w2l:2,x:12280,lastTown:7,visited:[0,1,5,6,7],hp:9999,maxhp:9999}));await h.step(20);
    await h.ev(()=>{for(const e of MR.E)e.dead=1;MR.isleFoe('cultist',6,MR.P.x+70,12100,12500);MR.isleFoe('robot',6,MR.P.x+150,12100,12500);const e=MR.spawnEnemy('harpy',MR.P.x+90);e.y=MR.P.y-70;e.by=e.y;e.state='hover';e.cd=.6;e.age=0;e.onGround=false;e.dir=-1});
