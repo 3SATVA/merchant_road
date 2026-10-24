@@ -96,7 +96,7 @@ Object.assign(ENEMY,{
  bigSlime:{hp:110,dmg:9,hull:10,spd:50,w:22,h:18,coin:[12,20],air:1,isle:1,base:'slime',gem:.15,fruit:.25},
  isleSlime:{hp:24,dmg:7,hull:5,spd:50,w:10,h:8,coin:[2,4],air:1,isle:1,base:'slime',fruit:.25},
  // autumn foes (world2/autumnfoes.js): FINAL numbers, not run through W2T below. cult = sun cultist (fast knife lunge), bot = Forgotten Robot (slam + telegraphed laser)
- cultist:{hp:110,dmg:58,hull:10,spd:92,w:10,h:19,coin:[30,50],air:1,isle:1,base:'cultist',cult:1,amber:.06},
+ cultist:{hp:110,dmg:58,hull:10,spd:92,w:8,h:15,coin:[30,50],air:1,isle:1,base:'cultist',cult:1,amber:.06},
  robot:{hp:320,dmg:52,hull:12,spd:22,w:18,h:22,coin:[45,75],air:1,isle:1,base:'robot',bot:1,gem:.5},
  harpy:{hp:125,dmg:30,hull:10,spd:120,w:16,h:16,coin:[24,40],air:1,gem:.2,harpy:1}}); // open-sky flyer of the autumn wilds: hovers at range, throws feather fans (AUF.feather)
 // World 2 is end-game: you arrive with maxed World 1 gear (Magma Lance, Stone set, II-III enchants). The tier scales every sky foe

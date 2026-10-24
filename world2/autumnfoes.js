@@ -2,7 +2,7 @@
 // Autumn Wilds (Sunspire -> Aldenreach): the new foes and their shots, the island set pieces (castle ruins, sun-cult rubble,
 // shrine) and falling leaves. Stats live in ENEMY (world2/data.js: cultist / robot / harpy); timings here in AUF.
 // Island foes run inside updIsle (skyisles.js) and do their own damage (no touch damage); the harpy runs from updAir (skyfoes.js).
-const AUF={lunge:{near:120,tele:.32,spd:230,t:.3,cd:1.1}, // cultist: wind-up [s] then a knife dash (px/s, s); cooldown + up to .5
+const AUF={lunge:{near:165,tele:.36,spd:300,t:.42,cd:1.2}, // cultist: wind-up [s] then a long knife dash (px/s, s: 126 px, was 69); cooldown + up to .5
  laser:{range:230,min:40,tele:.85,lock:.3,beam:.22,cd:2.8,dmg:46}, // robot laser: aim line tracks you, locks for the last .3 s, then fires along the locked line
  slam:{near:26,tele:.45,cd:1.4}, // robot fist slam (ENEMY.robot.dmg)
  feather:{dmg:30,hull:8,spd:165,tele:.45,cd:2.3,n:3,spread:.2,life:2.2}}; // harpy feather fan (x SKY.dmg on the winged horse)
@@ -56,15 +56,17 @@ function auDeath(e,d,y){if(d.cult){if(rnd()<d.amber*DROPMUL)dropUnit({item:10,or
 // ---- art (flat, no outline; facing right, feet at sy) ----
 function drawAuFoe(c,e,sx,sy,t){const dir=e.dir||1,fl=e.hitT>0,R=[],G=[];const Q=(xo,yo,w,h,col)=>R.push([dir>0?sx+xo:sx-xo-w,sy+yo,w,h,fl?'#ffffff':col]);const tt=t+(e.seed||0)*3,d=ENEMY[e.type];
  if(d.cult){const RB='#b8282a',R2='#7a1418',R3='#d84a3a',GD='#e8b040',MK='#f0c040',RY='#ffe080',BL='#d8dce8',st=e.st,f=e.moving?Math.floor(tt*12)%4:0,w=st==='wind',lg=st==='lunge',cy=w?1:0;
-  // boots, robe (flared, gold-trimmed), hood, sun mask with rays, dagger arm
-  if(e.moving){Q(-3+(f<2?1:-1),-1,3,1,'#3a1a14');Q(1+(f<2?-1:1),-1,3,1,'#3a1a14')}
-  Q(-4,-13+cy,8,12-cy,RB);Q(-5,-6,10,5,RB);Q(-6,-3,2,2,R2);Q(1,-12+cy,2,9,R3);Q(-5,-2,10,1,GD);Q(-4,-8,8,1,GD);Q(-4,-13+cy,1,7,R2);if(lg){Q(-8,-4,3,2,RB);Q(-10,-3,2,1,R2)}
-  Q(-3,-19+cy,7,6,R2);Q(-2,-20+cy,5,1,R2);Q(-4,-17+cy,2,5,R2);
-  const mc=w&&Math.sin(tt*40)>0?'#fff8d0':MK;Q(0,-18+cy,4,5,mc);Q(2,-17+cy,1,1,'#3a1a14');Q(1,-15+cy,2,1,'#c08a20');
-  for(const [a,b] of [[4,-18],[4,-14],[5,-16],[1,-19],[3,-19],[0,-13]])Q(a,b+cy-(b===-19?1:0),1,1,RY);
-  if(w){Q(-5,-17,2,5,R2);Q(-5,-21,1,4,BL);Q(-5,-22,1,1,'#ffffff');G.push([dir>0?sx-6:sx+5,sy-23,3,3,'rgba(255,240,180,'+(.4+.4*Math.sin(tt*30))+')'])}
-  else if(lg){Q(3,-12,5,2,R2);Q(8,-12,5,1,BL);Q(12,-12,1,1,'#ffffff');for(const k of [0,1,2])Q(-12-k*3,-14+k*4,3,1,'rgba(255,230,210,.55)')}
-  else{Q(2,-11,2,4,R2);Q(3,-7,1,3,BL);Q(3,-8,1,1,'#a8a8b0')}}
+  // a short, slight figure: boots, narrow flared robe (gold trim), hood, a spiky sun mask (gold disc, rays all round), dagger arm
+  if(e.moving){Q(-2+(f<2?1:-1),-1,2,1,'#3a1a14');Q(1+(f<2?-1:1),-1,2,1,'#3a1a14')}
+  Q(-3,-10+cy,6,9-cy,RB);Q(-4,-4,8,3,RB);Q(-4,-2,8,1,GD);Q(-3,-10+cy,1,7,R2);Q(1,-9+cy,1,6,R3);Q(-3,-6,6,1,GD);if(lg){Q(-6,-3,2,2,RB);Q(-7,-2,1,1,R2)}
+  Q(-3,-14+cy,4,5,R2);
+  const mc=w&&Math.sin(tt*40)>0?'#fff8d0':MK;Q(0,-14+cy,4,4,mc);Q(1,-15+cy,2,1,mc);Q(1,-10+cy,2,1,mc);Q(-1,-13+cy,1,2,mc);Q(4,-13+cy,1,2,mc);
+  Q(2,-13+cy,2,1,'#3a1a14');Q(2,-11+cy,1,1,'#c08a20');
+  const sp=w?Math.round(Math.sin(tt*30)):0;
+  for(const [a,b,c2] of [[1,-17,RY],[2,-16,GD],[-1,-16,GD],[4,-16,GD],[5,-15,RY],[6,-12,RY],[5,-10,GD],[-2,-15,RY],[-3,-12,RY],[-2,-10,GD],[4,-9,RY]])Q(a,b+cy-(a===1&&b===-17?sp:0),1,1,c2);
+  if(w){Q(-4,-11,2,4,R2);Q(-4,-15,1,4,BL);Q(-4,-16,1,1,'#ffffff');G.push([dir>0?sx-5:sx+3,sy-17,3,3,'rgba(255,240,180,'+(.4+.4*Math.sin(tt*30))+')'])}
+  else if(lg){Q(2,-8,4,2,R2);Q(6,-8,4,1,BL);Q(9,-8,1,1,'#ffffff');for(const k of [0,1,2,3])Q(-9-k*3,-12+k*3,3,1,'rgba(255,230,210,.55)')}
+  else{Q(2,-8,1,3,R2);Q(3,-6,1,2,BL);Q(3,-7,1,1,'#a8a8b0')}}
  else{const RU='#a8643a',RU2='#6a3a22',RU3='#c87a4a',M='#8a8a90',M2='#4a4a52',M3='#b8b8bc',EY='#ff3a2a',VD='#5a7a6a',st=e.st,f=e.moving?Math.floor(tt*6)%4:0,aim=st==='aim'||st==='beam',sl=st==='slam',bob=e.moving&&f%2?-1:0;
   // treads, rusty boxy body with verdigris patches and rivets, dented head with a red eye, bent antenna, slam arm
   Q(-8,-4,16,4,M2);Q(-8,-4,16,1,M);for(let k=0;k<4;k++)Q(-7+((k*4+f)%16),-2,2,1,M3);
