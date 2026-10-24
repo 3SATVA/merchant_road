@@ -24,12 +24,12 @@ const CURSECOL='#ff4a6a';for(const k in ENCH)if(ENCH[k].cur)ENCH[k].col=CURSECOL
 const ENCHCOST=3; // flat, every time
 const ENCHN=[60,30,10],ENCHL=[55,33,12]; // 1/2/3 enchants, level I/II/III
 const CURSEP=1/6; // each enchant rolled has this chance to be a curse
-let WTOWER=0;const ENCHT={cost:6,curse:.057}; // Vex's Tower (World 2 capital): 2x the wagon's essence, curse chance per enchant cut so a roll is ~92% curse-free (wagon ~77%)
+let WTOWER=0;const ENCHT={cost:6,curse:.057,n:[25,45,30],l:[0,55,45]}; // Vex's Tower (World 2 capital): 2x the wagon's essence, curse chance per enchant cut so a roll is ~92% curse-free (wagon ~77%); n/l: Vex rolls more enchants (1/2/3: 25/45/30, wagon 60/30/10) and only level II-III (55/45, wagon I/II/III 55/33/12)
 function isWep(id){return !GEAR[id]&&!!WEAPONS[id]}
 function wIdx(ws){let t=ws.reduce((a,b)=>a+b,0)*rnd();for(let i=0;i<ws.length;i++){if(t<ws[i])return i;t-=ws[i]}return 0}
-function rollEnchants(id){const c=isWep(id)?'w':'a',n=1+wIdx(ENCHN),out=[];
+function rollEnchants(id){const c=isWep(id)?'w':'a',n=1+wIdx(WTOWER?ENCHT.n:ENCHN),out=[];
  for(let i=0;i<n;i++){const cur=rnd()<(WTOWER?ENCHT.curse:CURSEP);const ok=k=>ENCH[k].w[c]&&!out.some(o=>o.k===k);let pool=Object.keys(ENCH).filter(k=>ok(k)&&!!ENCH[k].cur===cur);if(!pool.length)pool=Object.keys(ENCH).filter(ok);if(!pool.length)break;
-  out.push({k:pool[wIdx(pool.map(k=>ENCH[k].w[c]))],l:1+wIdx(ENCHL)})}return out}
+  out.push({k:pool[wIdx(pool.map(k=>ENCH[k].w[c]))],l:1+wIdx(WTOWER?ENCHT.l:ENCHL)})}return out}
 function enchCost(){return WTOWER?ENCHT.cost:ENCHCOST}
 // replaces every enchant on the item with a fresh random roll
 function enchantItem(id){if(!(S.weapons.includes(id)||S.gear.includes(id)||S.lances.includes(id))||id==='fists')return null;if((S.mats.essence||0)<enchCost())return null;
