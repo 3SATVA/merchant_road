@@ -33,7 +33,10 @@ function skyHorseTick(dt){sparkTick(dt);const H=S.horse;
 // a storm island within reach (either side) whose cloud covers lane l
 function stormNear(l){for(const I of SKYISLES)if(stormLn(I,l)&&P.x>I.x0-700&&P.x<I.x1+100)return true;return false}
 // camera while flying the sky horse: frame all three lanes when the screen is tall enough (phone portrait), else follow you, keeping you clear of the HUD and the touch buttons
-function skyCam(){const c=-160-.415*VH;return clamp(c,P.y+12-.70*VH,P.y-34-.13*VH)}
+// sky flight camera (World 2, horse): eases vertically toward you (the loop lerps camY). You sit ~42% down the screen, between the HUD and
+// the touch buttons; the view is clamped so it shows a little open sky above the high lane and not much below the cloud
+// sea, and you are always kept inside the old margins (a short landscape screen just follows you)
+function skyCam(){const y=P.y*.6+BANDY[P.band==null?laneOf(P.y):P.band]*.4,t=clamp(y-.42*VH,LANET[2]-.30*VH,40-.62*VH);return clamp(t,P.y+12-.70*VH,P.y-34-.13*VH)}
 function fallOut(){P.x=P.lastSafe;P.y=surfY(P.x);P.vy=0;P.onGround=true;S.hp-=10;ftxt(P.x,P.y-24,'-10','#ff6a6a');toast(ico('down',2),900);if(S.hp<=0)die()}
 // flight height. Over an island: above it in its lane (towns: any lane) = land on it; above it in a higher lane (or just took off from it) = skim over;
 // below it = stay under its belly (no more popping up onto it from underneath). LAND:1 = touch down this frame.

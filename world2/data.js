@@ -44,7 +44,7 @@ const FEATURE_DRIVABLE_AIRSHIPS=false;
 const HLAND=1/3; // winged horse on any island (Skyhaven, Sunspire, sky islands): 1/3 of on-foot walking (92 -> ~31px/s), hop off and walk; flying is unchanged
 const SHIPV=118,HFLY=.5,JET=1.2,HULLFIX=12,WRECKLOSS=.3; // airship base speed (x ship spd); winged horse = gallop x0.5 (~69px/s: slower than any airship, the ship is the way to travel); high band x1.2; hull repairs 12/s while moored; a wreck loses 30% of the hold
 // sky islands: small landable islands in the air wilds (no towns). Logic + art in world2/skyisles.js.
-// ln = flight lane (0 low / 1 middle / 2 high) and h = surface height (low ~55-62, middle ~172-178, high ~292-298: just under that lane's cruise height, so flying
+// ln = flight lane (0 low / 1 middle / 2 high) and h = surface height (low ~55-62, middle ~172-178, storm island 8 150 to leave its one-lane storm cloud a gap, high ~292-298: just under that lane's cruise height, so flying
 // through the lane lands you, and the lanes above / below pass over / under it), top 1 = Sunspire lilac grass,
 // storm n = a storm cloud over the island's own lane and the n-1 lanes above it (no flying there: you drop onto the island; the lanes below / above stay clear),
 // rw = reward (chest / wool node; Sky Crystal is enemy-only since Oct 2026, the storm island's crystal node became wool) at the centre + rx (deep inside: you walk through the fights to reach it), foes = spawned when you come near,
@@ -59,7 +59,7 @@ const SKYISLES=[
  {x0:10950,x1:11650,ln:1,h:174,top:0,au:2,kind:'grove',rw:'leaf',rx:30,foes:['unicorn','cultist'],ld:[[.25,.38,12],[.62,.72,-8]]},
  {x0:12000,x1:13000,ln:2,h:296,top:0,au:1,kind:'castle',rw:'chest',rx:-60,foes:['cultist','robot','dreadUni'],ld:[[.16,.26,-9],[.74,.84,14]]},
  {x0:13350,x1:13950,ln:0,h:56,top:0,au:1,kind:'rubble',rw:'leaf',rx:40,foes:['cultist','cultist'],ld:[[.62,.72,10]]},
- {x0:14300,x1:15350,ln:1,h:178,storm:1,top:0,au:1,kind:'grove',rw:'chest',rx:50,foes:['robot','unicorn','cultist'],ld:[[.2,.3,14],[.5,.6,-10],[.75,.86,12]]},
+ {x0:14300,x1:15350,ln:1,h:150,storm:1,top:0,au:1,kind:'grove',rw:'chest',rx:50,foes:['robot','unicorn','cultist'],ld:[[.2,.3,6],[.5,.6,-10],[.75,.86,5]]},
  {x0:15650,x1:16150,ln:2,h:292,top:0,au:1,kind:'shrine',rw:'leaf',rx:-30,foes:['dreadUni','cultist'],ld:[[.2,.3,10]]}];
 const STORMIN=48; // the storm's no-fly core is the island minus this much at each end: land, cross, take off past the edge
 const SKYI={pad:80,safe:110,gap:80,chestCd:600,nodeCd:360,chest:[140,220],silk:2,wool:3,leaf:2,amber:1}; // autumn: leaf = Emberleaf per pick, amber = Spiced Amber in an autumn chest (instead of the Star Silk) // pad = flat landing strip at each end, safe = no foe spawns or patrols this close to an end, gap = min px between two foes' patrol zones; reward respawn [s of play time], chest coins + Star Silk, Cloud Wool per pick

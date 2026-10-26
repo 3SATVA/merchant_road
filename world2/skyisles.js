@@ -128,25 +128,28 @@ function drawRw(i,ox,oy){const I=SKYISLES[i],wx=rwX(i),x=Math.round(wx-ox),y=Mat
   else{F(-2,-3,2,1,'#3ab8a8');F(1,-4,2,1,'#3ab8a8')}}
  if(ok&&Math.sin(menuT*3+i)>.75){const k=Math.floor(menuT*3+i)%3;px(X,x-4+k*4,y-15-k*2,1,1,'#ffffff')}}
 // storm mood: 0..1 by how far the player is from a storm island's no-fly core (1 inside, smooth fade over STORMFADE px outside)
-const STORMFADE=170; // storm cloud: sits in the top storm lane (laneCY), rain falls from it onto the island; the no-fly zone is stormAt (core x + storm lanes)
-function laneCY(l){return LANET[l]+8} // base of a lane cloud (storm / rain): its body fills the upper part of lane l
+const STORMFADE=170; // screen storm mood fades in over this distance from the no-fly core; the no-fly zone is stormAt (x + lane)
 function stormF(){if(!P)return 0;let f=0;for(const I of SKYISLES){if(!I.storm)continue;const a0=I.x0+STORMIN,a1=I.x1-STORMIN,d=P.x<a0?a0-P.x:P.x>a1?P.x-a1:0;f=Math.max(f,clamp(1-d/STORMFADE,0,1)*(P.fly&&!stormLn(I,laneOf(P.y))?.35:1))}return f*f*(3-2*f)} // flying a clear lane past it: a lighter mood
 function stormFlash(I){return hash(Math.floor(menuT*2.5)+I.x0)>.95&&Math.sin(menuT*40)>0}
 // drawn before the actors: desaturate + dark blue-grey over sky, background and island (player and foes stay readable)
 function stormShade(){const f=stormF();if(f<=0)return;X.globalCompositeOperation='saturation';X.globalAlpha=.48*f;X.fillStyle='#808080';X.fillRect(0,0,VW,VH);
  X.globalCompositeOperation='source-over';X.globalAlpha=1;X.fillStyle='rgba(26,32,54,'+(.36*f).toFixed(3)+')';X.fillRect(0,0,VW,VH)}
+// storm cloud placement (lanes): the cloud (its pre-lane look) sits in the top storm lane, its top STORMTOP from that lane's top (a little above it:
+// the lane above is always clear and its rider flies 40px higher), and its base at least STORMGAP above the island's highest point (sTop); where the lane is too short for the full cloud it is scaled down (k) to fit.
+// Rain falls from it onto the island core. stormBox(I) -> {cy (cloud midline), k}
+const STORMGAP=40,STORMTOP=-20;
+function stormBox(I){if(I.sTop==null){let t=1e9;for(let x=I.x0;x<=I.x1;x+=2)t=Math.min(t,surfY(x));I.sTop=t}const top=LANET[I.ln+I.storm-1]+STORMTOP,k=clamp((I.sTop-STORMGAP-top)/88,.4,1);return{cy:top+40*k,k,top}}
 function drawStorms(ox,oy){const F=stormF();for(const I of SKYISLES){if(!I.storm)continue;const a0=I.x0+STORMIN,a1=I.x1-STORMIN,c0=I.x0-14,c1=I.x1+14;const a=Math.max(0,Math.round(c0-ox)),b=Math.min(VW,Math.round(c1-ox));if(b<=a)continue; // cloud: the whole island; rain + no-fly: the core
- const cy=Math.max(14,Math.round(laneCY(I.ln+I.storm-1)-oy)), // short (landscape) screens: keep the cloud base just in view at the top
-  fl=stormFlash(I);
- wxTint({x0:c0,x1:c1},ox,a,b-a,'40,52,84',.22,cy-44,Math.round(-I.h-oy)+8);
- for(let sx=a;sx<b;sx+=2){const wx=sx+ox,e=clamp(Math.min(wx-c0,c1-wx)/44,0,1),h=Math.round((30+12*Math.abs(Math.sin(wx/19))+6*Math.sin(wx/7))*e);if(h<2)continue;const t0=Math.max(0,cy-Math.round((22+12*Math.abs(Math.sin(wx/23))+6*Math.sin(wx/9))*e));if(cy+h<0)continue;
-  rb(0,fl?'#8a98b4':'#465068',sx,t0,2,cy+h-t0);rb(1,fl?'#b8c6e0':'#5e6a84',sx,cy+h-3,2,3);if(hash(wx*.9)>.6)rb(2,'#363e54',sx,t0+Math.round(6*hash(wx*.31)),2,2);if(hash(wx*.47)>.7)rb(2,'#363e54',sx,cy+h-6,2,2)}rbFlush(X);
+ const B=stormBox(I),k=B.k,cy=Math.round(B.cy-oy),fl=stormFlash(I);
+ wxTint({x0:c0,x1:c1},ox,a,b-a,'40,52,84',.22,Math.round(B.top-oy),Math.round(-I.h-oy)); // the storm column, down to the island top (not over it)
+ for(let sx=a;sx<b;sx+=2){const wx=sx+ox,e=clamp(Math.min(wx-c0,c1-wx)/44,0,1),h=Math.round((30+12*Math.abs(Math.sin(wx/19))+6*Math.sin(wx/7))*e*k);if(h<2)continue;const t0=Math.max(0,cy-Math.round((22+12*Math.abs(Math.sin(wx/23))+6*Math.sin(wx/9))*e*k));if(cy+h<0)continue;
+  rb(0,fl?'#8a98b4':'#465068',sx,t0,2,cy+h-t0);rb(1,fl?'#b8c6e0':'#5e6a84',sx,cy+h-3,2,3);if(hash(wx*.9)>.6)rb(2,'#363e54',sx,t0+Math.round(6*k*hash(wx*.31)),2,2);if(hash(wx*.47)>.7)rb(2,'#363e54',sx,cy+h-6,2,2)}rbFlush(X);
  // heavy slanted rain under the core (wind from the right: 1px left per 3px down)
- X.fillStyle='#c8daf4';const n=Math.round((a1-a0)/.8);for(let k=0;k<n;k++){const s=hash(k*3.1+I.x0),wd=a1-a0,g0=cy+26;
-  const sp=1+s*.4,ry0=(hash(k*5.3)*400+menuT*250*sp)%400,wx=a0+((s*977-ry0/3)%wd+wd)%wd,sx=Math.round(wx-ox);if(sx<a||sx>=b)continue;
+ X.fillStyle='#c8daf4';const n=Math.round((a1-a0)/.8);for(let q=0;q<n;q++){const s=hash(q*3.1+I.x0),wd=a1-a0,g0=cy+Math.round(26*k);
+  const sp=1+s*.4,ry0=(hash(q*5.3)*400+menuT*250*sp)%400,wx=a0+((s*977-ry0/3)%wd+wd)%wd,sx=Math.round(wx-ox);if(sx<a||sx>=b)continue;
   const g=Math.round(surfY(wx)-oy),hh=g-g0;if(hh<=4)continue;const ry=g0+ry0*hh/400,eA=clamp(Math.min(wx-a0,a1-wx)/30,0,1);
   X.globalAlpha=.35+.6*eA;const y=Math.round(ry);X.fillRect(sx,y,1,3);X.fillRect(sx-1,y+3,1,3);if(ry>g-7)X.fillRect(sx-2,g-1,3,1)}X.globalAlpha=1;
  // lightning: a jagged pixel bolt from the cloud base to the island, plus a faint screen flicker while you are in or near the storm
- if(fl){const k=Math.floor(menuT*2.5),bx=a0+hash(k*1.7+I.x0)*(a1-a0),g=Math.round(surfY(bx)-oy);let x=Math.round(bx-ox),y=cy+30;
-  if(x>-20&&x<VW+20){while(y<g){const st=4+Math.round(hash(y*.37+k)*5),dx=Math.round((hash(y*.71+k*3)-.5)*6);px(X,x-1,y,3,st,'#a8c0ff');px(X,x,y,1,st,'#ffffff');y+=st;x+=dx}}
+ if(fl){const q=Math.floor(menuT*2.5),bx=a0+hash(q*1.7+I.x0)*(a1-a0),g=Math.round(surfY(bx)-oy);let x=Math.round(bx-ox),y=cy+Math.round(30*k);
+  if(x>-20&&x<VW+20){while(y<g){const st=4+Math.round(hash(y*.37+q)*5),dx=Math.round((hash(y*.71+q*3)-.5)*6);px(X,x-1,y,3,st,'#a8c0ff');px(X,x,y,1,st,'#ffffff');y+=st;x+=dx}}
   if(F>0){X.fillStyle='rgba(210,222,255,'+(.16*F).toFixed(3)+')';X.fillRect(0,0,VW,VH)}}}}
