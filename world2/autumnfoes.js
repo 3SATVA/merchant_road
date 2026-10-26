@@ -3,9 +3,9 @@
 // shrine) and falling leaves. Stats live in ENEMY (world2/data.js: cultist / robot / harpy); timings here in AUF.
 // Island foes run inside updIsle (skyisles.js) and do their own damage (no touch damage); the harpy runs from updAir (skyfoes.js).
 const AUF={lunge:{near:165,tele:.36,spd:300,t:.42,cd:1.2}, // cultist: wind-up [s] then a long knife dash (px/s, s: 126 px, was 69); cooldown + up to .5
- laser:{range:230,min:40,tele:.85,lock:.3,beam:.22,cd:2.8,dmg:46}, // robot laser: aim line tracks you, locks for the last .3 s, then fires along the locked line
+ laser:{range:230,min:40,tele:.85,lock:.3,beam:.22,cd:2.8,dmg:Math.round(46*AUMUL)}, // robot laser: aim line tracks you, locks for the last .3 s, then fires along the locked line
  slam:{near:26,tele:.45,cd:1.4}, // robot fist slam (ENEMY.robot.dmg)
- feather:{dmg:30,hull:8,spd:165,tele:.45,cd:2.3,n:3,spread:.2,life:2.2}}; // harpy feather fan (x SKY.dmg on the winged horse)
+ feather:{dmg:Math.round(30*AUMUL),hull:8,spd:165,tele:.45,cd:2.3,n:3,spread:.2,life:2.2}}; // harpy feather fan (x SKY.dmg on the winged horse)
 const AUP=[]; // harpy feathers in flight
 DROPS.cultist=[['essence',.35]];DROPS.robot=[['essence',.2]];DROPS.harpy=[['essence',.4]]; // plus: cultist 6% Spiced Amber, robot 50% Sky Crystal, harpy 20% Sky Crystal (ENEMY .amber/.gem)
 function segD(px0,py0,x0,y0,x1,y1){const dx=x1-x0,dy=y1-y0,l=dx*dx+dy*dy,t=l?clamp(((px0-x0)*dx+(py0-y0)*dy)/l,0,1):0;return Math.hypot(px0-x0-t*dx,py0-y0-t*dy)}

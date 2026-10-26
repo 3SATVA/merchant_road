@@ -137,6 +137,10 @@ const SC=[
  // World 2 capital (Aldenreach), Vex's Tower and the autumn foes
  ['cap_town',async h=>{await h.seed(W2({w2l:2,x:17850,lastTown:8,visited:[0,1,5,6,7,8],money:3000,cargo:[{item:9,origin:7,qty:2,paid:2000}]}));await h.step(30);await h.shot('outside');
    await h.ev(()=>MR.enterTown(MR.TOWNS[8]));await h.step(5);await h.shot('market');await h.ev(()=>{const b=document.querySelector('#tbody button[data-act="buy"]');if(b)b.click()});await h.step(3);await h.shot('bought');await h.dig()}],
+ ['alden_shops',async h=>{await h.seed(W2({w2l:2,x:17300,lastTown:8,visited:[0,1,5,6,7,8],money:300000,horse:{on:false,x:16000,dir:1,wings:true}}));await h.step(20);
+   for(const s of await h.ev(()=>MR.CAPSHOP.map(s=>[s.x,s.n]))){await h.ev(x=>{MR.P.x=x;MR.P.y=MR.surfY(x);MR.P.lastSafe=x;MR.E.length=0},s[0]);await h.step(20);await h.shot('door_'+s[1]);await h.ev(()=>{pressed.te=1});await h.step(4);await h.shot('ui_'+s[1]);
+    await h.ev(()=>{const b=document.querySelector('#tbody button[data-act="buypeg"],#tbody button[data-act="buyw2"],#tbody button[data-act="buyw"][data-id="resinsword"]');if(b)b.click()});await h.step(3);await h.shot('buy_'+s[1]);await h.ev(()=>document.getElementById('tLeave').click());await h.step(4)}
+   await h.ev(()=>{MR.S.horse.x=MR.P.x;MR.mount();MR.startFly()});await h.step(20);await h.ev(()=>{tkeys.r=1});await h.step(60);await h.ev(()=>{tkeys.r=0});await h.shot('pegasus');await h.dig()}],
  ['cap_tower',async h=>{await h.seed(W2({w2l:2,x:18250,lastTown:8,visited:[0,1,5,6,7,8],money:3000,mats:{essence:12}}));await h.step(40);await h.shot('door');
    await h.ev(()=>{pressed.te=1});await h.step(40);await h.shot('in');
    const go=async tx=>{for(let i=0;i<200;i++){const x=await h.ev(()=>MR.P.x);if(Math.abs(x-tx)<3)break;await h.ev(([x,tx])=>{tkeys.r=x<tx;tkeys.l=x>tx},[x,tx]);await h.step(2)}await h.ev(()=>{tkeys.r=0;tkeys.l=0});await h.step(2)};

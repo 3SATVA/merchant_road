@@ -5,13 +5,22 @@ reg(ITEMS,6,[
  {id:'skyglass',name:'Sky Crystal',base:260,col:'#7de0ff'},
  {id:'sunfruit',name:'Sunfruit',base:500,col:'#ffb040'},
  {id:'starsilk',name:'Star Silk',base:2000,col:'#e8c8ff'}]);
-// Aldenreach goods (the autumn capital, World 2 town 8): Spiced Amber is the prize, Emberleaf tea and Hearth Cider the cheap fillers
+// Aldenreach goods (the autumn capital, World 2 town 8). Prices follow the World 1 town ladder: each town further down the road brings a
+// top good ~4x the last (wood 30 > coal 100 > iron 500 > gold 2000; Sunfruit 500 > Star Silk 2000), so the capital's prize is 4 x Star Silk
+// and even its fillers sit above Star Silk (Oct 2026; was 1200 / 150 / 420)
 reg(ITEMS,10,[
- {id:'spicedamber',name:'Spiced Amber',base:1200,col:'#e88a2a'},
- {id:'emberleaf',name:'Emberleaf Tea',base:150,col:'#c8482a'},
- {id:'hearthcider',name:'Hearth Cider',base:420,col:'#d8a040'}]);
+ {id:'spicedamber',name:'Spiced Amber',base:8000,col:'#e88a2a'},
+ {id:'emberleaf',name:'Emberleaf Tea',base:2500,col:'#c8482a'},
+ {id:'hearthcider',name:'Hearth Cider',base:4500,col:'#d8a040'}]);
 HAULERS.wingcart={name:'Winged Cart',cap:20,spd:.9,jump:.95,price:400,w:1}; // World 2 only (Skyhaven), hitches to the winged horse
 COFF.wingcart=-18;HITCHR.wingcart=32;
+// Carriage (Aldenreach carrier store): World 2 only like the Winged Cart (flies with your horse, sparkles away on landing, hitch / park the same way);
+// S.carriage = owned, S.w2c = which of the two you drive ('wingcart' picks the cart back). Not in HORDER: World 1 never offers or uses it
+HAULERS.carriage={name:'Carriage',cap:75,spd:.85,jump:.93,price:100000,w:1};COFF.carriage=-20;HITCHR.carriage=36;
+function isWC(h){return h==='wingcart'||h==='carriage'} // a World 2 flying cart (hitched behind the winged horse)
+// Pegasus (Aldenreach stables): S.peg = owned, S.mnt = 'peg' rides it (else your sky horse). World 2 only: flies PEGSPD x the sky horse's
+// speed; World 1 never sees it (you ride your own horse there, unchanged)
+const PEGPRICE=50000,PEGSPD=1.5;function pegOn(){return !!(S&&S.peg&&S.mnt==='peg'&&WI===1)}
 // airships: World 2 cargo haulers (hold = cargo cap there). spd/hull are used by phase-2 flying; shown in the shop now
 const SHIPS={small:{name:'Small Airship',cap:30,spd:1.15,hull:60,price:0,z:.72,pal:['#c84a3a','#e8d8b0']},
  medium:{name:'Medium Airship',cap:60,spd:1,hull:100,price:6000,z:.9,pal:['#3a8ad0','#f4ead0']},
@@ -74,7 +83,7 @@ function dockShipX(i){const d=DOCKS[i];return d.x+d.side*52}
 reg(TOWNS,6,[
  {name:'Skyhaven',x:1050,w:1,ships:1,forge:1,sells:[6,8],weapons:['cogflail'],haulers:[]},
  {name:'Sunspire',x:9750,w:1,sells:[8,9],weapons:[],haulers:[]}]);
-reg(TOWNS,8,[{name:'Aldenreach',x:17850,w:1,biome:9,big:1,sells:[10,11,12],weapons:[],haulers:[]}]); // big = drawn by world2/capital.js (walls, houses, Vex's Tower)
+reg(TOWNS,8,[{name:'Aldenreach',x:17850,w:1,biome:9,big:1,forge:1,stable:1,carrier:1,sells:[10,11,12],weapons:['resinsword'],haulers:[]}]); // big = drawn by world2/capital.js (walls, houses, Vex's Tower, the four shop buildings CAPSHOP)
 reg(BIOMES,5,[
  {name:'Sky Meadow',sky:['#78c4f0','#b4e2f8','#eaf8ff'],far:'#a8cce0',mid:'#f4fbff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#5ee0c8'},
  {name:'Air Wilds',sky:['#5aa4e0','#9ad2f4','#e2f4ff'],far:'#b0d4ec',mid:'#f0f8ff',top:'#5ee0c8',top2:'#3ab8a8',dirt:'#e0d2b4',dirt2:'#c8b896',farS:'isles',midS:'cloudbank',mm:'#a8d8f4'},
@@ -106,6 +115,12 @@ for(const t of ['pegasus','skySlime','unicorn','dreadUni','bigSlime','isleSlime'
 // HP nerf on top of the tier (Oct 2026): pegasus, unicorn, dread unicorn and big slime at 1/2 (sky slime and the big slime's isle slimes unchanged)
 const W2HPN={pegasus:.5,unicorn:.5,dreadUni:.5,bigSlime:.5};for(const t in W2HPN)ENEMY[t].hp=Math.round(ENEMY[t].hp*W2HPN[t]);
 UNI.bolt=Math.round(UNI.bolt*W2T.dmg);
+// Autumn wilds x1.5 (Oct 2026): cultist, Forgotten Robot and harpy (autumn-only) get it here; their laser / feathers in AUF (world2/autumnfoes.js).
+// Unicorns, dread unicorns and pegasi get it per spawn when they spawn in the autumn wilds (au islands, biome 8): auBuff marks e.au, updAir swaps in auD(type)
+const AUMUL=1.5;for(const t of ['cultist','robot','harpy']){const d=ENEMY[t];d.hp=Math.round(d.hp*AUMUL);d.dmg=Math.round(d.dmg*AUMUL)}
+const AUBUFF=['unicorn','dreadUni','pegasus'],AUDC={};
+function auD(t){return AUDC[t]||(AUDC[t]=Object.assign({},ENEMY[t],{dmg:Math.round(ENEMY[t].dmg*AUMUL)}))}
+function auBuff(e){if(!AUBUFF.includes(e.type)||e.au)return e;e.au=1;e.hp=e.max=Math.round(e.max*AUMUL);return e}
 reg(SPAWNS,5,[[['slime',1]],[['pegasus',.55],['skySlime',.45]],[['slime',1]]]);
 reg(SPAWNS,8,[[['harpy',.55],['pegasus',.45]],[['slime',1]]]);
 // World 2 definition (see WORLDDEF in core/registry.js)
@@ -115,7 +130,7 @@ WORLDDEF[1]={name:'Skylands',len:W2LEN,bounds:[0,ISLES[0].x1,ISLES[1].x0,10900,I
  decorOK(x){return islAt(x-12)>=0&&islAt(x+12)>=0&&DOCKS.every(d=>Math.abs(x-d.x)>80)&&!(x>CAPW.x0-40&&x<CAPW.x1+40)&&CAPW.piers.every(q=>Math.abs(x-q)>70)},
  town:W2TOWN,money:W2START,arriveX:W2DOCK-34,horseOff:26, // first arrival: Skyhaven, W2START coins, by the dock
  // cart: World 2's hauler is the Winged Cart once bought (S.wcart); with drivable airships on, cargo rides in the ship instead
- cart(){return S.wcart&&!FEATURE_DRIVABLE_AIRSHIPS?'wingcart':'backpack'},parkIco:'wcartP',carry:'hold',autoHitch:0,
+ cart(){return FEATURE_DRIVABLE_AIRSHIPS?'backpack':S.carriage&&S.w2c!=='wingcart'?'carriage':S.wcart?'wingcart':'backpack'},parkIco:'wcartP',carry:'hold',autoHitch:0,
  leave(s,o){o.hold=s.cargo;o.park=s.park||null},
  fresh(s){s.w2l=W2L}, // new games are on the current World 2 layout
  migrate(s,d){w2Mats(s);if(d.w2l>=W2L)return;s.w2l=W2L; // older saves: World 2 positions onto the bigger islands (core/state.js load(), before anything checks them)

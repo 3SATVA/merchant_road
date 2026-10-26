@@ -8,6 +8,7 @@ function wepPixels(id){switch(id){
  case 'leafstaff':return ['#8a6a3a','#8a6a3a','#9a7a44','#9a7a44','#9a7a44','#9a7a44','#9a7a44','#9a7a44','#9a7a44','#9a7a44'];
  case 'firestaff':return ['#4a2a18','#4a2a18','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418','#5a3418'];
  case 'flamesword':return ['#5a3818','#5a3818','#d8b040','#a8301a','#c83a1a','#e8501a','#ff6a1a','#ff8a2a','#ffa030','#ffd040','#fff0a0'];
+ case 'resinsword':return ['#5a3818','#5a3818','#d8b040','#a8541a','#c86a1a','#e08a2a','#e08a2a','#f0a040','#f8c060','#f8c060','#ffe0a0','#fff0c0'];
  case 'obsidian':return ['#3a2a3a','#3a2a3a','#c04aa0','#2a1a2e','#3a2440','#3a2440','#3a2440','#3a2440','#4a2e52','#4a2e52','#e070d0'];
  case 'windstaff':return ['#a89070','#a89070','#c8b090','#c8b090','#c8b090','#c8b090','#c8b090','#c8b090','#c8b090','#c8b090'];
  case 'cogflail':return ['#5a3818','#5a3818','#6a4420','#7a5228','#9aa0aa'];
@@ -29,10 +30,11 @@ function drawFlail(c,ex,ey,dir,ang,t,fl){let hx,hy;const ca=Math.cos(ang),sa=Mat
 function drawWeapon(c,hx,hy,dir,ang,id,t,fl){
  const P=wepPixels(id);if(!P.length)return;const ca=Math.cos(ang),sa=Math.sin(ang);let ex=hx,ey=hy;
  if(WEAPONS[id]&&WEAPONS[id].lance)for(let i=3;i<P.length;i++)px(c,hx+ca*i*dir-sa*dir,hy+sa*i+ca,1,1,'#1e140c'); // dark underside so the lance reads against the horse
- for(let i=0;i<P.length;i++){const x=hx+ca*i*dir,y=hy+sa*i;px(c,x,y,1,1,P[i]);if(id==='sword'||id==='obsidian'||id==='flamesword'){if(i>2)px(c,x-sa*dir,y+ca,1,1,P[i])}ex=x;ey=y}
+ for(let i=0;i<P.length;i++){const x=hx+ca*i*dir,y=hy+sa*i;px(c,x,y,1,1,P[i]);if(id==='sword'||id==='obsidian'||id==='flamesword'||id==='resinsword'){if(i>2)px(c,x-sa*dir,y+ca,1,1,P[i])}ex=x;ey=y}
  const nx=-sa*dir,ny=ca;
  if(id==='warhammer'){for(let j=-3;j<=3;j++)for(let k=0;k<3;k++)px(c,ex+nx*j+ca*dir*k,ey+ny*j+sa*k,1,1,j===-3||j===3?'#6a707a':'#9aa0aa')}
  if(id==='crossbow'){const bx=hx+ca*dir*5,by=hy+sa*5;for(let j=-4;j<=4;j++)px(c,bx+nx*j-ca*dir*Math.abs(j)*.4,by+ny*j-sa*Math.abs(j)*.4,1,1,'#3a2a1a');}
+ if(id==='resinsword'){const f=Math.floor((t||0)*4);for(const i of [5,8,10]){const k=(f+i)%4,x=hx+ca*i*dir-sa*dir*2,y=hy+sa*i+ca*2;px(c,x,y,1,1,'#c86a1a');if(k>0)px(c,x-sa*dir,y+ca,1,1,k>2?'#ffe0a0':'#e8a040')}} // amber resin drips
  if(id==='flamesword'){const f=Math.floor((t||0)*12);for(let i=4;i<P.length;i+=2){const k=hash(i*3.1+f);if(k>.45){const x=hx+ca*i*dir-sa*dir*(k>.75?-1:2),y=hy+sa*i+ca*(k>.75?-1:2);px(c,x,y,1,1,k>.8?'#fff0a0':'#ff8a2a')}}}
  if(WEAPONS[id]&&WEAPONS[id].lance){const vx=hx+ca*dir*3,vy=hy+sa*3,vc=id==='ironlance'?'#9aa0aa':id==='magmalance'?'#5a3a3a':'#6e4526';for(let j=-2;j<=2;j++)px(c,vx+nx*j,vy+ny*j,1,1,Math.abs(j)===2?'#2a1a10':vc);
   if(id==='magmalance'){const f=Math.floor((t||0)*12);for(let i=9;i<P.length;i+=2){const k=hash(i*3.1+f);if(k>.5)px(c,hx+ca*i*dir-sa*dir*(k>.75?-1:1),hy+sa*i+ca*(k>.75?-1:1),1,1,k>.8?'#fff0a0':'#ff8a2a')}}}
@@ -41,7 +43,7 @@ function drawWeapon(c,hx,hy,dir,ang,id,t,fl){
  if(id==='windstaff'){const f=Math.floor((t||0)*8)%4,R=[[0,-2],[2,0],[0,2],[-2,0]][f];px(c,ex-1,ey-1,3,3,'#7fd4ea');px(c,ex-1,ey-1,2,2,'#bdeefa');px(c,ex,ey,1,1,'#ffffff');px(c,ex+R[0],ey+R[1],1,1,'#e8fbff')}
  if(id==='firestaff'){const f=(Math.floor((t||0)*10)%2);px(c,ex-1,ey-1,3,3,'#ff7a1a');px(c,ex,ey,1,1,f?'#fff0a0':'#ffd040')}
 }
-function drawHauler(c,x,y,dir,type,fill,wheel){if(type==='wingcart'){drawWingCart(c,x,y,dir,fill,wheel||0,false);return}
+function drawHauler(c,x,y,dir,type,fill,wheel){if(type==='wingcart'){drawWingCart(c,x,y,dir,fill,wheel||0,false);return}if(type==='carriage'){drawCarriage(c,x,y,dir,fill,wheel||0,false);return}
  // x,y = player feet (screen). returns nothing
  const P=(xo,yo,w,h,col)=>{px(c,dir>0?x+xo:x-xo-w,y+yo,w,h,col)};
  const wh=(cx,cy,r)=>{for(let a=0;a<12;a++){const an=a/12*Math.PI*2;P(cx+Math.round(Math.cos(an)*r),cy+Math.round(Math.sin(an)*r),1,1,'#2a1a10')}
@@ -56,5 +58,5 @@ function drawHauler(c,x,y,dir,type,fill,wheel){if(type==='wingcart'){drawWingCar
   if(n)goods(-12,-13,0,0);wh(-43,-5,5);wh(-17,-5,5);
   const fr=Math.min(1,n/50);if(n)P(-46,-14-Math.round(fr*3),5,Math.round(fr*3)+1,fill[0])}
 }
-const HAULURL={};HAULURL.wingcart=spriteURL(56,32,g=>drawWingCart(g,28,31,1,['#e8f4ff','#7de0ff','#ffb040'],.001,true));HORDER.forEach(id=>{HAULURL[id]=spriteURL(56,32,g=>{drawHauler(g,id==='wheelbarrow'?20:id==='backpack'?30:50,30,1,id,['#d83a3a','#c8a060','#8b5a2b','#ffd040','#a8b0bc'],.4);if(id==='backpack')drawPlayer(g,30,30,1,0,false,false,false,'fists',0)})});
+const HAULURL={};HAULURL.wingcart=spriteURL(56,32,g=>drawWingCart(g,28,31,1,['#e8f4ff','#7de0ff','#ffb040'],.001,true));HAULURL.carriage=spriteURL(56,32,g=>drawCarriage(g,28,31,1,['#e88a2a','#d8a040','#c8482a'],.001,true));HORDER.forEach(id=>{HAULURL[id]=spriteURL(56,32,g=>{drawHauler(g,id==='wheelbarrow'?20:id==='backpack'?30:50,30,1,id,['#d83a3a','#c8a060','#8b5a2b','#ffd040','#a8b0bc'],.4);if(id==='backpack')drawPlayer(g,30,30,1,0,false,false,false,'fists',0)})});
 const WEPURL={};const WEPC={};ICONORDER.forEach(id=>{const c=document.createElement('canvas');c.width=16;c.height=16;drawWeapon(c.getContext('2d'),3,13,1,-.78,id,0);WEPC[id]=c});ICONORDER.forEach(id=>{WEPURL[id]=spriteURL(16,16,g=>{if(id==='fists'){px(g,5,6,6,5,'#f1c28a');px(g,5,6,6,1,'#ffd8a8');px(g,6,8,1,1,'#c08a50');px(g,8,8,1,1,'#c08a50')}else drawWeapon(g,3,13,1,-.78,id,0)})});

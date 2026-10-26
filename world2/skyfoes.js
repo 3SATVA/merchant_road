@@ -1,12 +1,13 @@
 'use strict';
 function spawnAir(dir){const mx=P.fly==='ship'?SKY.maxShip:SKY.max,air=ENEMIES.filter(e=>!e.dead&&ENEMY[e.type].air&&!ENEMY[e.type].isle).length;if(air>=mx)return;const n=rnd()<SKY.pair?2:1;
- for(let i=0;i<n&&air+i<mx;i++){const x=P.x+dir*(VW/2+24+i*30);if(!((x>ISLES[0].x1+40&&x<ISLES[1].x0-40)||(x>ISLES[1].x1+40&&x<ISLES[2].x0-40)))continue;const t=pickType(biomeAt(x)),e=spawnEnemy(t,x);e.dir=-dir;
+ for(let i=0;i<n&&air+i<mx;i++){const x=P.x+dir*(VW/2+24+i*30);if(!((x>ISLES[0].x1+40&&x<ISLES[1].x0-40)||(x>ISLES[1].x1+40&&x<ISLES[2].x0-40)))continue;const b=biomeAt(x),t=pickType(b),e=spawnEnemy(t,x);if(b===8)auBuff(e);e.dir=-dir;
   e.y=t==='skySlime'?BANDY[0]+6-rnd()*24:BANDY[1+Math.floor(rnd()*2)]-6;e.by=e.y;e.state='hover';e.cd=1.2+rnd();e.age=0;e.onGround=false}}
 // open-sky kills (pegasus / sky slime): Sky Crystal is a material, straight into S.mats (never lost to a full hold), crystal sparks fly from the kill to the player
 function airGem(e,d){if(rnd()>=d.gem*DROPMUL)return;const y=e.y-d.h/2;giveMat('skyglass');const a=Math.atan2(P.y-12-y,P.x-e.x);for(let i=0;i<8;i++)PARTS.push({x:e.x,y,vx:Math.cos(a)*(90+rnd()*80)+(rnd()-.5)*40,vy:Math.sin(a)*(90+rnd()*80)+(rnd()-.5)*40,col:i%2?'#a8f4ff':'#ffffff',g:0,life:.45})}
 function airTouch(e,d){if(P.fly==='ship'){const hw=shipHW();return Math.abs(e.x-P.x)<hw+d.w/2&&e.y>P.y-52&&e.y-d.h<P.y+14}const m=mounted();return Math.abs(e.x-P.x)<(m?10:6)+d.w/2&&e.y>P.y-(m?28:18)&&e.y-d.h<P.y+2}
 function airHit(e,d){if(P.fly==='ship')hullHit(d.hull,e.x);else hurtPlayer(d.dmg*SKY.dmg,e.x,false)}
-function updAir(e,dt,d){if(d.isle){updIsle(e,dt,d);return}const tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;e.age=(e.age||0)+dt;e.x+=e.vx*dt;e.vx*=Math.pow(.05,dt);
+function updAir(e,dt,d){if(e.au)d=auD(e.type); // autumn-wilds spawn: x1.5 damage (auBuff, world2/data.js)
+ if(d.isle){updIsle(e,dt,d);return}const tx=P.x,ty=P.fly==='ship'?P.y-6:P.y-12;e.age=(e.age||0)+dt;e.x+=e.vx*dt;e.vx*=Math.pow(.05,dt);
  if(e.gone==null&&!AIRB.includes(biomeAt(P.x))){e.gone=e.age;e.dir=e.x<P.x?-1:1}
  if(e.gone!=null){e.y-=70*dt;e.x+=e.dir*110*dt;if(e.age-e.gone>2.2){e.dead=1;part(e.x,e.y-d.h/2,'#ffffff',8,70,40,.5)}return}
  if(d.harpy){updHarpy(e,dt,d);return} // world2/autumnfoes.js

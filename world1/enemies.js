@@ -25,7 +25,8 @@ function drawEnemy(c,e,sx,sy,t){if(ENEMY[e.type].air){drawAir(c,e,sx,sy,t);retur
   if(e.cast>0){P(5,-10,3,3,V?'#ff8030':'#d080ff');P(6,-9,1,1,'#ffffff')}else P(4,-9,2,2,'#9acd7a')}
 }
 function updEnemy(e,dt){const d=ENEMY[e.type],base=d.base||e.type;
- if(e.frz>0){e.frz-=dt;dt*=.45;if(rnd()<.15)PARTS.push({x:e.x+(rnd()-.5)*d.w,y:e.y-rnd()*d.h,vx:0,vy:12,col:rnd()<.5?'#e8f8ff':'#7ad0ff',g:0,life:.4})}
+ const dt0=dt;if(e.frz>0){e.frz-=dt;dt*=.45;if(rnd()<.15)PARTS.push({x:e.x+(rnd()-.5)*d.w,y:e.y-rnd()*d.h,vx:0,vy:12,col:rnd()<.5?'#e8f8ff':'#7ad0ff',g:0,life:.4})}
+ if(e.stk>0){e.stk-=dt0;dt=Math.max(dt0*STICKY.floor,dt*(e.stkM||1));if(rnd()<.12)PARTS.push({x:e.x+(rnd()-.5)*d.w,y:e.y-rnd()*d.h*.6,vx:0,vy:22,col:rnd()<.5?'#e8a040':'#ffc860',g:60,life:.5})} // Sticky (Resin Sword): x stkM on top of Freezing, never below STICKY.floor
  if(e.psn>0){e.psn-=dt;e.hp-=(e.psnD||4)*dt;if(rnd()<.3)PARTS.push({x:e.x+(rnd()-.5)*d.w,y:e.y-rnd()*d.h*.8,vx:0,vy:-14,col:rnd()<.5?'#6cd04a':'#3a8a2a',g:0,life:.45});if(e.hp<=0){killEnemy(e);return}}
  e.t+=dt;if(e.hitT>0)e.hitT-=dt;
  if(e.burn>0){e.burn-=dt;e.hp-=(e.burnD||6)*dt;if(rnd()<.35)PARTS.push({x:e.x+(rnd()-.5)*d.w,y:e.y-rnd()*d.h,vx:0,vy:-30,col:rnd()<.5?'#ff7a1a':'#ffd040',g:0,life:.3});if(e.hp<=0){killEnemy(e);return}}

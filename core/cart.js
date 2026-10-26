@@ -10,5 +10,5 @@ function unhitch(at){const H=curH();if(H==='backpack'||S.park||DG)return;const r
  S.park={x:Math.round(x),dir:P.dir,cargo:stacksOf(u.slice(0,room))};S.cargo=stacksOf(u.slice(room));
  part(S.park.x,surfY(S.park.x)-2,'#c8a060',8,60);toast(ico(WORLDDEF[S.w?1:0].parkIco,2),900);save()}
 function hitch(){if(!S.park)return;for(const s of S.park.cargo)addCargo(s.item,s.origin,s.qty,s.paid);P.dir=S.park.dir;S.park=null;part(P.x,P.y-2,'#c8a060',8,60);toast('🛒 ✓',900);save()}
-function toggleCart(){if(S.w&&FEATURE_DRIVABLE_AIRSHIPS)return;if(DG){toast('🛒 waits outside',900);return}if(curH()==='backpack'){toast(S.w?ico('wcartH',2)+' Winged Cart: Skyhaven':'No cart',1200);return}if(P.fly||(WI&&!P.onGround)){toast(ico('wcartP',2)+' Land first',900);return}
+function toggleCart(){if(S.w&&FEATURE_DRIVABLE_AIRSHIPS)return;if(DG){toast('🛒 waits outside',900);return}if(curH()==='backpack'){toast(S.w?ico('wcartH',2)+' Winged Cart: Skyhaven · Carriage: Aldenreach':'No cart',1400);return}if(P.fly||(WI&&!P.onGround)){toast(ico('wcartP',2)+' Land first',900);return}
  if(!S.park){unhitch();return}const d=S.park.x-P.x;if(nearCartP())hitch();else toast('🛒 '+(d<0?'◀ ':'')+Math.round(Math.abs(d)/10)+'m'+(d>0?' ▶':''),1100)}

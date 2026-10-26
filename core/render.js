@@ -78,9 +78,9 @@ function drawActors(ox,oy){
   if(k.gear||k.mat){const c=k.mat?MATC[k.mat]:(WEPC[k.gear]||GEARC[k.gear]),w=c.width;if(Math.sin(menuT*5+k.x)>.7)px(X,k.x-ox+w/2-2,k.y-oy-w-2+bob,1,1,'#fff4b0');X.drawImage(c,Math.round(k.x-ox-w/2),Math.round(k.y-oy-w+bob))}
   else X.drawImage(ICONC[ITEMS[k.item].id],Math.round(k.x-ox-4),Math.round(k.y-oy-8+bob))}
  for(const e of ENEMIES)drawEnemyFx(e,Math.round(e.x-ox),Math.round(e.y-oy));
- if(WI&&S&&P&&P.wcx!=null&&MODE!=='menu'&&carriedH()==='wingcart'&&mounted()){const cx=Math.round(P.wcx-ox),cy=Math.round(P.wcy-oy),hx=Math.round(P.x-ox-P.dir*(mounted()?12:4)),hy=Math.round(P.y-oy-(mounted()?12:8));
+ if(WI&&S&&P&&P.wcx!=null&&MODE!=='menu'&&isWC(carriedH())&&mounted()){const cx=Math.round(P.wcx-ox),cy=Math.round(P.wcy-oy),hx=Math.round(P.x-ox-P.dir*(mounted()?12:4)),hy=Math.round(P.y-oy-(mounted()?12:8));
   const ax=cx+P.dir*13,ay=cy-7;for(let k=0;k<=10;k++){const f=k/10;px(X,Math.round(ax+(hx-ax)*f),Math.round(ay+(hy-ay)*f+Math.sin(f*Math.PI)*3),1,1,'#5e3a1e')}
-  drawWingCart(X,cx,cy,P.dir,cargoColors(),menuT,!!P.fly||!P.onGround,(P.wcHit||0)>WCART.flash)}
+  drawW2Cart(X,cx,cy,P.dir,cargoColors(),menuT,!!P.fly||!P.onGround,(P.wcHit||0)>WCART.flash)}
  if(P&&S&&MODE!=='menu'){const sx=Math.round(P.x-ox),sy=Math.round(P.y-oy);const fl=P.inv>0&&Math.floor(P.inv*14)%2===0;
   let hy=sy;const H=carriedH();if(H!=='backpack'&&H!=='wheelbarrow'){const cxw=P.x-P.dir*(H==='bigwagon'?28:20);const g=groundAt(cxw);hy=Math.round((g===null?P.y:Math.min(g+(P.y-(groundAt(P.x)??P.y)),g))-oy)}
   const cols=cargoColors();

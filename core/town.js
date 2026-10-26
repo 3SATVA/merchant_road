@@ -1,6 +1,7 @@
 'use strict';
 let curTab='market',curTown=0;
-function enterTown(t){curTown=t.i;S.lastTown=t.i;if(!S.visited.includes(t.i))S.visited.push(t.i);curTab='market';setMode('town');renderTown();save()}
+function enterTown(t,tab){curTown=t.i;S.lastTown=t.i;if(!S.visited.includes(t.i))S.visited.push(t.i);curTab=tab||'market'; // tab: Aldenreach's shop doors open their own tab (world2/capital.js CAPSHOP)
+ setMode('town');renderTown();save()}
 function leaveTown(){setMode('play');save()}
 $('tLeave').onclick=leaveTown;
 $('ttabs').onclick=e=>{const b=e.target.closest('button');if(b){curTab=b.dataset.tab;renderTown()}};
@@ -21,7 +22,7 @@ BLDURL.ships=ICO.ship.url;document.querySelectorAll('#ttabs img[data-b]').forEac
 function lookPrev(look,eq,w,h,dx,dy){return spriteURL(w,h,g=>drawPlayer(g,dx,dy,1,0,false,false,false,'fists',0,{look,eq}))}
 function drawPrev(cv,t,walk){if(!cv)return;const g=cv.getContext('2d');g.imageSmoothingEnabled=false;g.clearRect(0,0,cv.width,cv.height);drawPlayer(g,Math.floor(cv.width/2),cv.height-4,1,t||0,!!walk,false,false,S.weapon,0,{eq:S.eq,look:S.look});setAura(g,Math.floor(cv.width/2),cv.height-4,t||0)}
 function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tmoney').textContent=pr(S.money);
- [...$('ttabs').children].forEach(b=>{b.classList.toggle('on',b.dataset.tab===curTab);const tb=b.dataset.tab;b.style.display=(tb==='haulers'&&!t.w&&!t.haulers.length&&S.haulers.length<2)||(tb==='weapons'&&!t.weapons.length&&S.weapons.length<2)||(tb==='barber'&&!t.barber)||(tb==='craft'&&!t.forge)||(tb==='stable'&&!t.stable)||(tb==='ships'&&(!t.ships||!FEATURE_DRIVABLE_AIRSHIPS))||(tb==='haulers'&&t.w&&(t.i!==W2TOWN||FEATURE_DRIVABLE_AIRSHIPS))?'none':''});let h='';
+ [...$('ttabs').children].forEach(b=>{b.classList.toggle('on',b.dataset.tab===curTab);const tb=b.dataset.tab;b.style.display=(tb==='haulers'&&!t.w&&!t.haulers.length&&S.haulers.length<2)||(tb==='weapons'&&!t.weapons.length&&S.weapons.length<2)||(tb==='barber'&&!t.barber)||(tb==='craft'&&!t.forge)||(tb==='stable'&&!t.stable)||(tb==='ships'&&(!t.ships||!FEATURE_DRIVABLE_AIRSHIPS))||(tb==='haulers'&&t.w&&((t.i!==W2TOWN&&!t.carrier)||FEATURE_DRIVABLE_AIRSHIPS))?'none':''});let h='';
  if(curTab==='market'){const n=cargoCount(),c=cap();
   h+='<div class="sec">CARGO '+n+'/'+c+'</div>';
   if(!S.cargo.length)h+='<div class="row dim"><span class="nm">Empty</span></div>';
@@ -31,9 +32,12 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
    const tr=p>ITEMS[i].base?'<span class="dn2">▲</span>':p<ITEMS[i].base?'<span class="up">▼</span>':'';
    const can=Math.min(c-n,Math.floor(S.money/p));
    h+='<div class="row" data-b="'+i+'">'+iconImg(ICONURL[ITEMS[i].id])+'<span class="nm">'+ITEMS[i].name+' '+pr(p)+tr+(nb?'<span class="sub">'+nb.name+' '+pr(nv)+(far.o!==nb?' · '+far.o.name+' '+pr(far.v):'')+'</span>':'')+'</span><button data-act="buy" data-i="'+i+'" data-n="1" '+(can<1?'disabled':'')+'>+1</button><button data-act="buy" data-i="'+i+'" data-n="999" '+(can<1?'disabled':'')+'>Max</button></div>'});
- } else if(curTab==='haulers'&&t.w){const H=HAULERS.wingcart;
-  const btn=S.wcart?'<button disabled>'+(S.park?ico('wcartP')+' Parked':ico('check'))+'</button>':'<button data-act="buywc" '+(S.money<H.price?'disabled':'')+'>'+pr(H.price)+'</button>';
-  h+='<div class="sec">FOR SALE</div><div class="row" data-h="wingcart">'+iconImg(HAULURL.wingcart,'big')+'<span class="nm">'+H.name+'<span class="sub">📦 '+H.cap+' ('+PACK+' pack + '+(H.cap-PACK)+' cart) · 👟 '+Math.round(H.spd*100)+'% · flies with your horse</span></span>'+btn+'</div>';
+ } else if(curTab==='haulers'&&t.w){ // World 2 carts: Winged Cart (Skyhaven), Carriage (Aldenreach carrier store); own both and pick one with Use
+  const w2r=(id,sold)=>{const H=HAULERS[id],own=id==='wingcart'?S.wcart:!!S.carriage,eq=own&&WORLDDEF[1].cart()===id;if(!own&&!sold)return '';
+   const btn=eq?'<button disabled>'+(S.park?ico('wcartP')+' Parked':ico('check'))+'</button>':own?'<button data-act="usew2" data-id="'+id+'" '+(S.park||cargoCount()>H.cap?'disabled':'')+'>Use</button>':'<button data-act="'+(id==='wingcart'?'buywc':'buyw2')+'" data-id="'+id+'" '+(S.money<H.price?'disabled':'')+'>'+pr(H.price)+'</button>';
+   return '<div class="row'+(eq?' on':'')+'" data-h="'+id+'">'+iconImg(HAULURL[id],'big')+'<span class="nm">'+H.name+'<span class="sub">'+ico('pack')+' '+H.cap+' ('+PACK+' pack + '+(H.cap-PACK)+' cart) · '+ico('arR')+' '+Math.round(H.spd*100)+'% · flies with your horse</span></span>'+btn+'</div>'};
+  const sold=id=>id==='wingcart'?t.i===W2TOWN:!!t.carrier,ids=['wingcart','carriage'],fs=ids.filter(id=>sold(id)&&!(id==='wingcart'?S.wcart:S.carriage)),ys=ids.filter(id=>id==='wingcart'?S.wcart:S.carriage);
+  if(fs.length)h+='<div class="sec">FOR SALE</div>'+fs.map(id=>w2r(id,1)).join('');if(ys.length)h+='<div class="sec">YOURS</div>'+ys.map(id=>w2r(id,1)).join('');
   h+='<div class="small" style="margin-top:6px">Hitch / park with the cart button. Sky foes can knock goods loose from the cart (never from your backpack).</div>';
  } else if(curTab==='haulers'){
   const row=id=>{const H=HAULERS[id];const own=S.haulers.includes(id),eq=S.hauler===id;
@@ -43,7 +47,7 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
  } else if(curTab==='weapons'){
   const row=id=>{const W=WEAPONS[id];const own=S.weapons.includes(id),eq=S.weapon===id;const el=W.elem==='fire'?' · 🔥':W.elem==='ice'?' · ❄':W.elem==='crush'?' · 🪨':W.leaf?' · 🍃':'';
    const btn=eq?'<button disabled>Equipped</button>':own?'<button data-act="usew" data-id="'+id+'">Equip</button>':'<button data-act="buyw" data-id="'+id+'" '+(S.money<W.price?'disabled':'')+'>'+pr(W.price)+'</button>';
-   return '<div class="row" data-w="'+id+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+W.dmg+' · '+(1/W.cd).toFixed(1)+'/s · '+(W.ranged?'ranged':'reach '+(W.flail?FLAIL.reach:W.range))+el+'</span></span>'+btn+'</div>'};
+   return '<div class="row" data-w="'+id+'">'+iconImg(WEPURL[id])+'<span class="nm">'+W.name+'<span class="sub">⚔ '+W.dmg+' · '+(1/W.cd).toFixed(1)+'/s · '+(W.ranged?'ranged':'reach '+(W.flail?FLAIL.reach:W.range))+el+(W.perm?' · '+ico('lock')+' '+W.perm.map(x=>enchSpan(x)).join(' '):'')+'</span></span>'+btn+'</div>'};
   const sale=WORDER.filter(id=>t.weapons.includes(id));h+=shopLists(WORDER,t.weapons,S.weapons,row);
   if(sale.some(id=>WEAPONS[id].elem))h+='<div class="small" style="margin-top:6px">🔥 melts ice golems · ❄ cracks lava golems · 🪨 crushes golems</div>';
  } else if(curTab==='inn'){const rc=INN.rest(t.i),pc=INN.pot;
@@ -54,6 +58,11 @@ function renderTown(){const t=TOWNS[curTown];$('tname').textContent=t.name;$('tm
   for(const r of recipesHere()){const isW=r.kind==='w',img=isW?WEPURL[r.id]:GEARURL[r.id],nm=isW?WEAPONS[r.id].name:GEAR[r.id].name,st=isW?(WEAPONS[r.id].lance?'🐴 ':'')+'⚔'+WEAPONS[r.id].dmg+(WEAPONS[r.id].multi?'×'+WEAPONS[r.id].multi+' 🌪':' 🔥'):GEAR[r.id].stat;const own=owns(r),ok=canCraft(r);
    const chips=Object.entries(r.need).map(([k,n])=>{const hv=have(k);return '<span class="ch'+(hv>=n?' ok':'')+'"><img src="'+matURL(k)+'">'+Math.min(hv,99)+'/'+n+'</span>'}).join('');
    h+='<div class="row'+(own?' dim':'')+'">'+iconImg(img)+'<span class="nm">'+nm+' <span class="up">'+st+'</span><span class="sub" style="margin-top:4px">'+chips+'</span></span><button data-act="craft" data-id="'+r.id+'" '+(own||!ok?'disabled':'')+'>'+(own?ico('check'):'Craft')+'</button></div>'}
+ } else if(curTab==='stable'&&t.stable&&t.w){const Hs=S.horse,sky=!!(Hs&&Hs.wings),pg=!!S.peg,on=pegOn(); // Aldenreach stables: the Pegasus (World 2 only, PEGSPD x flying speed)
+  h+='<div class="sec">MOUNTS</div>';
+  if(sky)h+='<div class="row'+(!on?' on':'')+'">'+iconImg(HORSEURL,'big')+'<span class="nm">Sky Horse<span class="sub">'+ico('wing')+' flies · your horse from World 1</span></span>'+(!on?'<button disabled>'+ico('check')+'</button>':'<button data-act="mnt" data-id="horse">Ride</button>')+'</div>';
+  h+='<div class="row'+(on?' on':'')+'">'+iconImg(pegURL(),'big')+'<span class="nm">Pegasus<span class="sub">'+ico('wing')+' flies ×'+PEGSPD+' faster · stays in World 2</span></span>'+(on?'<button disabled>'+ico('check')+'</button>':pg?'<button data-act="mnt" data-id="peg" '+(!sky?'disabled':'')+'>Ride</button>':'<button data-act="buypeg" '+(S.money<PEGPRICE||!sky?'disabled':'')+'>'+pr(PEGPRICE)+'</button>')+'</div>';
+  h+='<div class="small" style="margin-top:6px">'+(sky?'Ride the Pegasus anywhere in the Skylands; in World 1 you ride your own horse.':'Bring your winged horse first.')+'</div>';
  } else if(curTab==='stable'&&t.stable){const Hs=S.horse;
   h+='<div class="row">'+iconImg(HORSEURL,'big')+'<span class="nm">Horse<span class="sub">👟 ×'+RIDE+' · 🛒 pulls carts · 🐴 lances</span></span>'+(Hs?'<button disabled>'+ico('check')+'</button>':'<button data-act="buyhorse" '+(S.money<HORSEPRICE?'disabled':'')+'>'+pr(HORSEPRICE)+'</button>')+'</div>';
   h+='<div class="sec">LANCES</div>';for(const id of LORDER){const W=WEAPONS[id],own=S.lances.includes(id);if(!own&&W.crafted&&!t.forge&&id!=='woodlance'){}
@@ -79,7 +88,11 @@ $('tbody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  if(a==='buy'){buy(t,+b.dataset.i,+b.dataset.n)}
  else if(a==='sell'){const v=sell(t,+b.dataset.i,+b.dataset.n);if(v)toast('+'+pr(v),1200)}
  else if(a==='buyh'){const H=HAULERS[b.dataset.id];if(S.money>=H.price){S.money-=H.price;S.haulers.push(b.dataset.id);if(cargoCount()<=H.cap&&!S.park)S.hauler=b.dataset.id}}
- else if(a==='buywc'){const H=HAULERS.wingcart;if(!S.wcart&&S.money>=H.price){S.money-=H.price;S.wcart=true;toast(ico('wcartH',2)+' <b>Winged Cart</b> '+ico('check'),1800)}}
+ else if(a==='buywc'){const H=HAULERS.wingcart;if(!S.wcart&&S.money>=H.price){const was=WORLDDEF[1].cart();S.money-=H.price;S.wcart=true;if(was==='carriage')S.w2c='carriage';toast(ico('wcartH',2)+' <b>Winged Cart</b> '+ico('check'),1800)}}
+ else if(a==='buyw2'){const H=HAULERS.carriage;if(!S.carriage&&S.money>=H.price){const was=WORLDDEF[1].cart();S.money-=H.price;S.carriage=true;S.w2c=S.park&&was==='wingcart'?'wingcart':'carriage';toast(ico('wcartH',2)+' <b>Carriage</b> '+ico('check'),1800)}}
+ else if(a==='usew2'){const id=b.dataset.id,H=HAULERS[id];if((id==='wingcart'?S.wcart:S.carriage)&&!S.park&&cargoCount()<=H.cap)S.w2c=id}
+ else if(a==='buypeg'){if(!S.peg&&S.horse&&S.horse.wings&&S.money>=PEGPRICE){S.money-=PEGPRICE;S.peg=true;S.mnt='peg';toast(iconImg(pegURL())+' <b>Pegasus</b> '+ico('check'),1800)}}
+ else if(a==='mnt'){const id=b.dataset.id;if(id==='horse')S.mnt='horse';else if(S.peg)S.mnt='peg'}
  else if(a==='useh'){if(!S.park)S.hauler=b.dataset.id}
  else if(a==='buyw'){const W=WEAPONS[b.dataset.id];if(S.money>=W.price){S.money-=W.price;S.weapons.push(b.dataset.id);S.weapon=b.dataset.id}}
  else if(a==='usew'){S.weapon=b.dataset.id}

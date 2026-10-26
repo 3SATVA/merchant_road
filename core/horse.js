@@ -1,7 +1,8 @@
 'use strict';
 // horse (facing +x; x,y = between the hooves). run: 0..1 gallop amount; idle: standing animation
-function drawHorse(c,x,y,dir,t,run,idle,flash){const P=(xo,yo,w,h,col)=>{px(c,dir>0?x+xo:x-xo-w,y+yo,w,h,flash?'#ffffff':col)};
- const B='#8a5a32',BH='#a8743c',BS='#6e4526',M='#2a1a10',HF='#1e140c';
+// peg: draw the Pegasus (Aldenreach stables; white coat, pale-blue mane, gold hooves + blanket, gold-tipped wings); default = pegOn() (World 2 only)
+function drawHorse(c,x,y,dir,t,run,idle,flash,peg){const P=(xo,yo,w,h,col)=>{px(c,dir>0?x+xo:x-xo-w,y+yo,w,h,flash?'#ffffff':col)};const pg=peg===undefined?pegOn():!!peg;
+ const B=pg?'#f4f4fa':'#8a5a32',BH=pg?'#ffffff':'#a8743c',BS=pg?'#c8cede':'#6e4526',M=pg?'#a8c4e8':'#2a1a10',HF=pg?'#d8a830':'#1e140c',E=pg?'#3a3a5a':HF;
  const hf=WI===1&&S&&S.horse&&S.horse.wings?horseFlap(idle):null,hfly=hf!==null&&!!(plr()&&plr().fly==='horse');
  const pl=!idle&&run>.02&&WI===1&&horsePlod(),ph=pl?t*PLODF:run>0?t*(10+8*run):0,g=pl||run>.05&&!hfly;const leg=(lx,o)=>{if(hfly){const k=lx<0?1:0;P(lx-k,-7,2,4,BS);P(lx-1-k,-4,2,1,BS);P(lx-1-k,-3,2,1,HF);return}const a=g?Math.sin(ph+o):0,lift=pl?Math.max(0,Math.round(a*1.4)):g?Math.max(0,Math.round(a*(2.2+run))):0,sw=pl?Math.round(Math.cos(ph+o)*1.5):g?Math.round(Math.cos(ph+o)*(2+run)*Math.min(1,run*1.5)):0;
   P(lx+sw,-7,2,6-lift,BS);P(lx+sw,-1-lift,2,1,HF)};
@@ -11,14 +12,14 @@ function drawHorse(c,x,y,dir,t,run,idle,flash){const P=(xo,yo,w,h,col)=>{px(c,di
  leg(-6,gal?Math.PI+.8:0);leg(7,gal?.8:Math.PI);
  // neck + head
  const hb=idle?Math.round(Math.max(0,Math.sin(t*.8))*3):pl?Math.round(Math.abs(Math.sin(t*PLODF-.5))*2.4):0; // plod: head nods low on each footfall
- P(6,-19+bob+hb,4,6,B);P(8,-21+bob+hb,3,4,B);P(10,-22+bob+hb,5,4,B);P(14,-21+bob+hb,2,3,BS);P(15,-19+bob+hb,1,1,HF);P(11,-21+bob+hb,1,1,HF);P(9,-24+bob+hb,2,2,B);P(9,-24+bob+hb,1,1,BS);
+ P(6,-19+bob+hb,4,6,B);P(8,-21+bob+hb,3,4,B);P(10,-22+bob+hb,5,4,B);P(14,-21+bob+hb,2,3,BS);P(15,-19+bob+hb,1,1,E);P(11,-21+bob+hb,1,1,E);P(9,-24+bob+hb,2,2,B);P(9,-24+bob+hb,1,1,BS);
  P(6,-21+bob+hb,2,7,M);P(8,-23+bob+hb,2,2,M);
  // tail
  const ts=Math.round(Math.sin(t*(pl?3:g?14:2.2))*1.2)+(g&&!pl?-1:1);P(-13,-15+bob,2,2,M);P(-14,-13+bob+ts,2,5,M);P(-13,-9+bob+ts,1,2,M);
  // saddle + blanket
- P(-4,-16+bob,7,2,'#7a2a1a');P(-4,-16+bob,7,1,'#a8402a');P(-5,-14+bob,9,4,'#3a6ea5');P(-5,-11+bob,9,1,'#d8b040');
+ P(-4,-16+bob,7,2,'#7a2a1a');P(-4,-16+bob,7,1,'#a8402a');P(-5,-14+bob,9,4,pg?'#c88a20':'#3a6ea5');P(-5,-11+bob,9,1,pg?'#fff0b8':'#d8b040');
  if(idle){P(12,-20+hb,4,1,'#5a3818')}else{P(10,-20+bob,6,1,'#5a3818');P(4,-19+bob,7,1,'#5a3818')}
- if(WI===1&&S&&S.horse&&S.horse.wings)drawWings(P,t,bob,idle||pl?0:run,idle)}
+ if(pg||WI===1&&S&&S.horse&&S.horse.wings)drawWings(P,t,bob,idle||pl?0:run,idle,pg?PEGWING:null)}
 // rider on horseback: horse, then the player seated, then a leg down the flank; lance couched while charging
 function drawRider(c,sx,sy,d,t,fl,cols){const s=lanceSpeed();drawHorse(c,sx,sy,d,t,s,0,fl);const hf=WI===1&&S.horse.wings?horseFlap(0):null,by=hf!==null&&P.fly==='horse'?FLAPBOB[flapF(t,hf)]:s>.02&&WI===1&&horsePlod()?plodBob(t):Math.round(Math.sin((P.ride||0)*.35)*(s>.05?.8:0));
  const ry=sy-10+by;drawPlayer(c,sx-1*d,ry,d,t,false,false,fl,heldW(),WEAPONS[heldW()].flail?P.atk:P.couch>0?1:0,{eq:S.eq,look:S.look});
@@ -26,7 +27,8 @@ function drawRider(c,sx,sy,d,t,fl,cols){const s=lanceSpeed();drawHorse(c,sx,sy,d
  if(carriedH()==='backpack')drawHauler(c,sx-1*d,ry,d,'backpack',cols,0);
  setAura(c,sx,ry,t);enchAura(c,sx,ry,t);
  if(s>.7&&Math.floor(t*20)%2)part(P.x-d*12,P.y-1,'#c8b898',1,30,0,.3)}
-const HORSEURL=(()=>{const c=document.createElement('canvas');c.width=34;c.height=28;const g=c.getContext('2d');drawHorse(g,16,27,1,0,0,0);return c.toDataURL()})();
+const HORSEURL=(()=>{const c=document.createElement('canvas');c.width=34;c.height=28;const g=c.getContext('2d');drawHorse(g,16,27,1,0,0,0,0,false);return c.toDataURL()})();
+let PEGU0=null;function pegURL(){return PEGU0||(PEGU0=(()=>{const c=document.createElement('canvas');c.width=34;c.height=30;const g=c.getContext('2d');drawHorse(g,16,29,1,0,0,1,0,true);return c.toDataURL()})())} // stables icon (built on first use)
 const PLODF=5.5; // World 2 winged horse on land: slow heavy plod, wings folded (see horsePlod in world2/sky.js)
 function plodBob(t){return Math.round(Math.abs(Math.sin(t*PLODF))*1.6)}
 const LANCEMIN=.25,LANCEMAX=1.75,MOUNTDMG=1.3,HITSLOW=.4; // mounted: +30% damage taken (after armor), a hit drops you to 40% of gallop // lance damage x0.25 standing .. x1.75 at full gallop

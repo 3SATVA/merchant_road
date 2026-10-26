@@ -51,8 +51,9 @@ function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.cargo)
   /* cost basis: stacks from old saves without a valid price get the good's base price */
   const fixPaid=a=>{if(Array.isArray(a))for(const c of a)if(c&&!(isFinite(c.paid)&&c.paid>=0))c.paid=ITEMS[c.item]?ITEMS[c.item].base:0};fixPaid(s.cargo);if(s.park)fixPaid(s.park.cargo);
   if(!FEATURE_DRIVABLE_AIRSHIPS&&!s.shelf){shelveShips(s);s.shelf=1}
-  s.wcart=!!s.wcart;if(s.w===1&&s.park&&(!s.wcart||!onIsleX(s.park.x)||!Array.isArray(s.park.cargo))){if(s.wcart&&s.park&&Array.isArray(s.park.cargo))s.park.x=DOCKS[0].x-60;else s.park=null}
-  if(s.w===0&&s.ws[1]&&s.ws[1].park&&!s.wcart)s.ws[1].park=null;
+  s.wcart=!!s.wcart;const w2c=s.wcart||!!s.carriage; // either World 2 cart (Winged Cart / Aldenreach Carriage) can be parked
+  if(s.w===1&&s.park&&(!w2c||!onIsleX(s.park.x)||!Array.isArray(s.park.cargo))){if(w2c&&s.park&&Array.isArray(s.park.cargo))s.park.x=DOCKS[0].x-60;else s.park=null}
+  if(s.w===0&&s.ws[1]&&s.ws[1].park&&!w2c)s.ws[1].park=null;
   if(!HAULERS[s.hauler])s.hauler='backpack';return s}}catch(e){}return null}
 // airships shelved: land everyone at Skyhaven, World 2 goods fit the backpack (most valuable first), the rest and any bought airships are refunded in full to the World 2 wallet
 function shelveShips(s){const act=s.w===1,o=act?null:s.ws[1];let rf=0;

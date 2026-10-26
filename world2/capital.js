@@ -5,7 +5,11 @@
 // flags, smoke, lanterns, townsfolk, piers and skiffs are drawn live on top. Nothing here is solid.
 // The tower interior is a DG room (DG.tower; world1/caves.js hands updDungeon/renderDungeon over to updTower/renderTower).
 const CAPX0=CAPW.x0-40,CAPCW=CAPW.x1-CAPW.x0+80,CAPCH=250,CAPGY=226,CAPC={img:null,chim:[],lamps:[]};
-const CAPEX=[[CAPW.x0-40,CAPW.x0+44],[17850-104,17850+104],[CAPW.tower-46,CAPW.tower+46],[CAPW.x1-44,CAPW.x1+40]]; // no houses: gates, market, tower
+// the four Aldenreach shop buildings (each door opens TOWNS[8] on its own tab: core/town.js enterTown(t,tab); prompt in core/play.js)
+const CAPSHOP=[{x:17300,w:56,tab:'craft',n:'Forge',c:'#ffb070'},{x:17520,w:64,tab:'stable',n:'Stables',c:'#e8c860'},{x:18080,w:64,tab:'haulers',n:'Carrier',c:'#9ad0ff'},{x:18410,w:56,tab:'weapons',n:'Smith',c:'#f0a040'}];
+const CAPEX=[[CAPW.x0-40,CAPW.x0+44],[17850-104,17850+104],[CAPW.tower-46,CAPW.tower+46],[CAPW.x1-44,CAPW.x1+40]].concat(CAPSHOP.map(s=>[s.x-s.w/2-4,s.x+s.w/2+4])); // no houses: gates, market, tower, shops
+function nearCapShop(){if(WI!==1||DG||!P||P.fly||!TOWNS[8])return null;for(const s of CAPSHOP)if(Math.abs(P.x-s.x)<18&&Math.abs(P.y-surfY(s.x))<12)return s;return null}
+function capShopPrompt(s){return '<b style="color:'+s.c+'"><img class="px" style="width:18px;height:18px;vertical-align:middle" src="'+BLDURL[s.tab]+'"> '+s.n+'</b><br>'+(isTouch?'Tap E':'Press E')+' to enter'}
 const CAPROOF=[['#d8702a','#b0501e','#8a3a1a'],['#c0402a','#9a3020','#702418'],['#a85a3a','#8a4430','#6a3022'],['#b8862a','#966a1e','#6e4c16']];
 const CAPWALL=['#f0dcc0','#e8c8a0','#e0c0a8','#ecd4b0'];
 function capFree(a,b){return CAPEX.every(e=>b<e[0]||a>e[1])}
@@ -36,6 +40,7 @@ function capArt(){const cv=document.createElement('canvas');cv.width=CAPCW;cv.he
   if(hash(k*1.9)>.3){const ci=Math.round(rw*(.2+hash(k*2.2)*.5)),cx=rx0+ci,top=-hh-roofH(ci)-7;F(cx,top,4,roofH(ci)+6,'#8a7a70');F(cx+3,top,1,roofH(ci)+6,'#6a5a52');F(cx-1,top,6,2,'#a89a8a');CAPC.chim.push({x:cx+2,y:top,s:hash(k*3.7)})}
   x+=w;const gap=hash(k*1.13)>.55?16+Math.round(hash(k*2.71)*10):2+Math.round(hash(k*2.71)*3);if(gap>12)trees.push(x+gap/2);x+=gap;k++}
  for(let i=0;i<trees.length;i++){const tx=trees[i],v=Math.floor(hash(i*3.3)*3),s=1+Math.floor(hash(i*5.7)*2);g.drawImage(treeImg(v,2,s),Math.round(tx-CAPX0)-(TREEW>>1),CAPGY-TREEH)}
+ capShops(F);
  // market: three stalls with striped awnings, goods on the counters (spiced amber jars, tea bundles, cider barrels)
  const AW=[['#e8843a','#f4e4c8'],['#c0402a','#f4e4c8'],['#e0a030','#fff0d0']];
  [17776,17850,17924].forEach((sx,i)=>{const A=AW[i];F(sx-15,-22,1,22,'#6a4230');F(sx+14,-22,1,22,'#6a4230');F(sx-14,-9,28,9,'#8a5a3a');F(sx-14,-9,28,1,'#a87444');F(sx-14,-5,28,1,'#6a4230');
@@ -65,7 +70,40 @@ function capArt(){const cv=document.createElement('canvas');cv.width=CAPCW;cv.he
   for(const bx of [gx-24,gx+17]){F(bx,-74,7,22,'#a8282a');F(bx,-74,7,1,'#7a1418');F(bx+6,-74,1,22,'#7a1418');F(bx-1,-75,9,1,'#6a4230');for(let j=0;j<4;j++){F(bx+j,-52+j,1,4-j,'#a8282a');F(bx+6-j,-52+j,1,4-j,'#a8282a')}
    for(const [a,b] of [[3,0],[1,1],[3,1],[5,1],[2,2],[3,2],[4,2],[1,3],[2,3],[3,3],[4,3],[5,3],[3,4],[3,5]])F(bx+a,-70+b,1,1,'#e8b040')}}
  CAPC.img=cv}
-function capLamps(){if(CAPC.lamps.length)return CAPC.lamps;for(let x=CAPW.x0+70;x<CAPW.x1-60;x+=118){if(Math.abs(x-17850)<110||Math.abs(x-CAPW.tower)<40)continue;CAPC.lamps.push(x)}CAPC.lamps.push(17736,17964);return CAPC.lamps}
+// shop facades (painted into CAPC): forge (dark stone, furnace, chimney), stables (red barn, hay), carrier (wide arched coach door, wheel),
+// smith (stone shop, amber sword window); each has a hanging pixel sign beside its door
+function capShops(F){
+ const sign=(x,y,bg,ic)=>{F(x-1,y-6,9,1,'#3a2a24');F(x+6,y-8,1,3,'#3a2a24');F(x,y-5,1,2,'#3a2a24');F(x+5,y-5,1,2,'#3a2a24');F(x-2,y-3,10,10,'#4a3226');F(x-1,y-2,8,8,bg);ic(x-1,y-2)};
+ const roof=(x0,w,h,c1,c2,c3,top)=>{for(let i=0;i<w;i++){const t=1-Math.abs((i+.5)/w*2-1),rh=Math.max(1,Math.round(h*Math.min(1,t*1.6)));F(x0+i,top-rh,1,rh,i<w/2?c1:c2);for(let j=3;j<rh;j+=3)F(x0+i,top-rh+j,1,1,c3)}F(x0,top,w,1,c3)};
+ for(const s of CAPSHOP){const a=s.x-s.w/2,w=s.w;
+  if(s.tab==='craft'){const H=34;F(a,-H,w,H,'#5e5866');for(let y=-H+5,r=0;y<0;y+=5,r++){F(a,y,w,1,'#4a4452');for(let xx=a+(r%2?4:0);xx<a+w;xx+=9)F(xx,y-4,1,4,'#4a4452')}F(a,-H,1,H,'#3e3846');F(a+w-1,-H,1,H,'#3e3846');
+   roof(a-3,w+6,14,'#4a4a56','#3a3a44','#2e2e38',-H);F(a+w-14,-H-24,8,24,'#6a6474');F(a+w-8,-H-24,2,24,'#4a4452');F(a+w-15,-H-26,10,2,'#7a7484');F(a+w-13,-H-25,6,1,'#ff8a2a');
+   for(let i=-9;i<=9;i++){const h=Math.round(14+6*Math.sqrt(Math.max(0,1-(i/9.5)**2)));F(a+16+i,-h,1,h,'#2a1a14')} // furnace arch
+   F(a+9,-10,15,10,'#c84a1a');F(a+11,-9,11,8,'#ff8a2a');F(a+13,-7,7,6,'#ffd040');F(a+15,-5,3,4,'#fff0a0');F(a+6,-2,21,2,'#3a2a24');
+   F(a+33,-21,10,21,'#3a2e2a');F(a+34,-20,8,20,'#5a3a26');F(a+40,-11,1,1,'#e8b040');F(a+33,-22,10,1,'#2a201c'); // door
+   F(a+30,-6,9,2,'#3a3a40');F(a+32,-4,4,2,'#2a2a30');F(a+31,-2,6,2,'#3a3a40');F(a+30,-6,9,1,'#8a8a94'); // anvil
+   sign(a+w-6,-26,'#e8dcc0',(x,y)=>{F(x+1,y+2,6,2,'#3a3a40');F(x+3,y+4,2,2,'#3a3a40');F(x+2,y+6,4,1,'#3a3a40');F(x+6,y+2,1,1,'#3a3a40')})}
+  else if(s.tab==='stable'){const H=30;F(a,-H,w,H,'#9a3a2a');for(let xx=a+3;xx<a+w;xx+=4)F(xx,-H,1,H,'#7a2a1e');F(a,-H,w,1,'#b8503a');F(a,-2,w,2,'#5a2a1e');
+   for(let i=0;i<w+6;i++){const d=Math.min(i,w+5-i),rh=d<8?Math.round(d*1.4):Math.round(11+(d-8)*.5);F(a-3+i,-H-rh,1,Math.max(1,rh),i<(w+6)/2?'#6a3a2a':'#542e22')}F(a-3,-H,w+6,1,'#3a2018');
+   const dx=s.x-12;F(dx-1,-23,26,23,'#e8dcc0');F(dx,-22,24,22,'#6a2a1e');for(const ox of [0,12]){for(let j=0;j<12;j++){F(dx+ox+j,-22+Math.round(j*22/12),1,1,'#e8dcc0');F(dx+ox+11-j,-22+Math.round(j*22/12),1,1,'#e8dcc0')}F(dx+ox,-22,12,1,'#e8dcc0')}F(dx+12,-22,1,22,'#e8dcc0');
+   F(s.x-6,-H-10,12,9,'#e8dcc0');F(s.x-5,-H-9,10,7,'#3a2018');F(s.x-4,-H-5,8,3,'#e8c860');F(s.x-3,-H-6,2,1,'#f8e080'); // hay loft
+   for(const [hx,hy] of [[a-2,0],[a+w-8,0],[a+w-5,-6]]){F(hx,hy-6,9,6,'#d8b048');F(hx,hy-6,9,1,'#f0d070');F(hx+3,hy-6,1,6,'#b8902a');F(hx,hy-3,9,1,'#b8902a')}
+   sign(a+4,-24,'#e8dcc0',(x,y)=>{for(const [p,q] of [[1,1],[1,2],[1,3],[1,4],[2,5],[3,6],[4,6],[5,5],[6,4],[6,3],[6,2],[6,1]])F(x+p,y+q,1,1,'#7a7a84');F(x+1,y+1,1,1,'#b8b8c0');F(x+6,y+1,1,1,'#b8b8c0')})}
+  else if(s.tab==='haulers'){const H=36;F(a,-H,w,H,'#e0c8a8');F(a+w-3,-H,3,H,'#c8a888');F(a,-H,1,H,'#6a4230');F(a+w-1,-H,1,H,'#6a4230');F(a,-H+12,w,2,'#6a4230');for(let xx=a+8;xx<a+w-4;xx+=12)F(xx,-H,1,12,'#6a4230');
+   roof(a-3,w+6,16,'#3a5a8a','#2e4870','#22385a',-H);
+   for(let i=-14;i<=14;i++){const h=Math.round(16+8*Math.sqrt(Math.max(0,1-(i/14.5)**2)));F(s.x+i,-h,1,h,'#2a201c');F(s.x+i,-h-1,1,1,'#8a7a70')}
+   for(let i=-12;i<=12;i++){const h=Math.round(15+7*Math.sqrt(Math.max(0,1-(i/12.5)**2)));F(s.x+i,-h,1,h,'#3a2a22')}
+   const wx=s.x+2;for(const [p,q] of [[-3,-7],[-2,-8],[-1,-8],[0,-8],[1,-8],[2,-7],[3,-6],[3,-5],[3,-4],[3,-3],[2,-2],[1,-1],[0,-1],[-1,-1],[-2,-1],[-3,-2],[-4,-3],[-4,-4],[-4,-5],[-4,-6]])F(wx+p,q,1,1,'#c8a040');F(wx-1,-5,2,2,'#e8b040');F(wx-4,-9,10,1,'#8a2a32');F(s.x-11,-10,6,8,'#8a2a32');F(s.x-11,-10,6,1,'#a8404a'); // coach inside
+   F(a+4,-12,9,9,'#3a2a22');F(a+5,-11,7,7,'#8a5a3a');F(a+8,-11,1,7,'#3a2a22');F(a+5,-8,7,1,'#3a2a22');F(a+7,-9,3,3,'#c8a040'); // spare wheel
+   for(const wx2 of [a+6,a+w-12]){F(wx2,-H+3,7,7,'#6a4230');F(wx2+1,-H+4,5,5,'#ffd070');F(wx2+3,-H+4,1,5,'#6a4230')}
+   sign(a+w-7,-27,'#e8dcc0',(x,y)=>{for(const [p,q] of [[2,0],[3,0],[4,0],[5,0],[1,1],[6,1],[0,2],[7,2],[0,3],[7,3],[0,4],[7,4],[0,5],[7,5],[1,6],[6,6],[2,7],[3,7],[4,7],[5,7]])F(x+p,y+q,1,1,'#5a3818');F(x+3,y+3,2,2,'#c8a040');F(x+3,y+1,2,1,'#8a5a3a');F(x+3,y+6,2,1,'#8a5a3a');F(x+1,y+3,1,2,'#8a5a3a');F(x+6,y+3,1,2,'#8a5a3a')})}
+  else{const H=32;F(a,-H,w,H,'#b0a092');for(let y=-H+6,r=0;y<0;y+=6,r++){F(a,y,w,1,'#9a8a80');for(let xx=a+(r%2?5:0);xx<a+w;xx+=10)F(xx,y-5,1,5,'#9a8a80')}F(a,-H,1,H,'#86766c');F(a+w-1,-H,1,H,'#86766c');
+   roof(a-3,w+6,15,'#c0402a','#9a3020','#702418',-H);F(a+10,-H-20,5,10,'#8a7a70');F(a+9,-H-21,7,2,'#a89a8a');
+   F(a+4,-22,24,16,'#4a3226');F(a+5,-21,22,14,'#3a2418');for(let i=0;i<10;i++){F(a+8+i*2,-17+(i>7?0:0),2,2,['#a8541a','#c86a1a','#e08a2a','#f0a040','#f8c060','#ffe0a0','#f8c060','#f0a040','#d8b040','#5a3818'][i])}F(a+7,-19,1,6,'#d8b040');F(a+5,-21,22,1,'#ffe0a0'); // display window: the Resin Sword
+   for(let i=0;i<3;i++)F(a+12+i*4,-14,1,2+i%2,'#e8a040');F(a+4,-6,24,2,'#6a4230');
+   F(a+34,-22,12,22,'#3a2e2a');F(a+35,-21,10,21,'#6a4230');F(a+36,-20,8,9,'#7a4a2a');F(a+43,-11,1,1,'#e8b040');
+   sign(a+w-5,-28,'#e8dcc0',(x,y)=>{for(let i=0;i<6;i++)F(x+1+i,y+6-i,1,1,i<4?'#a8b0bc':'#e8eef4');F(x+1,y+4,3,1,'#d8b040');F(x+2,y+3,1,3,'#d8b040');F(x,y+7,1,1,'#5a3818')})}}}
+function capLamps(){if(CAPC.lamps.length)return CAPC.lamps;for(let x=CAPW.x0+70;x<CAPW.x1-60;x+=118){if(Math.abs(x-17850)<110||Math.abs(x-CAPW.tower)<40||CAPSHOP.some(s=>Math.abs(x-s.x)<s.w/2+6))continue;CAPC.lamps.push(x)}CAPC.lamps.push(17736,17964);return CAPC.lamps}
 // townsfolk: little walkers that pace their own stretch of the street (decor only)
 const CAPFOLK=[{x:17300,r:70,c:'#4a6aa8'},{x:17560,r:90,c:'#8a4a6a'},{x:17850,r:60,c:'#5a7a3a'},{x:18080,r:80,c:'#a8642a'},{x:18400,r:60,c:'#6a4a8a'},{x:17700,r:40,c:'#a83a2a'}];
 function drawFolk(ox,oy,gy){for(let i=0;i<CAPFOLK.length;i++){const f=CAPFOLK[i],ph=menuT*.35/(f.r/60)+i*1.7,s=Math.sin(ph),dir=Math.cos(ph)>0?1:-1,wx=f.x+s*f.r,x=Math.round(wx-ox),y=gy;if(x<-10||x>VW+10)continue;
@@ -92,7 +130,12 @@ function drawCapital(ox,oy){if(ox+VW<ISLES[2].x0-200||ox>ISLES[2].x1+200)return;
  {const t=CAPW.tower,fx=Math.round(t-ox);if(fx>-40&&fx<VW+40){flag(fx+2,gy-205,10,3,'#7a4ab0','#c890ff',0);const pl=.5+.5*Math.sin(menuT*3),near=P&&!DG&&Math.abs(P.x-t)<30;X.globalAlpha=(near?.22:.1)+pl*.06;X.fillStyle='#c890ff';X.beginPath();X.arc(fx,gy-10,near?18:14,0,7);X.fill();X.globalAlpha=1;
   if(Math.sin(menuT*2.2)>.3){const k=Math.floor(menuT*2.2)%4;px(X,fx-14+k*9,gy-150+((k*13)%40),1,1,'#f0d8ff')}}}
  for(const lx of capLamps()){const x=Math.round(lx-ox);if(x<-12||x>VW+12)continue;const fl=Math.sin(menuT*8+lx)>0;px(X,x,gy-18,1,18,'#3a2a24');px(X,x-2,gy-22,5,1,'#3a2a24');px(X,x-1,gy-21,3,4,fl?'#ffd070':'#ffb040');px(X,x,gy-20,1,2,'#fff0b8');X.globalAlpha=.1;X.fillStyle='#ffd070';X.beginPath();X.arc(x,gy-19,11,0,7);X.fill();X.globalAlpha=1}
- drawFolk(ox,oy,gy)}
+ capShopLive(ox,gy);drawFolk(ox,oy,gy)}
+// live shop details: the forge's furnace flickers and its chimney throws sparks; a shop door glows while you stand at it
+function capShopLive(ox,gy){const ns=nearCapShop();for(const s of CAPSHOP){const a=Math.round(s.x-s.w/2-ox);if(a<-s.w-30||a>VW+30)continue;
+  if(s.tab==='craft'){const f=.5+.5*Math.sin(menuT*9)*Math.sin(menuT*3.3);X.globalAlpha=.18+.14*f;X.fillStyle='#ff8a2a';X.beginPath();X.arc(a+16,gy-6,13,0,7);X.fill();X.globalAlpha=1;px(X,a+13+Math.round(f*4),gy-6,2,2,f>.5?'#fff0a0':'#ffd040');
+   for(let j=0;j<3;j++){const p=(menuT*.9+j/3)%1;px(X,a+s.w-10+Math.round(Math.sin(menuT*3+j*2)*2+p*5),Math.round(gy-60-p*22),1,1,p<.5?'#ffd040':'#ff8a2a')}}
+  if(ns===s){X.globalAlpha=.12+.06*Math.sin(menuT*4);X.fillStyle=s.c;X.beginPath();X.arc(Math.round(s.x-ox),gy-10,18,0,7);X.fill();X.globalAlpha=1}}}
 // ---- World 2 autumn ground decor (DECOR with biome >= 8: the capital island outside the walls) ----
 function auDecor(d,P){const r=d.r;
  if(r<.24){P(-4,-2,9,2,'#c0502a');P(-3,-3,7,1,'#e8843a');P(-1,-4,3,1,'#f0a040');P(2,-3,1,1,'#ffe070');P(-5,-1,1,1,'#a83a22')}

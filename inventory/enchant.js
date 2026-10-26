@@ -19,7 +19,11 @@ const ENCH={
  berserk:{n:'Berserk',cur:1,w:{w:25},v:[.6,.9,1.2],d:v=>'⚔ up to +'+pc(v)+' at low ❤ · 🧪 half'},
  volatile:{n:'Volatile',cur:1,w:{w:25},v:[[.2,15],[.25,22],[.3,30]],d:v=>'💣 '+pc(v[0])+' boom '+v[1]+' · -3 you'},
  heavy:{n:'Heavy',cur:1,w:{a:60},v:[.2,.28,.36],d:v=>'🛡 -'+pc(v)+' · 👟 -12%'},
- greedy:{n:'Greedy',cur:1,w:{w:20,a:40},v:[.5,.75,1],d:v=>'$ +'+pc(v)+' · loot+ · 👺 more'}};
+ greedy:{n:'Greedy',cur:1,w:{w:20,a:40},v:[.5,.75,1],d:v=>'$ +'+pc(v)+' · loot+ · 👺 more'},
+ // Sticky: never rolls (w:{}); only comes built into a weapon (WEAPONS[id].perm, the Resin Sword's Sticky III). v = enemy speed multiplier for
+ // STICKY.dur s after a hit; multiplies with Freezing's slow, floored at STICKY.floor so nothing ever stops dead
+ sticky:{n:'Sticky',col:'#e8a040',perm:1,w:{},v:[.8,.7,.6],d:v=>'slow -'+pc(1-v)+' '+STICKY.dur+'s · stacks with ❄'}};
+const STICKY={dur:2.5,floor:.25};
 const CURSECOL='#ff4a6a';for(const k in ENCH)if(ENCH[k].cur)ENCH[k].col=CURSECOL;
 const ENCHCOST=3; // flat, every time
 const ENCHN=[60,30,10],ENCHL=[55,33,12]; // 1/2/3 enchants, level I/II/III
@@ -34,7 +38,9 @@ function enchCost(){return WTOWER?ENCHT.cost:ENCHCOST}
 // replaces every enchant on the item with a fresh random roll
 function enchantItem(id){if(!(S.weapons.includes(id)||S.gear.includes(id)||S.lances.includes(id))||id==='fists')return null;if((S.mats.essence||0)<enchCost())return null;
  S.mats.essence-=enchCost();S.ench[id]=rollEnchants(id);save();return S.ench[id]}
-function encList(id){const e=S&&S.ench&&S.ench[id];return Array.isArray(e)?e:[]}
+// an item's enchants: built-in ones first (WEAPONS[id].perm, e.g. the Resin Sword's Sticky III: can't be rolled off, a re-roll never adds a
+// second copy), then whatever S.ench holds
+function encList(id){const e=S&&S.ench&&S.ench[id],a=Array.isArray(e)?e:[],W=WEAPONS[id],pm=W&&!GEAR[id]&&W.perm;return pm?pm.concat(a.filter(x=>!pm.some(p=>p.k===x.k))):a}
 function eVal(x){return ENCH[x.k].v[x.l-1]}
 function eName(x){return ENCH[x.k].n+' '+RN[x.l-1]}
 // enchant sources currently active: held weapon + worn armor -> [key, 'w'|'a', level]
@@ -52,6 +58,7 @@ function onHitFx(e,dmg){
  const b=wv('burning');if(b&&e.type!=='lavaGolem'){e.burn=Math.max(e.burn||0,b[0]);e.burnD=b[1]}
  const f=wv('freezing');if(f&&e.type!=='iceGolem'){if(!(e.frz>0))part(e.x,e.y-8,'#bfe8ff',6,60);e.frz=Math.max(e.frz||0,f)}
  const v=wv('venom');if(v){e.psn=Math.max(e.psn||0,v[0]);e.psnD=v[1]}
+ const sk=wv('sticky');if(sk){if(!(e.stk>0))part(e.x,e.y-8,'#e8a040',6,50);e.stk=Math.max(e.stk||0,STICKY.dur);e.stkM=sk} // world1/enemies.js updEnemy slows by stkM
  const heal=(wv('leeching')||0)+.5*activeEnch().filter(([x,s])=>x==='leeching'&&s==='a').reduce((a,[,,l])=>a+ENCH.leeching.v[l-1],0);
  if(heal&&S.hp<maxHP()){S.hp=Math.min(maxHP(),S.hp+heal);PARTS.push({x:P.x+(rnd()-.5)*6,y:P.y-12,vx:0,vy:-24,col:'#ff7aa8',g:0,life:.5})}
  const vo=wv('volatile');if(vo&&rnd()<vo[0]){part(e.x,e.y-8,'#ffd040',18,190);part(e.x,e.y-8,'#ff5a1a',14,140);
@@ -60,12 +67,15 @@ function onHitFx(e,dmg){
 function thornsHit(dmg){const t=ev('thorns');if(!t)return;let best=null,bd=34;for(const e of ENEMIES){if(e.dead)continue;const d=Math.abs(e.x-P.x);if(d<bd){bd=d;best=e}}
  if(best){hurtEnemy(best,dmg*t,'#9ad870');part(best.x,best.y-8,'#9ad870',5,60);if(best.hp<=0)killEnemy(best)}}
 function enchCol(id){const l=encList(id);if(!l.length)return null;return l.some(x=>ENCH[x.k].cur)?CURSECOL:ENCH[l[0].k].col}
-function enchSpan(x){const E=ENCH[x.k];return '<span class="'+(E.cur?'cz':'')+'" style="color:'+E.col+'">'+eName(x)+'</span>'}
+function enchSpan(x){const E=ENCH[x.k];return '<span class="'+(E.cur?'cz':'')+'" style="color:'+E.col+'">'+(E.perm?ico('lock')+' ':'')+eName(x)+'</span>'}
 function enchTag(id){const l=encList(id);if(!l.length)return '';return '<span class="en">'+enchSpan(l[0])+(l.length>1?' <span class="gold">+'+(l.length-1)+'</span>':'')+'</span>'}
 function enchAura(c,sx,sy,t){const a=activeEnch();if(!a.length)return;for(let i=0;i<a.length;i++){const E=ENCH[a[i][0]];const ph=t*1.7+i*2.4;const y=sy-2-((t*9+i*7)%18),x=sx+Math.round(Math.sin(ph*2)*6);if(Math.sin(t*5+i*2)>-.3)px(c,x,y,1,1,E.cur?(i%2?'#ff4a6a':'#9a40ff'):E.col)}}
 // tinted enemy draw for status effects
 const FXCV=document.createElement('canvas');FXCV.width=80;FXCV.height=80;const FXG=FXCV.getContext('2d');
-function drawEnemyFx(e,sx,sy){const tint=e.frz>0?['#7ad0ff',.45]:e.psn>0?['#5cd04a',.38]:e.burn>0&&Math.floor(menuT*12)%2?['#ff7a1a',.35]:null;
+function drawEnemyFx(e,sx,sy){const sk=e.stk>0,tint=sk&&!(e.frz>0&&Math.floor(menuT*4)%2)?['#e8a040',.42]:e.frz>0?['#7ad0ff',.45]:e.psn>0?['#5cd04a',.38]:e.burn>0&&Math.floor(menuT*12)%2?['#ff7a1a',.35]:null;
  if(!tint){drawEnemy(X,e,sx,sy,menuT);return}
  FXG.globalCompositeOperation='source-over';FXG.clearRect(0,0,80,80);drawEnemy(FXG,e,40,70,menuT);FXG.globalCompositeOperation='source-atop';FXG.globalAlpha=tint[1];FXG.fillStyle=tint[0];FXG.fillRect(0,0,80,80);FXG.globalAlpha=1;FXG.globalCompositeOperation='source-over';
- X.drawImage(FXCV,sx-40,sy-70)}
+ X.drawImage(FXCV,sx-40,sy-70);if(sk)resinDrips(e,sx,sy)}
+// amber resin drips on a Sticky-slowed foe: 3 drops sliding down from the body and falling off
+function resinDrips(e,sx,sy){const d=ENEMY[e.type],w=d.w||12,h=d.h||12;for(let i=0;i<3;i++){const ph=(menuT*1.1+i/3+(e.x*.013))%1,dx=Math.round((((i*37+Math.floor(e.x))%7)/6-.5)*w*.8),y=Math.round(sy-h*.55+ph*h*.7);
+ px(X,sx+dx,sy-h+1,2,1,'#c86a1a');px(X,sx+dx,y,1,2,ph>.8?'#f8c060':'#e8a040');px(X,sx+dx,y+2,1,1,'#ffe0a0')}}

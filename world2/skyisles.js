@@ -9,7 +9,7 @@ function skyS(){if(!S.sky)S.sky={r:{},st:0};if(!S.sky.r)S.sky.r={};return S.sky}
 function rwX(i){const I=SKYISLES[i];return Math.round((I.x0+I.x1)/2+(I.rx||0))}
 function rwReady(i){const r=S.sky&&S.sky.r?S.sky.r[i]:null;return r==null||S.time-r>=(SKYISLES[i].rw==='chest'?SKYI.chestCd:SKYI.nodeCd)}
 function skyTh(x,I){const ed=Math.min(x-I.x0,I.x1-x),bl=7+92*Math.sqrt(clamp(ed/230,0,1))+9*Math.sin(x/41+I.h)*clamp(ed/120,0,1);return Math.max(5,Math.round(heightAt(x)-I.h+bl+4*hash(Math.floor(x/3))))} // fixed belly under the base height: ledges and hills sit on top
-function isleFoe(t,i,x,z0,z1){const e=spawnEnemy(t,x);e.isl=i;e.z0=z0;e.z1=z1;e.y=surfY(x);e.dir=rnd()<.5?-1:1;e.st='idle';e.sT=.4+rnd()*.6;e.tx=x;e.cd=1+rnd();e.tcd=0;e.onGround=true;e.vy=0;e.hx=0;e.hop=.5+rnd()*.8;e.sq=0;SKYST.foes.push(e);return e}
+function isleFoe(t,i,x,z0,z1){const e=spawnEnemy(t,x);e.isl=i;e.z0=z0;e.z1=z1;e.y=surfY(x);e.dir=rnd()<.5?-1:1;e.st='idle';e.sT=.4+rnd()*.6;e.tx=x;e.cd=1+rnd();e.tcd=0;e.onGround=true;e.vy=0;e.hx=0;e.hop=.5+rnd()*.8;e.sq=0;if(SKYISLES[i].au)auBuff(e);SKYST.foes.push(e);return e}
 function isleDeath(e){const y=e.y-ENEMY[e.type].h/2;
  const d=ENEMY[e.type];if(d.gem&&rnd()<d.gem*DROPMUL)giveMat('skyglass'); // Sky Crystal: material, straight into S.mats
  if(d.cult||d.bot){auDeath(e,d,y);return} // autumn foes (world2/autumnfoes.js)
@@ -40,12 +40,12 @@ function skyTick(dt){if(WI!==1||DG||!P)return;
   const g=groundAt(b.x);if(g!==null&&b.y>g+1){b.life=0;part(b.x,g,'#ff7ad8',4,60,100,.3);continue}
   const bb={x:b.x,y:b.y+2},BD={w:6,h:4},m=mounted();
   const hit=P.fly?airTouch(bb,BD):Math.abs(b.x-P.x)<(m?9:5)&&b.y>P.y-(m?27:17)&&b.y<P.y+1;
-  if(hit){b.life=0;part(b.x,b.y,'#ff7ad8',6,90,60,.35);if(P.fly)airHit(bb,{dmg:UNI.bolt,hull:UNI.hull});else hurtPlayer(UNI.bolt,b.x)}
+  if(hit){b.life=0;part(b.x,b.y,'#ff7ad8',6,90,60,.35);if(P.fly)airHit(bb,{dmg:b.dmg||UNI.bolt,hull:UNI.hull});else hurtPlayer(b.dmg||UNI.bolt,b.x)}
   else if(P.fly&&cartTouch(bb,BD)){b.life=0;part(b.x,b.y,'#ff7ad8',6,90,60,.35);cartHit(bb)}}
  for(let i=UB.length-1;i>=0;i--)if(UB[i].life<=0)UB.splice(i,1);
  auTick(dt)}
 function uniFire(e){const dir=e.dir,hx=e.x+dir*17,hy=e.y-12;let a=Math.atan2(e.ay,Math.abs(e.ax)||1);if(Math.abs(e.ay)<16)a=0;a=clamp(a,-UNI.ang,UNI.ang);
- UB.push({x:hx,y:hy,vx:Math.cos(a)*UNI.spd*dir,vy:Math.sin(a)*UNI.spd,life:UNI.life,tr:[]});part(hx,hy,'#ff7ad8',6,70,0,.3);
+ UB.push({x:hx,y:hy,vx:Math.cos(a)*UNI.spd*dir,vy:Math.sin(a)*UNI.spd,life:UNI.life,tr:[],dmg:e.au?Math.round(UNI.bolt*AUMUL):UNI.bolt});part(hx,hy,'#ff7ad8',6,70,0,.3);
  if(--e.bn>0){e.st='charge';e.sT=e.tele=UNI.gap;return} // burst: same aim, short re-glow between bolts
  e.st='cool';e.sT=.35;e.cd=UNI.cd+rnd()*UNI.cdR;e.vx-=dir*30}
 function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const au=d.cult||d.bot,lo=!au&&e.z0!=null?e.z0:I.x0+8,hi=!au&&e.z1!=null?e.z1:I.x1-8; // autumn foes roam the whole island (they only patrol their own slice)

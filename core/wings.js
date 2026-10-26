@@ -2,8 +2,9 @@
 const FLAPA=[62,32,4,-28,-56,20],FLAPL=[.82,1,1,.95,.8,.66],FLAPBOB=[1,0,0,-1,-1,0],WINGC={}; // wing flap cycle (see wingRects)
 // pixel wings on the horse's back (World 2): folded when standing, flapping when running or flying
 function horseFlap(idle){const pl=plr();if(idle||!pl||!mounted())return null;if(pl.fly==='horse')return .09;if(!pl.onGround)return .07;return null}
-function drawWings(P0,t,bob,run,idle){const A='#ffffff',B='#e4ecf6',C='#a8bcd8',D='#7f94b4';const dur=horseFlap(idle),gal=!idle&&run>.05&&dur===null;
- const wing=(o,k,ol)=>{const P=ol?(x,y,w,h)=>P0(x-1,y-1,w+2,h+2,'#4a5a7a'):P0;const cols=k?[B,C,D]:[A,B,C];
+const PEGWING=['#ffffff','#f6eed8','#e8c870','#c8a040','#7a6a4a']; // Pegasus wings: white, gold tips
+function drawWings(P0,t,bob,run,idle,pal){const A=pal?pal[0]:'#ffffff',B=pal?pal[1]:'#e4ecf6',C=pal?pal[2]:'#a8bcd8',D=pal?pal[3]:'#7f94b4',OL=pal?pal[4]:'#4a5a7a';const dur=horseFlap(idle),gal=!idle&&run>.05&&dur===null;
+ const wing=(o,k,ol)=>{const P=ol?(x,y,w,h)=>P0(x-1,y-1,w+2,h+2,OL):P0;const cols=k?[B,C,D]:[A,B,C];
   if(dur===null&&!gal){P(-9+o,-18+bob-o,13,3,cols[0]);P(-13+o,-20+bob-o,5,3,cols[0]);P(-16+o,-22+bob-o,4,2,cols[1]);P(-9+o,-15+bob-o,12,1,cols[2]);P(-15+o,-19+bob-o,3,1,cols[2]);return}
   const f=dur!==null?flapF(t,dur):[2,1,2,3][Math.floor(t*(6+5*run))%4],fr=wingFrame(k?(f+1)%6:f,k?16:19,4);
   for(const r of fr)P(2+o+r[0],-17+bob-o+r[1],r[2],r[3],cols[r[4]])};

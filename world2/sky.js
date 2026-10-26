@@ -13,14 +13,14 @@ function sparkTick(dt){if(!SPARKS.length)return;for(const p of SPARKS){p.t+=dt;i
 function drawSparks(X,ox,oy){if(!SPARKS.length)return;for(const p of SPARKS){if(p.t<0)continue;const k=p.t/p.life,x=Math.round(p.x-ox),y=Math.round(p.y-oy);
   if(k>.55&&((p.t*16+p.ph)|0)%2)continue;X.globalAlpha=1-k*.6; // twinkle out
   const a=p.c==='#ffffff'?'#7ff0ff':p.c;if(k<.22){px(X,x-2,y,5,1,a);px(X,x,y-2,1,5,a);px(X,x-1,y,3,1,p.c);px(X,x,y-1,1,3,p.c)}else if(k<.5){px(X,x-1,y,3,1,a);px(X,x,y-1,1,3,a);px(X,x,y,1,1,p.c)}else px(X,x,y,1,1,p.c)}X.globalAlpha=1}
-function horseVanish(fx){const H=S.horse;if(!H)return;const wc=carriedH()==='wingcart'&&P.wcx!=null;H.on=false;H.x=HGONE;H.dir=P.dir;P.hv=0;P.couch=0;P.ride=0;
+function horseVanish(fx){const H=S.horse;if(!H)return;const wc=isWC(carriedH())&&P.wcx!=null;H.on=false;H.x=HGONE;H.dir=P.dir;P.hv=0;P.couch=0;P.ride=0;
  if(fx){sparkBurst(P.x-P.dir*2,P.y-9,36,34);if(wc)sparkBurst(P.wcx,P.wcy-6,14,18); // a hitched Winged Cart goes with it (cargo stays yours)
   if(!skyS().lv&&!stormAt(P.x)){S.sky.lv=1;toast(ico('wing',2)+' Your sky horse vanishes on landing<br><small>'+(isTouch?'tap the horse':'press R')+' to call it</small>',2800)}}
  save()}
 // horse button in World 2 (toggleHorse hook): sparkle in under you, mounted, and lift off into the low band
 function skyHorseBtn(){const H=S.horse;if(H.on){horseVanish(1);return}
  if(stormAt(P.x)){sparkBurst(P.x,P.y-8,12,18);if(!$('toasts').children.length)toast(ico('wing',2)+' '+ico('x',2)+'<br>Too stormy for your sky horse<br><small>walk out past the cloud edge, then call it</small>',1800);return}
- H.on=true;H.wings=true;H.x=null;P.hv=0;P.couch=0;P.ride=0;P.wcx=null;sparkBurst(P.x,P.y-5,36,34);startFly();if(carriedH()==='wingcart')sparkBurst(P.x-P.dir*30,P.y-6,14,18);save()}
+ H.on=true;H.wings=true;H.x=null;P.hv=0;P.couch=0;P.ride=0;P.wcx=null;sparkBurst(P.x,P.y-5,36,34);startFly();if(isWC(carriedH()))sparkBurst(P.x-P.dir*30,P.y-6,14,18);save()}
 // game start / load in World 2: a ground save loads on foot (horse away), a mid-air one (S.air, or off any island) loads mounted and flying
 function w2Start(air){W2ENV.pk=undefined;SPARKS=[];const H=S.horse;if(!H)return;if(H.on&&air&&canFly())startFly();else if(H.on)horseVanish(0);else H.x=HGONE}
 // per tick (from skyTick): touchdown ends the ride, a horse left standing anywhere goes away, a Winged Cart parked / hitched on foot sparkles in / out
@@ -34,7 +34,7 @@ function updSky(dt){w2Tick(dt);wcTick(dt);if(W2ENV.leaveT>0)W2ENV.leaveT-=dt;con
  if(b!==env.biome){biomeToast(b);env.biome=b}
  if(!sh&&!canFly()){if(stormAt(P.x))stormDrop();P.fly=null;P.onGround=false;return}
  let mv=(inp.left()?-1:0)+(inp.right()?1:0);if(mv)P.dir=mv;
- const vmax=(sh?SHIPV*SHIPS[S.ship].spd:GALLOP*HFLY*spdMul()*(carriedH()==='wingcart'?HAULERS.wingcart.spd:1))*(P.band===2?JET:1);
+ const vmax=(sh?SHIPV*SHIPS[S.ship].spd:GALLOP*HFLY*spdMul()*(isWC(carriedH())?HAULERS[carriedH()].spd:1)*(pegOn()&&!sh?PEGSPD:1))*(P.band===2?JET:1);
  P.hv=(P.hv||0)+(mv*vmax-(P.hv||0))*Math.min(1,dt*(sh?1.3:2.4));if(!mv&&Math.abs(P.hv)<1)P.hv=0;P.ride=(P.ride||0)+Math.abs(P.hv)*dt;
  const ox=P.x;P.x=clamp(P.x+(P.hv+P.kbx)*dt,XMIN,XMAX);P.kbx*=Math.pow(.004,dt);if(Math.abs(P.kbx)<2)P.kbx=0;const dx=P.x-ox;P.walk=false;
  if(inp.up()||(!sh&&pressed.tj)){if(P.band<2){P.band++;if(!sh)part(P.x-P.dir*6,P.y-16,'#ffffff',5,60,40,.5)}}
