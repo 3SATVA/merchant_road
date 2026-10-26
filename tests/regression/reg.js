@@ -37,6 +37,9 @@ const BALRUN=(p,m)=>async h=>{await h.seed(W2(Object.assign({x:1900,cargo:[{item
  h.put('run',r);await h.step(30);await h.shot();await h.dig()};
 const ensureSaves=()=>fs.readdirSync(SAVEDIR).filter(f=>f.endsWith('.json')).sort();
 // scenario: [name, async(h)=>{}]  h: ev, step, seed, shot, dig
+// lane test helpers: put the player in horse flight at x in lane k, then hold right until x>=tx (or landed)
+const LF=(h,x,k)=>h.ev(([x,k])=>{const H=S.horse;H.on=true;H.wings=true;H.x=null;P.x=x;P.y=BANDY[k];P.vy=0;P.band=k;P.fly='horse';P.toff=null;P.onGround=false;P.hv=0;for(const e of ENEMIES)e.dead=1;camX=P.x-VW/2;camY=skyCam()},[x,k]);
+const LGO=async(h,tx)=>{for(let i=0;i<400;i++){if(await h.ev(t=>P.x>=t||!P.fly,tx))break;await h.ev(()=>{tkeys.r=1;for(const e of ENEMIES)if(!ENEMY[e.type].isle)e.dead=1});await h.step(3)}await h.ev(()=>{tkeys.r=0})};
 const SC=[
  ['menu',async h=>{await h.step(120);await h.shot()}],
  ['w1_walk',async h=>{await h.seed(base({x:2400}));await h.ev(()=>{keys.d=1});await h.step(90);await h.ev(()=>{pressed[' ']=1});await h.step(40);await h.ev(()=>{MR.spawnEnemy('goblin',MR.P.x+60);MR.spawnEnemy('slime',MR.P.x+90)});
@@ -141,6 +144,11 @@ const SC=[
    for(const s of await h.ev(()=>MR.CAPSHOP.map(s=>[s.x,s.n]))){await h.ev(x=>{MR.P.x=x;MR.P.y=MR.surfY(x);MR.P.lastSafe=x;MR.E.length=0},s[0]);await h.step(20);await h.shot('door_'+s[1]);await h.ev(()=>{pressed.te=1});await h.step(4);await h.shot('ui_'+s[1]);
     await h.ev(()=>{const b=document.querySelector('#tbody button[data-act="buypeg"],#tbody button[data-act="buyw2"],#tbody button[data-act="buyw"][data-id="resinsword"]');if(b)b.click()});await h.step(3);await h.shot('buy_'+s[1]);await h.ev(()=>document.getElementById('tLeave').click());await h.step(4)}
    await h.ev(()=>{MR.S.horse.x=MR.P.x;MR.mount();MR.startFly()});await h.step(20);await h.ev(()=>{tkeys.r=1});await h.step(60);await h.ev(()=>{tkeys.r=0});await h.shot('pegasus');await h.dig()}],
+ // flight lanes (World 2): under / over an island, a storm lane, a lane change
+ ['lane_under',async h=>{await h.seed(W2({w2l:2,x:10560,lastTown:7,hp:9999,maxhp:9999,horse:{on:false,x:null,dir:1,wings:true}}));await h.step(10);await LF(h,10780,0);await LGO(h,11250);await h.shot('under');await LGO(h,11700);await h.dig()}],
+ ['lane_over',async h=>{await h.seed(W2({w2l:2,x:12900,lastTown:7,hp:9999,maxhp:9999,horse:{on:false,x:null,dir:1,wings:true}}));await h.step(10);await LF(h,13250,1);await LGO(h,13600);await h.shot('over');await LGO(h,13800);await h.dig('over');await LF(h,13250,0);await LGO(h,13500);await h.step(30);await h.dig()}],
+ ['lane_storm',async h=>{await h.seed(W2({x:4000,hp:9999,maxhp:9999,horse:{on:false,x:null,dir:1,wings:true}}));await h.step(10);await LF(h,4345,1);await LGO(h,4520);await h.step(40);await h.shot('drop');await h.dig('drop');await LF(h,4300,2);await LGO(h,4800);await h.shot('over');await LGO(h,4950);await h.dig()}],
+ ['lane_change',async h=>{await h.seed(W2({x:1900,hp:9999,maxhp:9999,horse:{on:false,x:null,dir:1,wings:true}}));await h.step(10);await LF(h,3100,0);await h.step(10);await h.ev(()=>{pressed.tu=1});await h.step(9);await h.shot('rising');await h.step(60);await h.dig('mid');await h.ev(()=>{pressed.tu=1});await h.step(80);await h.shot('high');await h.dig('high');await h.ev(()=>{pressed.td=1});await h.ev(()=>{pressed.td=1});await h.step(120);await h.dig()}],
  ['cap_tower',async h=>{await h.seed(W2({w2l:2,x:18250,lastTown:8,visited:[0,1,5,6,7,8],money:3000,mats:{essence:12}}));await h.step(40);await h.shot('door');
    await h.ev(()=>{pressed.te=1});await h.step(40);await h.shot('in');
    const go=async tx=>{for(let i=0;i<200;i++){const x=await h.ev(()=>MR.P.x);if(Math.abs(x-tx)<3)break;await h.ev(([x,tx])=>{tkeys.r=x<tx;tkeys.l=x>tx},[x,tx]);await h.step(2)}await h.ev(()=>{tkeys.r=0;tkeys.l=0});await h.step(2)};

@@ -1,7 +1,8 @@
 'use strict';
 function spawnAir(dir){const mx=P.fly==='ship'?SKY.maxShip:SKY.max,air=ENEMIES.filter(e=>!e.dead&&ENEMY[e.type].air&&!ENEMY[e.type].isle).length;if(air>=mx)return;const n=rnd()<SKY.pair?2:1;
  for(let i=0;i<n&&air+i<mx;i++){const x=P.x+dir*(VW/2+24+i*30);if(!((x>ISLES[0].x1+40&&x<ISLES[1].x0-40)||(x>ISLES[1].x1+40&&x<ISLES[2].x0-40)))continue;const b=biomeAt(x),t=pickType(b),e=spawnEnemy(t,x);if(b===8)auBuff(e);e.dir=-dir;
-  e.y=t==='skySlime'?BANDY[0]+6-rnd()*24:BANDY[1+Math.floor(rnd()*2)]-6;e.by=e.y;e.state='hover';e.cd=1.2+rnd();e.age=0;e.onGround=false}}
+  const L=laneOf(P.y);e.y=t==='skySlime'?BANDY[L]+6-rnd()*24:BANDY[Math.max(1,Math.min(2,L+Math.floor(rnd()*2)))]-6; // lanes: around the lane you fly in (pegasi at or above it)
+  e.by=e.y;e.state='hover';e.cd=1.2+rnd();e.age=0;e.onGround=false}}
 // open-sky kills (pegasus / sky slime): Sky Crystal is a material, straight into S.mats (never lost to a full hold), crystal sparks fly from the kill to the player
 function airGem(e,d){if(rnd()>=d.gem*DROPMUL)return;const y=e.y-d.h/2;giveMat('skyglass');const a=Math.atan2(P.y-12-y,P.x-e.x);for(let i=0;i<8;i++)PARTS.push({x:e.x,y,vx:Math.cos(a)*(90+rnd()*80)+(rnd()-.5)*40,vy:Math.sin(a)*(90+rnd()*80)+(rnd()-.5)*40,col:i%2?'#a8f4ff':'#ffffff',g:0,life:.45})}
 function airTouch(e,d){if(P.fly==='ship'){const hw=shipHW();return Math.abs(e.x-P.x)<hw+d.w/2&&e.y>P.y-52&&e.y-d.h<P.y+14}const m=mounted();return Math.abs(e.x-P.x)<(m?10:6)+d.w/2&&e.y>P.y-(m?28:18)&&e.y-d.h<P.y+2}
@@ -17,7 +18,7 @@ function updAir(e,dt,d){if(e.au)d=auD(e.type); // autumn-wilds spawn: x1.5 damag
   if(e.state==='hover'){const hx=tx+(e.x<tx?-70:70),hy=ty-40+Math.sin(e.t*2+e.seed)*10;e.x+=clamp((hx-e.x)*1.6,-d.spd*.95,d.spd*.95)*dt;e.y+=clamp((hy-e.y)*1.6,-80,80)*dt;e.dir=tx>e.x?1:-1;
    e.cd-=dt;if(e.cd<=0&&Math.abs(tx-e.x)<190){e.state='dive';e.hitDone=0;const a=Math.atan2(ty-e.y,tx-e.x);e.dvx=Math.cos(a)*d.spd;e.dvy=Math.sin(a)*d.spd;e.dT=0}}
   else if(e.state==='dive'){e.dT+=dt;e.x+=e.dvx*dt;e.y+=e.dvy*dt;e.dir=e.dvx>0?1:-1;if(!e.hitDone&&airTouch(e,d)){e.hitDone=1;airHit(e,d)}else if(!e.hitDone&&cartTouch(e,d)){e.hitDone=1;cartHit(e)}if(e.dT>1.1){e.state='hover';e.cd=(P.fly==='ship'?SKY.diveShip:SKY.diveHorse)+rnd()*SKY.diveRnd}}}
- else{const hop=Math.abs(Math.sin(e.t*2.6+e.seed));e.by+=clamp((ty+4-e.by)*.6,-22,22)*dt;e.by=Math.max(e.by,BANDY[1]-10);e.y=e.by-hop*16;e.onGround=hop<.15;
+ else{const hop=Math.abs(Math.sin(e.t*2.6+e.seed));e.by+=clamp((ty+4-e.by)*.6,-40,40)*dt; // follows you between lanese.y=e.by-hop*16;e.onGround=hop<.15;
   const dx=tx-e.x;if(Math.abs(dx)<240){e.x+=Math.sign(dx)*d.spd*dt;e.dir=Math.sign(dx)||1}
   e.cd-=dt;if(e.cd<=0&&airTouch(e,d)){e.cd=1;airHit(e,d)}else if(e.cd<=0&&cartTouch(e,d)){e.cd=1;cartHit(e)}}}
 function drawAir(c,e,sx,sy,t){if(ENEMY[e.type].isle){drawIsleFoe(c,e,sx,sy,t);return}if(ENEMY[e.type].harpy){drawHarpy(c,e,sx,sy,t);return}const dir=e.dir,fl=e.hitT>0;let R=[];const L1=R;let tilt=0,by=0;const P=(xo,yo,w,h,col)=>R.push([dir>0?sx+xo:sx-xo-w,sy+yo+by+Math.round((dir>0?xo:xo+w-1)*tilt),w,h,fl?'#ffffff':col]);

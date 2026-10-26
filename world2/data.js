@@ -32,8 +32,11 @@ const W2LEN=19600,ISL0=150,ISL1=1950,W2DOCK=1560,W2TOWN=6,FLYALT=100,W2START=100
 const ISLES=[{x0:150,x1:1950},{x0:8800,x1:10600},{x0:16450,x1:19300,cap:1}]; // [2] = Aldenreach, the walled autumn capital (world2/capital.js)
 const CAPW={x0:17150,x1:18550,tower:18250,piers:[16560,19190]}; // capital walls (gatehouses), Vex's Tower door, decorative piers at both ends
 const DOCKS=[{x:1560,side:1,isl:0,town:6},{x:8990,side:-1,isl:1,town:7}]; // side: which way the moored airship hangs off the pier
-const BANDY=[-70,-140,-210]; // altitude bands: low (near islands, sky slimes), mid (pegasi), high (pegasi + tailwind)
-const WX=[{x0:2886,x1:3406,k:'rain'},{x0:4080,x1:4330,k:'up'},{x0:5540,x1:6645,k:'rain'},{x0:6930,x1:7133,k:'up'},{x0:8166,x1:8523,k:'rain'},{x0:11720,x1:11930,k:'up'},{x0:13020,x1:13300,k:'rain'},{x0:15380,x1:15600,k:'up'}]; // rain pushes you down a band, updrafts lift you
+const BANDY=[-70,-190,-310]; // flight lanes (Oct 2026): low / middle / high, the horse's cruise height in each (high = tailwind, JET)
+const LANEB=[-130,-250],LANET=[-130,-250,-370]; // soft lanes: the lane you are in is read from your height (LANEB = the midlines between lanes), LANET = top edge of each lane (visuals)
+function laneOf(y){return y>LANEB[0]?0:y>LANEB[1]?1:2}
+const WX=[{x0:2886,x1:3406,k:'rain',ln:[1]},{x0:4080,x1:4330,k:'up'},{x0:5540,x1:6645,k:'rain',ln:[0]},{x0:6930,x1:7133,k:'up'},{x0:8166,x1:8523,k:'rain',ln:[0,1]},{x0:11720,x1:11930,k:'up'},{x0:13020,x1:13300,k:'rain',ln:[2]},{x0:15380,x1:15600,k:'up'}]; // rain: ln = the lanes it falls in (flight there is RAINSLOW slower, at least one lane stays dry); updrafts lift you a lane (never into a storm lane)
+const RAINSLOW=.6;
 // ===== FEATURE FLAG: drivable airships in World 2 (shop, boarding/mooring, piloting, hull + wrecks, airship cargo hold, mid-air leap to horse).
 // Shelved for now (see SHELVED.md): all the code and sprites stay below, intact; set this to true to bring them back.
 // The World 1 scrap-pile airship build and the airship that carries you between worlds (and the cutscene) are NOT affected.
@@ -41,21 +44,23 @@ const FEATURE_DRIVABLE_AIRSHIPS=false;
 const HLAND=1/3; // winged horse on any island (Skyhaven, Sunspire, sky islands): 1/3 of on-foot walking (92 -> ~31px/s), hop off and walk; flying is unchanged
 const SHIPV=118,HFLY=.5,JET=1.2,HULLFIX=12,WRECKLOSS=.3; // airship base speed (x ship spd); winged horse = gallop x0.5 (~69px/s: slower than any airship, the ship is the way to travel); high band x1.2; hull repairs 12/s while moored; a wreck loses 30% of the hold
 // sky islands: small landable islands in the air wilds (no towns). Logic + art in world2/skyisles.js.
-// h = surface height (BANDY is -70/-140/-210), top 1 = Sunspire lilac grass, storm 1 = under a storm cloud (no flying under it),
+// ln = flight lane (0 low / 1 middle / 2 high) and h = surface height (low ~55-62, middle ~172-178, high ~292-298: just under that lane's cruise height, so flying
+// through the lane lands you, and the lanes above / below pass over / under it), top 1 = Sunspire lilac grass,
+// storm n = a storm cloud over the island's own lane and the n-1 lanes above it (no flying there: you drop onto the island; the lanes below / above stay clear),
 // rw = reward (chest / wool node; Sky Crystal is enemy-only since Oct 2026, the storm island's crystal node became wool) at the centre + rx (deep inside: you walk through the fights to reach it), foes = spawned when you come near,
 // ld = ledges / hollows [from, to (fraction of the width), +px up / -px down], on top of gentle rolling ground (flat landing pads of SKYI.pad at both ends)
 const SKYISLES=[
- {x0:2250,x1:2870,h:100,top:0,rw:'wool',rx:40,foes:['bigSlime','unicorn'],ld:[[.28,.42,14],[.62,.71,-8]]},
- {x0:3430,x1:4030,h:190,top:1,rw:'chest',rx:-30,foes:['unicorn','bigSlime'],ld:[[.2,.33,-9],[.56,.72,16]]},
- {x0:4430,x1:5490,h:125,top:0,storm:1,rw:'wool',rx:30,foes:['bigSlime','unicorn','bigSlime'],ld:[[.16,.27,12],[.38,.45,-10],[.62,.78,18],[.84,.9,10]]},
- {x0:5790,x1:6490,h:85,top:1,rw:'wool',rx:-40,foes:['dreadUni','bigSlime'],ld:[[.22,.37,15],[.6,.66,-8],[.73,.83,12]]},
- {x0:7190,x1:8150,h:160,top:1,storm:1,rw:'chest',rx:50,foes:['unicorn','dreadUni','bigSlime'],ld:[[.18,.28,-9],[.34,.48,15],[.68,.77,12]]},
+ {x0:2250,x1:2870,ln:0,h:60,top:0,rw:'wool',rx:40,foes:['bigSlime','unicorn'],ld:[[.28,.42,14],[.62,.71,-8]]},
+ {x0:3430,x1:4030,ln:2,h:296,top:1,rw:'chest',rx:-30,foes:['unicorn','bigSlime'],ld:[[.2,.33,-9],[.56,.72,16]]},
+ {x0:4430,x1:5490,ln:0,h:58,storm:2,top:0,rw:'wool',rx:30,foes:['bigSlime','unicorn','bigSlime'],ld:[[.16,.27,12],[.38,.45,-10],[.62,.78,18],[.84,.9,10]]},
+ {x0:5790,x1:6490,ln:2,h:294,top:1,rw:'wool',rx:-40,foes:['dreadUni','bigSlime'],ld:[[.22,.37,15],[.6,.66,-8],[.73,.83,12]]},
+ {x0:7190,x1:8150,ln:1,h:176,storm:2,top:1,rw:'chest',rx:50,foes:['unicorn','dreadUni','bigSlime'],ld:[[.18,.28,-9],[.34,.48,15],[.68,.77,12]]},
  // the autumn wilds (Sunspire -> Aldenreach): au = autumn look (au 2 = blends from Sunspire lilac), kind = set piece (world2/autumnfoes.js), rw 'leaf' = Emberleaf bush
- {x0:10950,x1:11650,h:115,top:0,au:2,kind:'grove',rw:'leaf',rx:30,foes:['unicorn','cultist'],ld:[[.25,.38,12],[.62,.72,-8]]},
- {x0:12000,x1:13000,h:175,top:0,au:1,kind:'castle',rw:'chest',rx:-60,foes:['cultist','robot','dreadUni'],ld:[[.16,.26,-9],[.74,.84,14]]},
- {x0:13350,x1:13950,h:95,top:0,au:1,kind:'rubble',rw:'leaf',rx:40,foes:['cultist','cultist'],ld:[[.62,.72,10]]},
- {x0:14300,x1:15350,h:150,top:0,au:1,storm:1,kind:'grove',rw:'chest',rx:50,foes:['robot','unicorn','cultist'],ld:[[.2,.3,14],[.5,.6,-10],[.75,.86,12]]},
- {x0:15650,x1:16150,h:120,top:0,au:1,kind:'shrine',rw:'leaf',rx:-30,foes:['dreadUni','cultist'],ld:[[.2,.3,10]]}];
+ {x0:10950,x1:11650,ln:1,h:174,top:0,au:2,kind:'grove',rw:'leaf',rx:30,foes:['unicorn','cultist'],ld:[[.25,.38,12],[.62,.72,-8]]},
+ {x0:12000,x1:13000,ln:2,h:296,top:0,au:1,kind:'castle',rw:'chest',rx:-60,foes:['cultist','robot','dreadUni'],ld:[[.16,.26,-9],[.74,.84,14]]},
+ {x0:13350,x1:13950,ln:0,h:56,top:0,au:1,kind:'rubble',rw:'leaf',rx:40,foes:['cultist','cultist'],ld:[[.62,.72,10]]},
+ {x0:14300,x1:15350,ln:1,h:178,storm:1,top:0,au:1,kind:'grove',rw:'chest',rx:50,foes:['robot','unicorn','cultist'],ld:[[.2,.3,14],[.5,.6,-10],[.75,.86,12]]},
+ {x0:15650,x1:16150,ln:2,h:292,top:0,au:1,kind:'shrine',rw:'leaf',rx:-30,foes:['dreadUni','cultist'],ld:[[.2,.3,10]]}];
 const STORMIN=48; // the storm's no-fly core is the island minus this much at each end: land, cross, take off past the edge
 const SKYI={pad:80,safe:110,gap:80,chestCd:600,nodeCd:360,chest:[140,220],silk:2,wool:3,leaf:2,amber:1}; // autumn: leaf = Emberleaf per pick, amber = Spiced Amber in an autumn chest (instead of the Star Silk) // pad = flat landing strip at each end, safe = no foe spawns or patrols this close to an end, gap = min px between two foes' patrol zones; reward respawn [s of play time], chest coins + Star Silk, Cloud Wool per pick
 const UNI={near:52,bolt:10,hull:9,tele:.5,gap:.2,spd:180,life:1.6,range:210,ang:.6,cd:1.6,cdR:.8}; // unicorn bolt: damage (x W2T.dmg), hull, telegraph [s], s between burst bolts (ENEMY.burst), px/s, life [s], aggro px, max aim [rad], cooldown + rnd
@@ -75,7 +80,10 @@ function w2Mats(s){let n=0;const st=a=>Array.isArray(a)?a.filter(u=>{if(u&&u.ite
  if(n){if(!s.mats||typeof s.mats!=='object')s.mats={};s.mats.skyglass=(Math.floor(+s.mats.skyglass)||0)+n}}
 function islAt(x){for(let i=0;i<ISLES.length;i++)if(x>ISLES[i].x0&&x<ISLES[i].x1)return i;return -1}
 function skyAt(x){for(let i=0;i<SKYISLES.length;i++)if(x>SKYISLES[i].x0&&x<SKYISLES[i].x1)return i;return -1}
-function stormAt(x){const i=skyAt(x);if(i<0||!SKYISLES[i].storm)return false;const I=SKYISLES[i];return x>I.x0+STORMIN&&x<I.x1-STORMIN}
+// storm no-fly zone: the island core (minus STORMIN at each end) in the storm's lanes; no lane = on the island itself (calling the horse there)
+function stormLn(I,l){return !!I.storm&&l>=I.ln&&l<I.ln+I.storm}
+function stormAt(x,l){const i=skyAt(x);if(i<0||!SKYISLES[i].storm)return false;const I=SKYISLES[i];return x>I.x0+STORMIN&&x<I.x1-STORMIN&&stormLn(I,l==null?I.ln:l)}
+function rainLn(x,l){for(const z of WX)if(z.k==='rain'&&x>z.x0&&x<z.x1)return !z.ln||z.ln.includes(l);return false}
 function onIsle(x){return islAt(x)>=0||skyAt(x)>=0}
 function wxAt(x){for(const z of WX)if(x>z.x0&&x<z.x1)return z.k;return null}
 function dockShipX(i){const d=DOCKS[i];return d.x+d.side*52}

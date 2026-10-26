@@ -8,7 +8,7 @@ DROPS.unicorn=[['essence',.3]];DROPS.dreadUni=[['essence',.7]]; // on top of the
 function skyS(){if(!S.sky)S.sky={r:{},st:0};if(!S.sky.r)S.sky.r={};return S.sky}
 function rwX(i){const I=SKYISLES[i];return Math.round((I.x0+I.x1)/2+(I.rx||0))}
 function rwReady(i){const r=S.sky&&S.sky.r?S.sky.r[i]:null;return r==null||S.time-r>=(SKYISLES[i].rw==='chest'?SKYI.chestCd:SKYI.nodeCd)}
-function skyTh(x,I){const ed=Math.min(x-I.x0,I.x1-x),bl=7+92*Math.sqrt(clamp(ed/230,0,1))+9*Math.sin(x/41+I.h)*clamp(ed/120,0,1);return Math.max(5,Math.round(heightAt(x)-I.h+bl+4*hash(Math.floor(x/3))))} // fixed belly under the base height: ledges and hills sit on top
+function skyTh(x,I){const ed=Math.min(x-I.x0,I.x1-x),bl=7+52*Math.sqrt(clamp(ed/230,0,1))+5*Math.sin(x/41+I.h)*clamp(ed/120,0,1);return Math.max(5,Math.round(heightAt(x)-I.h+bl+4*hash(Math.floor(x/3))))} // fixed belly under the base height: ledges and hills sit on top; max ~68px (lanes: the rider one lane down passes under it)
 function isleFoe(t,i,x,z0,z1){const e=spawnEnemy(t,x);e.isl=i;e.z0=z0;e.z1=z1;e.y=surfY(x);e.dir=rnd()<.5?-1:1;e.st='idle';e.sT=.4+rnd()*.6;e.tx=x;e.cd=1+rnd();e.tcd=0;e.onGround=true;e.vy=0;e.hx=0;e.hop=.5+rnd()*.8;e.sq=0;if(SKYISLES[i].au)auBuff(e);SKYST.foes.push(e);return e}
 function isleDeath(e){const y=e.y-ENEMY[e.type].h/2;
  const d=ENEMY[e.type];if(d.gem&&rnd()<d.gem*DROPMUL)giveMat('skyglass'); // Sky Crystal: material, straight into S.mats
@@ -16,7 +16,7 @@ function isleDeath(e){const y=e.y-ENEMY[e.type].h/2;
  if(d.fruit&&rnd()<d.fruit*DROPMUL)dropUnit({item:8,origin:6,paid:0},e.x,e.y-12); // Sunfruit (sky slimes, instead of the World 1 apple)
  if(d.uni){part(e.x,y,d.elite?'#ffd040':'#ff7ad8',10,120,40,.5);part(e.x,y,d.elite?'#1a1020':'#3e2c52',8,90,80,.5)}
  else{part(e.x,y,'#b8f8d8',8,110,200,.45);if(e.type==='bigSlime'&&SKYST.act[e.isl]){const I=SKYISLES[e.isl];for(const s of [-1,1]){const k=isleFoe('isleSlime',e.isl,clamp(e.x+s*8,e.z0||I.x0+10,e.z1||I.x1-10),e.z0,e.z1);k.onGround=false;k.y=e.y-6;k.vy=-170;k.hx=s*70;k.dir=s;k.hop=.5}}}}
-function stormDrop(){part(P.x,P.y-20,'#c4d8f2',8,80,120,.5);if(!skyS().st){S.sky.st=1;toast(ico('wing',2)+' '+ico('x',2)+'<br>Storm cloud: land and cross on foot<br><small>call your horse past its edge</small>',3200)}}
+function stormDrop(){part(P.x,P.y-20,'#c4d8f2',8,80,120,.5);if(!skyS().st){S.sky.st=1;toast(ico('wing',2)+' '+ico('x',2)+'<br>Storm cloud: land and cross on foot<br><small>or fly over / under it in a clear lane</small>',3200)}}
 function takeRw(i){const I=SKYISLES[i],x=rwX(i),y=surfY(x);let h='';
  if(I.rw==='chest'){const c=SKYI.chest[0]+Math.floor(rnd()*(SKYI.chest[1]-SKYI.chest[0]+1));S.money+=c;ftxt(x,y-22,'+$'+c,'#ffd75e');h='<span class="gold">+'+pr(c)+'</span>';
   const am=!!I.au,q=Math.min(am?SKYI.amber:SKYI.silk,cap()-cargoCount());if(q>0){addCargo(am?10:9,am?8:7,q,0);h+=' '+iconImg(ICONURL[am?'spicedamber':'starsilk'])+' +'+q}part(x,y-8,'#ffe08a',12,110,120,.6)}
@@ -50,7 +50,7 @@ function uniFire(e){const dir=e.dir,hx=e.x+dir*17,hy=e.y-12;let a=Math.atan2(e.a
  e.st='cool';e.sT=.35;e.cd=UNI.cd+rnd()*UNI.cdR;e.vx-=dir*30}
 function updIsle(e,dt,d){const I=SKYISLES[e.isl];if(!I){e.dead=1;return}const au=d.cult||d.bot,lo=!au&&e.z0!=null?e.z0:I.x0+8,hi=!au&&e.z1!=null?e.z1:I.x1-8; // autumn foes roam the whole island (they only patrol their own slice)
  e.x=clamp(e.x+e.vx*dt,lo,hi);e.vx*=Math.pow(.02,dt);if(e.tcd>0)e.tcd-=dt;e.moving=false;
- const gy=surfY(e.x),dxp=P.x-e.x,adx=Math.abs(dxp),near=adx<240&&P.y>gy-150&&P.y<gy+40;
+ const gy=surfY(e.x),dxp=P.x-e.x,adx=Math.abs(dxp),near=adx<240&&P.y>gy-80&&P.y<gy+40; // lanes: only when you are on the island or flying in its lane (pass over / under to skip it)
  if(au){updAuFoe(e,dt,d,lo,hi,gy,dxp,adx,near,I);return} // cultist / Forgotten Robot: own attacks, no touch damage (world2/autumnfoes.js)
  if(d.uni){e.y=gy;
   if(e.st==='walk'){if(Math.abs(e.tx-e.x)<3){e.st='idle';e.sT=.5+rnd()*.8}else{const s=Math.sign(e.tx-e.x);e.dir=s;e.x=clamp(e.x+s*d.spd*dt,lo,hi);e.moving=true}}
@@ -128,16 +128,17 @@ function drawRw(i,ox,oy){const I=SKYISLES[i],wx=rwX(i),x=Math.round(wx-ox),y=Mat
   else{F(-2,-3,2,1,'#3ab8a8');F(1,-4,2,1,'#3ab8a8')}}
  if(ok&&Math.sin(menuT*3+i)>.75){const k=Math.floor(menuT*3+i)%3;px(X,x-4+k*4,y-15-k*2,1,1,'#ffffff')}}
 // storm mood: 0..1 by how far the player is from a storm island's no-fly core (1 inside, smooth fade over STORMFADE px outside)
-const STORMFADE=170,STORMCY=232; // STORMCY: cloud base above the island top, as high as the regular rain clouds sit (visual only: the no-fly zone is stormAt, x only)
-function stormF(){if(!P)return 0;let f=0;for(const I of SKYISLES){if(!I.storm)continue;const a0=I.x0+STORMIN,a1=I.x1-STORMIN,d=P.x<a0?a0-P.x:P.x>a1?P.x-a1:0;f=Math.max(f,clamp(1-d/STORMFADE,0,1))}return f*f*(3-2*f)}
+const STORMFADE=170; // storm cloud: sits in the top storm lane (laneCY), rain falls from it onto the island; the no-fly zone is stormAt (core x + storm lanes)
+function laneCY(l){return LANET[l]+8} // base of a lane cloud (storm / rain): its body fills the upper part of lane l
+function stormF(){if(!P)return 0;let f=0;for(const I of SKYISLES){if(!I.storm)continue;const a0=I.x0+STORMIN,a1=I.x1-STORMIN,d=P.x<a0?a0-P.x:P.x>a1?P.x-a1:0;f=Math.max(f,clamp(1-d/STORMFADE,0,1)*(P.fly&&!stormLn(I,laneOf(P.y))?.35:1))}return f*f*(3-2*f)} // flying a clear lane past it: a lighter mood
 function stormFlash(I){return hash(Math.floor(menuT*2.5)+I.x0)>.95&&Math.sin(menuT*40)>0}
 // drawn before the actors: desaturate + dark blue-grey over sky, background and island (player and foes stay readable)
 function stormShade(){const f=stormF();if(f<=0)return;X.globalCompositeOperation='saturation';X.globalAlpha=.48*f;X.fillStyle='#808080';X.fillRect(0,0,VW,VH);
  X.globalCompositeOperation='source-over';X.globalAlpha=1;X.fillStyle='rgba(26,32,54,'+(.36*f).toFixed(3)+')';X.fillRect(0,0,VW,VH)}
 function drawStorms(ox,oy){const F=stormF();for(const I of SKYISLES){if(!I.storm)continue;const a0=I.x0+STORMIN,a1=I.x1-STORMIN,c0=I.x0-14,c1=I.x1+14;const a=Math.max(0,Math.round(c0-ox)),b=Math.min(VW,Math.round(c1-ox));if(b<=a)continue; // cloud: the whole island; rain + no-fly: the core
- const cy=Math.max(14,Math.round(-I.h-STORMCY-oy)), // short (landscape) screens: keep the cloud base just in view at the top
+ const cy=Math.max(14,Math.round(laneCY(I.ln+I.storm-1)-oy)), // short (landscape) screens: keep the cloud base just in view at the top
   fl=stormFlash(I);
- wxTint({x0:c0,x1:c1},ox,a,b-a,'40,52,84',.22);
+ wxTint({x0:c0,x1:c1},ox,a,b-a,'40,52,84',.22,cy-44,Math.round(-I.h-oy)+8);
  for(let sx=a;sx<b;sx+=2){const wx=sx+ox,e=clamp(Math.min(wx-c0,c1-wx)/44,0,1),h=Math.round((30+12*Math.abs(Math.sin(wx/19))+6*Math.sin(wx/7))*e);if(h<2)continue;const t0=Math.max(0,cy-Math.round((22+12*Math.abs(Math.sin(wx/23))+6*Math.sin(wx/9))*e));if(cy+h<0)continue;
   rb(0,fl?'#8a98b4':'#465068',sx,t0,2,cy+h-t0);rb(1,fl?'#b8c6e0':'#5e6a84',sx,cy+h-3,2,3);if(hash(wx*.9)>.6)rb(2,'#363e54',sx,t0+Math.round(6*hash(wx*.31)),2,2);if(hash(wx*.47)>.7)rb(2,'#363e54',sx,cy+h-6,2,2)}rbFlush(X);
  // heavy slanted rain under the core (wind from the right: 1px left per 3px down)
