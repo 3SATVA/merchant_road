@@ -39,9 +39,16 @@ GEAR.crystalhelm={name:'Sky Crystal Helm',slot:'head',hp:30,def:.11,spd:.05,val:
 GEAR.crystalchest={name:'Sky Crystal Chestplate',slot:'chest',hp:30,def:.11,spd:.05,val:300,stat:'❤ +30 🛡 -11% 👟 +5%'};
 GEAR.crystalboots={name:'Sky Crystal Boots',slot:'feet',hp:30,def:.11,spd:.05,val:300,stat:'❤ +30 🛡 -11% 👟 +5%'};
 const CRYSET=45; // per piece with all 3 worn (3 x 45 = +135)
+// World 2 Cultist armor (forged at Aldenreach from Magic Essence + Star Silk cargo + Sun Cloth): glass cannon. atk = damage mult, aspd = attack speed
+// (cooldown / (1+aspd)), tiny def; the full set fixes max HP at CULTHP (inventory/inventory.js maxHP) and adds Solar Flare (inventory/enchant.js solarHit)
+GEAR.cultmask={name:'Cultist Mask',slot:'head',hp:15,def:.02,atk:.12,aspd:.08,val:320,stat:'⚔ +12% ⚡ +8% 🛡 -2% ❤ +15'};
+GEAR.cultrobe={name:'Cultist Robes',slot:'chest',hp:20,def:.03,atk:.15,aspd:.1,val:320,stat:'⚔ +15% ⚡ +10% 🛡 -3% ❤ +20'};
+GEAR.cultboots={name:'Cultist Boots',slot:'feet',hp:15,def:.02,atk:.08,aspd:.07,val:320,stat:'⚔ +8% ⚡ +7% 🛡 -2% ❤ +15'};
+const CULTHP=150,SOLAR={every:5,dmg:60,rx:46,ry:40,fx:.42}; // full Cultist Set: max HP exactly 150; Solar Flare every 5th hit: 60 x dmgMul() to foes within 46 px (40 px up/down)
 const GSLOTS=[['head','Head'],['chest','Chest'],['feet','Feet']];
-const SETS={witch:{name:'Witch Set',pieces:['witchhat','witchrobe','witchboots'],col:'#c060ff',desc:'🔮 Twin shots'},stone:{name:'Stone Set',pieces:['stonehelm','stonechest','stoneboots'],col:'#7de0ff',desc:'❤ +30 · ⚓ · 📦 safe'},crystal:{name:'Crystal Set',pieces:['crystalhelm','crystalchest','crystalboots'],col:'#a8f4ff',desc:'❤ +45 each · +135'}};
+const SETS={witch:{name:'Witch Set',pieces:['witchhat','witchrobe','witchboots'],col:'#c060ff',desc:'🔮 Twin shots'},stone:{name:'Stone Set',pieces:['stonehelm','stonechest','stoneboots'],col:'#7de0ff',desc:'❤ +30 · ⚓ · 📦 safe'},crystal:{name:'Crystal Set',pieces:['crystalhelm','crystalchest','crystalboots'],col:'#a8f4ff',desc:'❤ +45 each · +135'},cultist:{name:'Cultist Set',pieces:['cultmask','cultrobe','cultboots'],col:'#f0a040',desc:'☀ Solar Flare: every 5th hit bursts (60 fire dmg) · ❤ max 150'}};
 const MATS={stone:{name:'Sentient Stone',col:'#a8a8a8'},essence:{name:'Magic Essence',col:'#c060ff'},lava:{name:'Dried Lava',col:'#ff6a1a'}};
+MATS.suncloth={name:'Sun Cloth',col:'#f0a040'}; // World 2 material: 10% from sun cultists and Sun Casters (world2/autumnfoes.js auDeath), for the Cultist armor
 MATS.skyglass={name:'Sky Crystal',col:'#7de0ff'}; // World 2 enemy-only drop (isle + air foes), a material since Oct 2026 (was cargo item 7, kept reserved for old saves; world2/data.js w2Mats migrates)
 // drop chances by enemy family (DROPMUL lets tests force drops)
 const DROPS={slime:[['apple',.25]],goblin:[['dagger',.1]],golem:[['stone',.3]],witch:[['essence',.3]],lavaGolem:[['lava',.1]]};let DROPMUL=1;

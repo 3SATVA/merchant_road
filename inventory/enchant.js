@@ -49,7 +49,8 @@ function ench(k){let n=0;for(const [x] of activeEnch())if(x===k)n++;return n}
 function ev(k,i){let s=0;for(const [x,,l] of activeEnch())if(x===k){const v=ENCH[k].v[l-1];s+=Array.isArray(v)?v[i||0]:v}return s} // summed value
 function wv(k){const x=encList(heldW()).find(x=>x.k===k);return x?eVal(x):null} // held weapon's value
 function berserkMul(){const b=ev('berserk');return b?1+b*clamp(1-S.hp/maxHP(),0,1):1}
-function dmgMul(){return (1+ev('sharp'))*(1+ev('bloodthirst',0))*berserkMul()}
+function dmgMul(){return (1+ev('sharp'))*(1+ev('bloodthirst',0))*berserkMul()*(1+(S&&S.eq?gearSum('atk'):0))} // atk = Cultist armor
+function aspdMul(){return 1+(S&&S.eq?gearSum('aspd'):0)} // attack speed (Cultist armor): weapon / lance cooldown divided by this
 function dmgTakenMul(){return 1+ev('bloodthirst',1)}
 function defTotal(){return Math.min(.75,gearSum('def')+ev('guarded')+ev('heavy'))}
 function spdMul(){return Math.max(.5,1+gearSum('spd')+ev('swift')-.12*ench('heavy'))}
@@ -64,6 +65,17 @@ function onHitFx(e,dmg){
  const vo=wv('volatile');if(vo&&rnd()<vo[0]){part(e.x,e.y-8,'#ffd040',18,190);part(e.x,e.y-8,'#ff5a1a',14,140);
   for(const o of ENEMIES)if(!o.dead&&Math.abs(o.x-e.x)<38&&Math.abs(o.y-e.y)<40){hurtEnemy(o,vo[1],'#ffb030');if(o!==e&&o.hp<=0)killEnemy(o)}
   if(Math.abs(P.x-e.x)<40){S.hp=Math.max(1,S.hp-3);ftxt(P.x,P.y-24,'-3 💣','#ff9a4a')}}}
+// Solar Flare (full Cultist Set): every SOLAR.every-th landed hit (hitEnemy) bursts fire around you; FLARES = the ring effect (drawn in core/render.js)
+const FLARES=[];
+function solarHit(e){if(!setOn('cultist'))return;P.sol=(P.sol||0)+1;if(P.sol<SOLAR.every)return;P.sol=0;const cx=P.x,cy=P.y-10,dm=SOLAR.dmg*dmgMul();
+ FLARES.push({x:cx,y:cy,t:0});part(cx,cy,'#ffe080',14,170);part(cx,cy,'#ff6a1a',12,130);shake(.5);
+ for(const o of ENEMIES)if(!o.dead&&o.hp>0&&Math.abs(o.x-cx)<SOLAR.rx&&Math.abs(o.y-ENEMY[o.type].h/2-cy)<SOLAR.ry){hurtEnemy(o,dm,'#ffb030');o.hitT=.12;if(o!==e&&o.hp<=0)killEnemy(o)}}
+function drawFlares(ox,oy){for(const f of FLARES){const k=clamp(f.t/SOLAR.fx,0,1),r=6+SOLAR.rx*Math.sqrt(k),cx=Math.round(f.x-ox),cy=Math.round(f.y-oy),n=40;
+ if(k<.25){const s=Math.round(9*(1-k*4))+3;px(X,cx-s,cy-s,s*2+1,s*2+1,'rgba(255,240,180,'+(.55*(1-k*4))+')')}
+ for(let i=0;i<n;i++){const a=i/n*6.283+f.t*2,x=Math.round(cx+Math.cos(a)*r),y=Math.round(cy+Math.sin(a)*r*.85),c=k<.35?'#fff0b0':k<.7?(i%2?'#ffb040':'#ff7a1a'):(i%2?'#e8501a':'#a8301a');px(X,x-1,y-1,k<.6?3:2,k<.6?3:2,c)}
+ if(k<.6)for(let i=0;i<22;i++){const a=i/22*6.283-f.t*3,q=r*(.62+.08*((i*7)%3)),y=Math.round(cy+Math.sin(a)*q*.85)-Math.round(k*6);px(X,Math.round(cx+Math.cos(a)*q)-1,y-1,2,2,i%3?'#ff8a2a':'#ffd040')}
+ if(k<.7)for(let i=0;i<8;i++){const a=i/8*6.283+.39,l=r*.7;for(let j=0;j<3;j++){const q=l*(.45+j*.2);px(X,Math.round(cx+Math.cos(a)*q),Math.round(cy+Math.sin(a)*q*.85),1,1,j<1?'#ffe080':'#ff9a30')}}}}
+function tickFlares(dt){for(const f of FLARES)f.t+=dt;for(let i=FLARES.length-1;i>=0;i--)if(FLARES[i].t>SOLAR.fx)FLARES.splice(i,1)}
 function thornsHit(dmg){const t=ev('thorns');if(!t)return;let best=null,bd=34;for(const e of ENEMIES){if(e.dead)continue;const d=Math.abs(e.x-P.x);if(d<bd){bd=d;best=e}}
  if(best){hurtEnemy(best,dmg*t,'#9ad870');part(best.x,best.y-8,'#9ad870',5,60);if(best.hp<=0)killEnemy(best)}}
 function enchCol(id){const l=encList(id);if(!l.length)return null;return l.some(x=>ENCH[x.k].cur)?CURSECOL:ENCH[l[0].k].col}

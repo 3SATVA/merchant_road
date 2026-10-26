@@ -27,7 +27,7 @@ function refundOf(units){let t=0;for(const u of units)t+=(+u.paid||0)*(u.qty||1)
 function die(){if(DG){dungeonKO();return}const lost=cargoCount();const gnd=PICK.filter(k=>k.item!=null&&!k.mat&&!k.gear);const refund=refundOf(S.cargo)+refundOf(gnd);S.money+=refund;S.cargo=[];if(S.horse&&S.horse.on){S.horse.on=false;S.horse.x=TOWNS[S.lastTown].x+30;S.horse.dir=-1}S.hp=0;S.stats.deaths++;PICK=[];ENEMIES=[];PROJ=[];ROCKS=[];
  $('deadTxt').innerHTML=(lost?'Lost '+lost+' goods.':'No goods lost.')+(refund?'<br><br><span id="refund" style="color:#ffd75e;font-size:11px">+'+pr(refund)+' refunded</span><br><span style="opacity:.7">(half of what you paid)</span>':'')+'<br><br>Money and gear kept.<br>Waking up in '+TOWNS[S.lastTown].name+'.';S.x=TOWNS[S.lastTown].x;S.hp=maxHP();
  try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}setMode('dead')}
-function hitEnemy(e,dmg,dir,elem){const w=WEAPONS[S.weapon];const m=wmult({elem:elem},e.type);const cr=wv('crit'),crit=cr&&rnd()<cr;const d=dmg*m*dmgMul()*(crit?2:1)*(.9+rnd()*.2);e.hp-=d;onHitFx(e,d);e.hitT=.12;e.vx=dir*(ENEMY[e.type].base==='golem'?30:90)*(wv('knock')||1);if(crit){ftxt(e.x,e.y-ENEMY[e.type].h-12,'CRIT!','#ffe08a');part(e.x,e.y-8,'#ffe08a',6,90)}
+function hitEnemy(e,dmg,dir,elem){solarHit(e);const w=WEAPONS[S.weapon];const m=wmult({elem:elem},e.type);const cr=wv('crit'),crit=cr&&rnd()<cr;const d=dmg*m*dmgMul()*(crit?2:1)*(.9+rnd()*.2);e.hp-=d;onHitFx(e,d);e.hitT=.12;e.vx=dir*(ENEMY[e.type].base==='golem'?30:90)*(wv('knock')||1);if(crit){ftxt(e.x,e.y-ENEMY[e.type].h-12,'CRIT!','#ffe08a');part(e.x,e.y-8,'#ffe08a',6,90)}
  ftxt(e.x,e.y-ENEMY[e.type].h-4,Math.round(d)+(m>1?'!':''),m>1?'#ffd75e':m<1?'#9a9a9a':'#ffffff');part(e.x,e.y-8,'#ffffff',3,60);
  if(e.hp<=0)killEnemy(e)}
 function killEnemy(e){const d=ENEMY[e.type];e.dead=1;S.stats.kills++;const c=Math.round((d.coin[0]+Math.floor(rnd()*(d.coin[1]-d.coin[0]+1)))*(1+ev('greedy')));S.money+=c;ftxt(e.x,e.y-d.h-10,'+$'+c,'#ffd75e');
@@ -40,7 +40,7 @@ function steerProj(p,dt){const sp=Math.hypot(p.vx,p.vy)||1,ux=p.vx/sp,uy=p.vy/sp
  for(const e of ENEMIES){if(e.dead)continue;const tx=e.x-p.x,ty=e.y-ENEMY[e.type].h/2-p.y,d=Math.hypot(tx,ty);if(d<bd&&(tx*ux+ty*uy)/(d||1)>.34){bd=d;best=[tx,ty]}}
  if(!best)return;const want=Math.atan2(best[1],best[0]),cur=Math.atan2(uy,ux);let da=want-cur;while(da>Math.PI)da-=2*Math.PI;while(da<-Math.PI)da+=2*Math.PI;
  const tr=3.6*(p.home||1)*dt,a=cur+clamp(da,-tr,tr);p.vx=Math.cos(a)*sp;p.vy=Math.sin(a)*sp}
-function playerAttack(){if(mounted()&&S.lance&&!WEAPONS[S.weapon].flail){lanceStrike();return}const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd;P.atk=1;P.atkD=w.flail?FLAIL.anim:.2;
+function playerAttack(){if(mounted()&&S.lance&&!WEAPONS[S.weapon].flail){lanceStrike();return}const w=WEAPONS[S.weapon];if(P.cd>0)return;P.cd=w.cd/aspdMul();P.atk=1;P.atkD=w.flail?FLAIL.anim:.2;
  if(w.flail){flailSwing(w);return}
  if(w.multi){const rm=1+gearSum('rng');for(let i=0;i<w.multi;i++){const a=(i===0?0:i%2?-1:1)*Math.ceil(i/2)*w.spread;
   PROJ.push({x:P.x+P.dir*8,y:P.y-9,vx:P.dir*w.pspd*Math.cos(a),vy:w.pspd*Math.sin(a),g:0,dmg:w.dmg*rm,from:'p',elem:w.elem,kind:'wind',home:w.home,wait:i*w.stag,life:w.life,spin:rnd()*6})}
@@ -89,7 +89,7 @@ function update(dt){S.time+=dt;{const rg=ev('regen');if(rg&&S.hp>0)S.hp=Math.min
   if(k.life<=0)k.dead=1;else if(Math.abs(k.x-P.x)<10&&Math.abs(k.y-(P.y-4))<14&&k.age>.4){if(k.mat){giveMat(k.mat);k.dead=1}else if(k.gear){giveGear(k.gear);k.dead=1}else if(cargoCount()<cap()){addCargo(k.item,k.origin,1,k.paid);k.dead=1;ftxt(P.x,P.y-26,'+1 '+ITEMS[k.item].name,'#7de07a')}}
   k.age=(k.age||0)+dt}
  prune(PICK,k=>!k.dead)}
- for(const p of PARTS){p.life-=dt;p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt}prune(PARTS,p=>p.life>0);
+ for(const p of PARTS){p.life-=dt;p.vy+=p.g*dt;p.x+=p.vx*dt;p.y+=p.vy*dt}prune(PARTS,p=>p.life>0);if(FLARES.length)tickFlares(dt);
  for(const f of FTXT){f.life-=dt;f.y-=18*dt}prune(FTXT,f=>f.life>0);
  env.saveT=(env.saveT||0)+dt;if(env.saveT>5){env.saveT=0;save()}
 }

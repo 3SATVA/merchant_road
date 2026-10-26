@@ -31,5 +31,10 @@ ICONS.witchhat=['.....h..','....hh..','...hhh..','...hhh..','..hhhhh.','..ppppp.
 ICONS.crystalhelm=['...x....','..aqa...','.aqqqa..','aqxqqqa.','aqqqqqzb','aaaaaaab','a.kkkk.b','........'];ICONPAL2.crystalhelm={a:'#5ac8e0',q:'#a8f4ff',x:'#ffffff',z:'#3a9ac8',b:'#2a7aa0',k:'#1a3a50'};
 ICONS.crystalchest=['.a....a.','aaq..qaa','aqqxqqqa','.aqqqqa.','.aqxqqa.','.aqqqza.','.aazzaa.','..bbbb..'];ICONPAL2.crystalchest={a:'#5ac8e0',q:'#a8f4ff',x:'#ffffff',z:'#3a9ac8',b:'#2a7aa0'};
 ICONS.crystalboots=['........','.aa..aa.','.aq..aq.','.ax..ax.','.aqq.aqq','aaqqaaqq','bbbbbbbb','........'];ICONPAL2.crystalboots={a:'#5ac8e0',q:'#a8f4ff',x:'#ffffff',b:'#2a7aa0'};
+// Cultist armor (Aldenreach forge) + Sun Cloth: crimson cloth, gold trim, the spiky sun mask
+ICONS.cultmask=['.y.y..y.','..yggy..','yggggggy','.gkkgkg.','yggggggy','.ggddgg.','y.gggg.y','...y....'];ICONPAL2.cultmask={g:'#f0c040',y:'#ffe080',k:'#3a1a14',d:'#c08a20'};
+ICONS.cultrobe=['..rrrr..','.rdyydr.','rrryyrrr','.rrrrrr.','.rdyyrr.','.rrrrrr.','rrrrrrrr','yyyyyyyy'];ICONPAL2.cultrobe={r:'#b8282a',d:'#7a1418',y:'#e8b040'};
+ICONS.cultboots=['........','.rr..rr.','.rd..rd.','.rd..rd.','.rdd.rdd','rrddrrdd','yyyyyyyy','........'];ICONPAL2.cultboots={r:'#b8282a',d:'#7a1418',y:'#e8b040'};
+ICONS.suncloth=['........','rrrrrrr.','rrryrrrd','rryxyrrd','rrryrrrd','rrrrrrrd','.ddddddd','........'];ICONPAL2.suncloth={r:'#c8342e',d:'#7a1418',y:'#f0c040',x:'#ffe080'};
 const GEARC={},GEARURL={};for(const id in GEAR){GEARC[id]=iconCanvas(id);GEARURL[id]=GEARC[id].toDataURL()}
 const MATC={},MATURL={};for(const id in MATS){MATC[id]=iconCanvas(id);MATURL[id]=MATC[id].toDataURL()}

@@ -46,7 +46,7 @@ function toggleHorse(){if(P&&P.fly)return;if(!S.horse){toast('🐴 Stables: Bog 
 // the horse button whistles your horse over from wherever it was left (a cave mouth, another island, the other end of the road) and you hop on
 function summonHorse(){if(!S.horse||S.horse.on||DG)return;const x=horseSpot(P.x-P.dir*8);S.horse.x=x;S.horse.dir=P.dir;if(WI)S.horse.wings=true;
  part(x,surfY(x)-6,'#e8dcc0',12,90,120,.6);part(x,surfY(x)-14,'#ffffff',6,60,40,.5);ftxt(P.x,P.y-30,'♪','#ffe08a')}
-function lanceStrike(){const w=WEAPONS[S.lance];if(P.cd>0||P.couch>0)return;P.cd=w.cd;P.couch=.55;P.hits=[]}
+function lanceStrike(){const w=WEAPONS[S.lance];if(P.cd>0||P.couch>0)return;P.cd=w.cd/aspdMul();P.couch=.55;P.hits=[]}
 function lanceSpeed(){return clamp(Math.abs(P.hv||0)/(P&&P.fly==='horse'?GALLOP*HFLY:GALLOP),0,1)} // in the sky the (slow) winged horse's own top speed counts as a full charge
 function lanceTick(dt){if(!(P.couch>0))return;P.couch-=dt;const w=WEAPONS[S.lance],s=lanceSpeed();
  const x0=P.dir>0?P.x+4:P.x-w.range-6,x1=P.dir>0?P.x+w.range+6:P.x-4;

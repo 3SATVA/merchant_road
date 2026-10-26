@@ -28,7 +28,7 @@ function renderInv(){$('imoney').textContent=pr(S.money);let h='';const W=WEAPON
  h+='<div class="sec">'+(S.park?'🎒 ':'')+'CARGO '+cargoCount()+'/'+cap()+'</div><div class="tiles">';
  if(!S.cargo.length)h+=tile('','Empty',{cls:'empty'});for(const st of S.cargo)h+=tile(ICONURL[ITEMS[st.item].id],ITEMS[st.item].name,{q:'×'+st.qty,s:'<span style="color:#b49a88">'+TOWNS[st.origin].name+'</span>'});h+='</div>';
  if(S.park){h+='<div class="sec">🛒 🅿 '+cargoN(S.park.cargo)+'/'+(HAULERS[S.hauler].cap-PACK)+'</div><div class="tiles">';if(!S.park.cargo.length)h+=tile('','Empty',{cls:'empty'});for(const st of S.park.cargo)h+=tile(ICONURL[ITEMS[st.item].id],ITEMS[st.item].name,{cls:'dim',q:'×'+st.qty});h+='</div>'}
- h+='<div class="small" style="margin-top:8px">🧪'+S.potions+' · ❤ '+Math.ceil(S.hp)+'/'+maxHP()+(defTotal()?' · 🛡 -'+Math.round(defTotal()*100)+'%':'')+(gearSum('rng')?' · 🏹 +'+Math.round(gearSum('rng')*100)+'%':'')+'</div>';
+ h+='<div class="small" style="margin-top:8px">🧪'+S.potions+' · ❤ '+Math.ceil(S.hp)+'/'+maxHP()+(defTotal()?' · 🛡 -'+Math.round(defTotal()*100)+'%':'')+(gearSum('rng')?' · 🏹 +'+Math.round(gearSum('rng')*100)+'%':'')+(gearSum('atk')?' · ⚔ +'+Math.round(gearSum('atk')*100)+'% ⚡ +'+Math.round(gearSum('aspd')*100)+'%':'')+'</div>';
  $('ibody').innerHTML=h;drawPrev($('iprev'),0,false);updHUD()}
 $('ibody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const a=b.dataset.act,id=b.dataset.id;
  if(a==='eq'&&GEAR[id]&&S.gear.includes(id))S.eq[GEAR[id].slot]=id;
@@ -37,5 +37,5 @@ $('ibody').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)retu
  else if(a==='eql'&&S.lances.includes(id))S.lance=id;
  S.hp=Math.min(S.hp,maxHP());save();renderInv()};
 function setOn(id){const st=SETS[id];return !!(S&&S.eq&&st.pieces.every(g=>S.eq[GEAR[g].slot]===g))}
-function maxHP(){return (S?S.maxhp:100)+(S&&setOn('stone')?30:0)+(S&&S.ench?ev('hardy'):0)+(S&&S.eq?gearSum('hp')+(setOn('crystal')?3*CRYSET-gearSum('hp'):0):0)} // gear hp (crystal armor), the Crystal Set lifts its 3 x 30 to 3 x CRYSET
+function maxHP(){if(S&&S.eq&&setOn('cultist'))return CULTHP;return (S?S.maxhp:100)+(S&&setOn('stone')?30:0)+(S&&S.ench?ev('hardy'):0)+(S&&S.eq?gearSum('hp')+(setOn('crystal')?3*CRYSET-gearSum('hp'):0):0)} // gear hp (crystal armor), the Crystal Set lifts its 3 x 30 to 3 x CRYSET
 function gearSum(k){let v=0;for(const [sl] of GSLOTS){const g=S.eq&&S.eq[sl];if(g&&GEAR[g][k])v+=GEAR[g][k]}return v}

@@ -25,7 +25,7 @@ function takeRw(i){const I=SKYISLES[i],x=rwX(i),y=surfY(x);let h='';
   addCargo(it,lf?8:6,q,0);h=iconImg(ICONURL[ITEMS[it].id])+' +'+q;ftxt(x,y-20,'+'+q,'#7de07a');part(x,y-8,lf?'#e8843a':'#ffffff',10,90,100,.5)}
  skyS().r[i]=S.time;toast(h,1600);save()}
 function skyTick(dt){if(WI!==1||DG||!P)return;
- if(SKYST.ref!==ENEMIES){SKYST.ref=ENEMIES;W2ENV.pk=undefined;SKYST.act=[];SKYST.foes=[];UB.length=0;AUP.length=0} // ENEMIES was reset (death, menu, travel)
+ if(SKYST.ref!==ENEMIES){SKYST.ref=ENEMIES;W2ENV.pk=undefined;SKYST.act=[];SKYST.foes=[];UB.length=0;AUP.length=0;AUB.length=0} // ENEMIES was reset (death, menu, travel)
  skyHorseTick(dt);
  for(let i=0;i<SKYISLES.length;i++){const I=SKYISLES[i],dd=P.x<I.x0?I.x0-P.x:P.x>I.x1?P.x-I.x1:0;
   if(!SKYST.act[i]&&dd<VW/2+70){SKYST.act[i]=1;const n=I.foes.length,a=I.x0+SKYI.safe,sw=(I.x1-SKYI.safe-a)/n; // each foe owns one slice of the island (SKYI.gap between slices, SKYI.safe landing room at each end)

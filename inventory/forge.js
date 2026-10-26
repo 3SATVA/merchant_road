@@ -1,9 +1,11 @@
 'use strict';
 const RECIPES=[{id:'flamesword',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'firestaff',kind:'w',need:{essence:2,iron:2,lava:1}},{id:'magmalance',kind:'w',need:{stone:3,lava:1,iron:1}},{id:'witchhat',kind:'g',need:{essence:2}},{id:'witchrobe',kind:'g',need:{essence:3}},{id:'stonechest',kind:'g',need:{stone:3}},{id:'stonehelm',kind:'g',need:{stone:2}},{id:'witchboots',kind:'g',need:{essence:2}},{id:'stoneboots',kind:'g',need:{stone:2}},
  // World 2 (w:1, Skyhaven forge): Sky Crystal and essence are mats
- {id:'crystalhelm',kind:'g',w:1,need:{skyglass:6,essence:10}},{id:'crystalchest',kind:'g',w:1,need:{skyglass:6,essence:10}},{id:'crystalboots',kind:'g',w:1,need:{skyglass:6,essence:10}},{id:'windstaff',kind:'w',w:1,need:{skyglass:6,essence:10}}];
-const CARGOMAT={iron:4}; // Sky Crystal is a material (S.mats.skyglass) since Oct 2026 // recipe needs paid in cargo units (any origin) instead of S.mats
-function recipesHere(){return RECIPES.filter(r=>(r.w||0)===WI)}
+ {id:'crystalhelm',kind:'g',w:1,need:{skyglass:6,essence:10}},{id:'crystalchest',kind:'g',w:1,need:{skyglass:6,essence:10}},{id:'crystalboots',kind:'g',w:1,need:{skyglass:6,essence:10}},{id:'windstaff',kind:'w',w:1,need:{skyglass:6,essence:10}},
+ // at = that town's forge only: the Cultist armor at Aldenreach (Star Silk from cargo, see CARGOMAT)
+ {id:'cultmask',kind:'g',w:1,at:'Aldenreach',need:{essence:5,starsilk:20,suncloth:5}},{id:'cultrobe',kind:'g',w:1,at:'Aldenreach',need:{essence:5,starsilk:20,suncloth:5}},{id:'cultboots',kind:'g',w:1,at:'Aldenreach',need:{essence:5,starsilk:20,suncloth:5}}];
+const CARGOMAT={iron:4,starsilk:9}; // Sky Crystal is a material (S.mats.skyglass) since Oct 2026 // recipe needs paid in cargo units (any origin) instead of S.mats
+function recipesHere(t){return RECIPES.filter(r=>(r.w||0)===WI&&(!r.at||(t&&t.name===r.at)))}
 function matURL(k){return CARGOMAT[k]!=null?ICONURL[ITEMS[CARGOMAT[k]].id]:MATURL[k]}
 function have(k){const it=CARGOMAT[k];return it!=null?S.cargo.filter(s=>s.item===it).reduce((a,s)=>a+s.qty,0):(S.mats[k]||0)}
 function owns(r){return r.kind==='w'?(WEAPONS[r.id].lance?S.lances.includes(r.id):S.weapons.includes(r.id)):S.gear.includes(r.id)}

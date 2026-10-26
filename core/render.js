@@ -101,6 +101,7 @@ function drawActors(ox,oy){
   else{const c=p.v?'#ff8030':'#c060ff';px(X,sx-2,sy-2,4,4,c);px(X,sx-1,sy-1,2,2,'#ffffff')}}
  drawHPBars(ox,oy);
  for(const p of PARTS)px(X,p.x-ox,p.y-oy,1,1,p.col);
+ if(FLARES.length)drawFlares(ox,oy);
  if(WI)drawSparks(X,ox,oy);
 }
 // enemy health bars, the ONE bar for every foe in both worlds (drawEnemy/drawAir draw none): show after a hit and fade ~3s later; big foes (golems, Vex's elite witches) always show theirs

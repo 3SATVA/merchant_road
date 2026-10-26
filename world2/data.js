@@ -56,11 +56,11 @@ const SKYISLES=[
  {x0:5790,x1:6490,ln:2,h:294,top:1,rw:'wool',rx:-40,foes:['dreadUni','bigSlime'],ld:[[.22,.37,15],[.6,.66,-8],[.73,.83,12]]},
  {x0:7190,x1:8150,ln:1,h:176,storm:2,top:1,rw:'chest',rx:50,foes:['unicorn','dreadUni','bigSlime'],ld:[[.18,.28,-9],[.34,.48,15],[.68,.77,12]]},
  // the autumn wilds (Sunspire -> Aldenreach): au = autumn look (au 2 = blends from Sunspire lilac), kind = set piece (world2/autumnfoes.js), rw 'leaf' = Emberleaf bush
- {x0:10950,x1:11650,ln:1,h:174,top:0,au:2,kind:'grove',rw:'leaf',rx:30,foes:['unicorn','cultist'],ld:[[.25,.38,12],[.62,.72,-8]]},
- {x0:12000,x1:13000,ln:2,h:296,top:0,au:1,kind:'castle',rw:'chest',rx:-60,foes:['cultist','robot','dreadUni'],ld:[[.16,.26,-9],[.74,.84,14]]},
+ {x0:10950,x1:11650,ln:1,h:174,top:0,au:2,kind:'grove',rw:'leaf',rx:30,foes:['caster','cultist'],ld:[[.25,.38,12],[.62,.72,-8]]},
+ {x0:12000,x1:13000,ln:2,h:296,top:0,au:1,kind:'castle',rw:'chest',rx:-60,foes:['cultist','robot','caster'],ld:[[.16,.26,-9],[.74,.84,14]]},
  {x0:13350,x1:13950,ln:0,h:56,top:0,au:1,kind:'rubble',rw:'leaf',rx:40,foes:['cultist','cultist'],ld:[[.62,.72,10]]},
- {x0:14300,x1:15350,ln:1,h:150,storm:1,top:0,au:1,kind:'grove',rw:'chest',rx:50,foes:['robot','unicorn','cultist'],ld:[[.2,.3,6],[.5,.6,-10],[.75,.86,5]]},
- {x0:15650,x1:16150,ln:2,h:292,top:0,au:1,kind:'shrine',rw:'leaf',rx:-30,foes:['dreadUni','cultist'],ld:[[.2,.3,10]]}];
+ {x0:14300,x1:15350,ln:1,h:150,storm:1,top:0,au:1,kind:'grove',rw:'chest',rx:50,foes:['robot','caster','cultist'],ld:[[.2,.3,6],[.5,.6,-10],[.75,.86,5]]},
+ {x0:15650,x1:16150,ln:2,h:292,top:0,au:1,kind:'shrine',rw:'leaf',rx:-30,foes:['caster','cultist'],ld:[[.2,.3,10]]}];
 const STORMIN=48; // the storm's no-fly core is the island minus this much at each end: land, cross, take off past the edge
 const SKYI={pad:80,safe:110,gap:80,chestCd:600,nodeCd:360,chest:[140,220],silk:2,wool:3,leaf:2,amber:1}; // autumn: leaf = Emberleaf per pick, amber = Spiced Amber in an autumn chest (instead of the Star Silk) // pad = flat landing strip at each end, safe = no foe spawns or patrols this close to an end, gap = min px between two foes' patrol zones; reward respawn [s of play time], chest coins + Star Silk, Cloud Wool per pick
 const UNI={near:52,bolt:10,hull:9,tele:.5,gap:.2,spd:180,life:1.6,range:210,ang:.6,cd:1.6,cdR:.8}; // unicorn bolt: damage (x W2T.dmg), hull, telegraph [s], s between burst bolts (ENEMY.burst), px/s, life [s], aggro px, max aim [rad], cooldown + rnd
@@ -112,8 +112,9 @@ Object.assign(ENEMY,{
  dreadUni:{hp:110,dmg:9,hull:11,spd:40,w:16,h:20,coin:[20,32],air:1,isle:1,base:'witch',uni:1,burst:3,elite:1,gem:.35},
  bigSlime:{hp:110,dmg:9,hull:10,spd:50,w:22,h:18,coin:[12,20],air:1,isle:1,base:'slime',gem:.15,fruit:.25},
  isleSlime:{hp:24,dmg:7,hull:5,spd:50,w:10,h:8,coin:[2,4],air:1,isle:1,base:'slime',fruit:.25},
- // autumn foes (world2/autumnfoes.js): FINAL numbers, not run through W2T below. cult = sun cultist (fast knife lunge), bot = Forgotten Robot (slam + telegraphed laser)
- cultist:{hp:110,dmg:58,hull:10,spd:92,w:8,h:15,coin:[30,50],air:1,isle:1,base:'cultist',cult:1,amber:.06},
+ // autumn foes (world2/autumnfoes.js): FINAL numbers, not run through W2T below. cult = sun cultist (short knife dash) / Sun Caster (caster: keeps away, homing sun ball), bot = Forgotten Robot (slam + telegraphed laser)
+ cultist:{hp:110,dmg:78,hull:10,spd:92,w:8,h:15,coin:[30,50],air:1,isle:1,base:'cultist',cult:1,cloth:.1}, // cloth = Sun Cloth (material) chance; dmg 58 -> 78 with the short dash (Oct 2026)
+ caster:{hp:90,dmg:42,hull:9,spd:62,w:8,h:16,coin:[30,50],air:1,isle:1,base:'cultist',cult:1,caster:1,cloth:.1}, // Sun Caster: dmg = the sun ball (AUF.sunball); base 'cultist' = the same essence drop
  robot:{hp:320,dmg:52,hull:12,spd:22,w:18,h:22,coin:[45,75],air:1,isle:1,base:'robot',bot:1,gem:.5},
  harpy:{hp:125,dmg:30,hull:10,spd:120,w:16,h:16,coin:[24,40],air:1,gem:.2,harpy:1}}); // open-sky flyer of the autumn wilds: hovers at range, throws feather fans (AUF.feather)
 // World 2 is end-game: you arrive with maxed World 1 gear (Magma Lance, Stone set, II-III enchants). The tier scales every sky foe
@@ -123,9 +124,9 @@ for(const t of ['pegasus','skySlime','unicorn','dreadUni','bigSlime','isleSlime'
 // HP nerf on top of the tier (Oct 2026): pegasus, unicorn, dread unicorn and big slime at 1/2 (sky slime and the big slime's isle slimes unchanged)
 const W2HPN={pegasus:.5,unicorn:.5,dreadUni:.5,bigSlime:.5};for(const t in W2HPN)ENEMY[t].hp=Math.round(ENEMY[t].hp*W2HPN[t]);
 UNI.bolt=Math.round(UNI.bolt*W2T.dmg);
-// Autumn wilds x1.5 (Oct 2026): cultist, Forgotten Robot and harpy (autumn-only) get it here; their laser / feathers in AUF (world2/autumnfoes.js).
+// Autumn wilds x1.5 (Oct 2026): cultist, Sun Caster, Forgotten Robot and harpy (autumn-only) get it here; their laser / feathers in AUF (world2/autumnfoes.js).
 // Unicorns, dread unicorns and pegasi get it per spawn when they spawn in the autumn wilds (au islands, biome 8): auBuff marks e.au, updAir swaps in auD(type)
-const AUMUL=1.5;for(const t of ['cultist','robot','harpy']){const d=ENEMY[t];d.hp=Math.round(d.hp*AUMUL);d.dmg=Math.round(d.dmg*AUMUL)}
+const AUMUL=1.5;for(const t of ['cultist','caster','robot','harpy']){const d=ENEMY[t];d.hp=Math.round(d.hp*AUMUL);d.dmg=Math.round(d.dmg*AUMUL)}
 const AUBUFF=['unicorn','dreadUni','pegasus'],AUDC={};
 function auD(t){return AUDC[t]||(AUDC[t]=Object.assign({},ENEMY[t],{dmg:Math.round(ENEMY[t].dmg*AUMUL)}))}
 function auBuff(e){if(!AUBUFF.includes(e.type)||e.au)return e;e.au=1;e.hp=e.max=Math.round(e.max*AUMUL);return e}
